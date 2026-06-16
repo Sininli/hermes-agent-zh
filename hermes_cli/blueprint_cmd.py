@@ -205,7 +205,7 @@ def _fmt_catalog() -> str:
 
     lines = ["Automation Blueprints — `/blueprint <name>` and I'll ask you what I need:\n"]
     for r in CATALOG:
-        lines.append(f"  • {r.key} — {r.title}")
+        lines.append(f"   {r.key} — {r.title}")
         lines.append(f"    {r.description}")
     lines.append(
         "\nTip: `/blueprint <name>` walks you through it. Power users can "
@@ -217,7 +217,7 @@ def _fmt_catalog() -> str:
 def _fmt_candidates(query: str, candidates: List[Any]) -> str:
     lines = [f"'{query}' matches several blueprints — which one?\n"]
     for r in candidates:
-        lines.append(f"  • {r.key} — {r.title}")
+        lines.append(f"   {r.key} — {r.title}")
     lines.append("\nRun `/blueprint <name>` with one of the names above.")
     return "\n".join(lines)
 

@@ -348,7 +348,7 @@ def _cmd_migrate(args):
     )
     print(
         color(
-            "│          ⚕ Hermes — OpenClaw Migration                 │",
+            "│           Hermes — OpenClaw Migration                 │",
             Colors.MAGENTA,
         )
     )
@@ -574,7 +574,7 @@ def _cmd_cleanup(args):
     )
     print(
         color(
-            "│          ⚕ Hermes — OpenClaw Cleanup                   │",
+            "│           Hermes — OpenClaw Cleanup                   │",
             Colors.MAGENTA,
         )
     )
@@ -728,7 +728,7 @@ def _print_migration_report(report: dict, dry_run: bool):
 
         if migrated_items:
             label = "Would migrate" if dry_run else "Migrated"
-            print(color(f"  ✓ {label}:", Colors.GREEN))
+            print(color(f"   {label}:", Colors.GREEN))
             for item in migrated_items:
                 kind = item.get("kind", "unknown")
                 dest = item.get("destination", "")
@@ -740,7 +740,7 @@ def _print_migration_report(report: dict, dry_run: bool):
             print()
 
         if conflict_items:
-            print(color("  ⚠ Conflicts (skipped — use --overwrite to force):", Colors.YELLOW))
+            print(color("   Conflicts (skipped — use --overwrite to force):", Colors.YELLOW))
             for item in conflict_items:
                 kind = item.get("kind", "unknown")
                 reason = item.get("reason", "already exists")
@@ -756,7 +756,7 @@ def _print_migration_report(report: dict, dry_run: bool):
             print()
 
         if error_items:
-            print(color("  ✗ Errors:", Colors.RED))
+            print(color("   Errors:", Colors.RED))
             for item in error_items:
                 kind = item.get("kind", "unknown")
                 reason = item.get("reason", "unknown error")
@@ -799,7 +799,7 @@ def _print_migration_report(report: dict, dry_run: bool):
         ]
         if skipped_keys:
             print()
-            print(color("  ⚠ API keys were NOT migrated (secrets migration is disabled by default).", Colors.YELLOW))
+            print(color("   API keys were NOT migrated (secrets migration is disabled by default).", Colors.YELLOW))
             print(color("  Your OPENROUTER_API_KEY and other provider keys must be added manually.", Colors.YELLOW))
             print()
             print_info("To migrate API keys, re-run with:")

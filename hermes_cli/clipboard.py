@@ -69,7 +69,7 @@ def _macos_has_image() -> bool:
             ["osascript", "-e", "clipboard info"],
             capture_output=True, text=True, timeout=3,
         )
-        return "«class PNGf»" in info.stdout or "«class TIFF»" in info.stdout
+        return "<class PNGf>" in info.stdout or "<class TIFF>" in info.stdout
     except Exception:
         return False
 
@@ -98,7 +98,7 @@ def _macos_osascript(dest: Path) -> bool:
     # Extract as PNG
     script = (
         'try\n'
-        '  set imgData to the clipboard as «class PNGf»\n'
+        '  set imgData to the clipboard as <class PNGf>\n'
         f'  set f to open for access POSIX file "{dest}" with write permission\n'
         '  write imgData to f\n'
         '  close access f\n'

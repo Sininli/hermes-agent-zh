@@ -572,6 +572,6 @@ def register(ctx) -> None:
         # adapter class above.
         max_message_length=HomeAssistantAdapter.MAX_MESSAGE_LENGTH,
         # Display
-        emoji="🏠",
+        emoji="",
         allow_update_command=True,
     )

@@ -78,7 +78,7 @@ def _cmd_list(_args) -> None:
         print(f"  [{event}]")
         for spec in by_event[event]:
             is_approved = (spec.event, spec.command) in approved
-            status = "✓ allowed" if is_approved else "✗ not allowlisted"
+            status = " allowed" if is_approved else " not allowlisted"
             matcher_part = f" matcher={spec.matcher!r}" if spec.matcher else ""
             print(
                 f"    - {spec.command}{matcher_part} "
@@ -93,7 +93,7 @@ def _cmd_list(_args) -> None:
                     mtime_at = entry.get("script_mtime_at_approval")
                     if mtime_now and mtime_at and mtime_now > mtime_at:
                         print(
-                            f"      ⚠ script modified since approval "
+                            f"       script modified since approval "
                             f"(was {mtime_at}, now {mtime_now}) — "
                             f"run `hermes hooks doctor` to re-validate"
                         )
@@ -240,10 +240,10 @@ def _cmd_test(args) -> None:
 
 def _print_run_result(result: Dict[str, Any]) -> None:
     if result.get("error"):
-        print(f"      ✗ error: {result['error']}")
+        print(f"       error: {result['error']}")
         return
     if result.get("timed_out"):
-        print(f"      ✗ timed out after {result['elapsed_seconds']}s")
+        print(f"       timed out after {result['elapsed_seconds']}s")
         return
 
     rc = result.get("returncode")
@@ -319,19 +319,19 @@ def _doctor_one(spec, shell_hooks) -> int:
 
     # 1. Script exists and is executable
     if shell_hooks.script_is_executable(spec.command):
-        print("      ✓ script exists and is executable")
+        print("       script exists and is executable")
     else:
         problems += 1
-        print("      ✗ script missing or not executable "
+        print("       script missing or not executable "
               "(chmod +x the file, or fix the path)")
 
     # 2. Allowlist status
     entry = shell_hooks.allowlist_entry_for(spec.event, spec.command)
     if entry:
-        print(f"      ✓ allowlisted (approved {entry.get('approved_at', '?')})")
+        print(f"       allowlisted (approved {entry.get('approved_at', '?')})")
     else:
         problems += 1
-        print("      ✗ not allowlisted — hook will NOT fire at runtime "
+        print("       not allowlisted — hook will NOT fire at runtime "
               "(run with --accept-hooks once, or confirm at the TTY prompt)")
 
     # 3. Mtime drift
@@ -340,11 +340,11 @@ def _doctor_one(spec, shell_hooks) -> int:
         mtime_at = entry["script_mtime_at_approval"]
         if mtime_now and mtime_at and mtime_now > mtime_at:
             problems += 1
-            print(f"      ⚠ script modified since approval "
+            print(f"       script modified since approval "
                   f"(was {mtime_at}, now {mtime_now}) — review changes, "
                   f"then `hermes hooks revoke` + re-approve to refresh")
         elif mtime_now and mtime_at and mtime_now == mtime_at:
-            print("      ✓ script unchanged since approval")
+            print("       script unchanged since approval")
 
     # 4. Produces valid JSON for a synthetic payload — only when the entry
     # is already allowlisted.  Otherwise `hermes hooks doctor` would execute
@@ -352,7 +352,7 @@ def _doctor_one(spec, shell_hooks) -> int:
     # reviewed them, which directly contradicts the documented workflow
     # ("spot newly-added hooks *before they register*").
     if not entry:
-        print("      ℹ skipped JSON smoke test — not allowlisted yet. "
+        print("       skipped JSON smoke test — not allowlisted yet. "
               "Approve the hook first (via TTY prompt or --accept-hooks), "
               "then re-run `hermes hooks doctor`.")
     elif shell_hooks.script_is_executable(spec.command):
@@ -360,11 +360,11 @@ def _doctor_one(spec, shell_hooks) -> int:
         result = shell_hooks.run_once(spec, payload)
         if result.get("timed_out"):
             problems += 1
-            print(f"      ✗ timed out after {result['elapsed_seconds']}s "
+            print(f"       timed out after {result['elapsed_seconds']}s "
                   f"on synthetic payload (timeout={spec.timeout}s)")
         elif result.get("error"):
             problems += 1
-            print(f"      ✗ execution error: {result['error']}")
+            print(f"       execution error: {result['error']}")
         else:
             rc = result.get("returncode")
             elapsed = result.get("elapsed_seconds", 0)
@@ -372,14 +372,14 @@ def _doctor_one(spec, shell_hooks) -> int:
             if stdout:
                 try:
                     json.loads(stdout)
-                    print(f"      ✓ produced valid JSON on synthetic payload "
+                    print(f"       produced valid JSON on synthetic payload "
                           f"(exit={rc}, {elapsed}s)")
                 except json.JSONDecodeError:
                     problems += 1
-                    print(f"      ✗ stdout was not valid JSON (exit={rc}, "
+                    print(f"       stdout was not valid JSON (exit={rc}, "
                           f"{elapsed}s): {_truncate(stdout, 120)}")
             else:
-                print(f"      ✓ ran clean with empty stdout "
+                print(f"       ran clean with empty stdout "
                       f"(exit={rc}, {elapsed}s) — hook is observer-only")
 
     return problems

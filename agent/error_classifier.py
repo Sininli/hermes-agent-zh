@@ -305,11 +305,11 @@ _PROVIDER_POLICY_BLOCKED_PATTERNS = [
 # Patterns are intentionally narrow — each phrase is a verbatim string from
 # a specific provider's safety pipeline, not a generic word like "policy" or
 # "violation" that could collide with billing/auth/format errors:
-#   • OpenAI Codex cybersecurity refusal (gpt-5.5, the case from #18028)
-#   • OpenAI moderation refusal ("violates our usage policies", with
+#    OpenAI Codex cybersecurity refusal (gpt-5.5, the case from #18028)
+#    OpenAI moderation refusal ("violates our usage policies", with
 #     "usage policies" disambiguating from billing's "exceeded ... policy")
-#   • Anthropic safety refusal ("prompt was flagged by ... safety system")
-#   • OpenAI Responses content filter
+#    Anthropic safety refusal ("prompt was flagged by ... safety system")
+#    OpenAI Responses content filter
 _CONTENT_POLICY_BLOCKED_PATTERNS = [
     # OpenAI Codex (#18028) — message may arrive without an HTTP status
     "flagged for possible cybersecurity risk",
@@ -643,11 +643,11 @@ def classify_api_error(
     # xAI returns "You have either run out of available resources or do not
     # have an active Grok subscription" through two distinct code paths:
     #
-    #   • HTTP 403 — status_code is set; _classify_by_status (step 2) routes
+    #    HTTP 403 — status_code is set; _classify_by_status (step 2) routes
     #     it to FailoverReason.auth correctly, and _is_entitlement_failure
     #     then prevents the credential-refresh loop.
     #
-    #   • SSE ``type=error`` frame — surfaced as _StreamErrorEvent with
+    #    SSE ``type=error`` frame — surfaced as _StreamErrorEvent with
     #     status_code=None.  _classify_by_status is skipped entirely, and
     #     "grok subscription" / "out of available resources" appear in none
     #     of the message-pattern lists below.  Without this guard the error

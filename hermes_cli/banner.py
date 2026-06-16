@@ -1,6 +1,6 @@
-"""Welcome banner, ASCII art, skills summary, and update check for the CLI.
+"""欢迎横幅、ASCII 艺术、技能摘要和 CLI 更新检查。
 
-Pure display functions with no HermesCLI state dependency.
+纯显示函数，无 HermesCLI 状态依赖。
 """
 
 import json
@@ -38,7 +38,7 @@ _RST = "\033[0m"
 
 
 def cprint(text: str):
-    """Print ANSI-colored text through prompt_toolkit's renderer."""
+    """通过 prompt_toolkit 的渲染器打印 ANSI 彩色文本。"""
     from prompt_toolkit import print_formatted_text as _pt_print
     from prompt_toolkit.formatted_text import ANSI as _PT_ANSI
     _pt_print(_PT_ANSI(text))
@@ -49,7 +49,7 @@ def cprint(text: str):
 # =========================================================================
 
 def _skin_color(key: str, fallback: str) -> str:
-    """Get a color from the active skin, or return fallback."""
+    """从当前皮肤获取颜色，若不可用则返回回退值。"""
     try:
         from hermes_cli.skin_engine import get_active_skin
         return get_active_skin().get_color(key, fallback)
@@ -91,11 +91,10 @@ HERMES_CADUCEUS = """[#CD7F32]⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⡀⠀⣀⣀�
 # =========================================================================
 
 def get_available_skills() -> Dict[str, List[str]]:
-    """Return skills grouped by category, filtered by platform and disabled state.
+    """返回按类别分组的技能，已根据平台和禁用状态过滤。
 
-    Delegates to ``_find_all_skills()`` from ``tools/skills_tool`` which already
-    handles platform gating (``platforms:`` frontmatter) and respects the
-    user's ``skills.disabled`` config list.
+    委托给 ``tools/skills_tool`` 中的 ``_find_all_skills()``，该函数已处理
+    平台门控（``platforms:`` 前置元数据）并尊重用户的 ``skills.disabled`` 配置列表。
     """
     try:
         from tools.skills_tool import _find_all_skills
@@ -126,7 +125,7 @@ _OFFICIAL_REPO_CANONICAL = "github.com/nousresearch/hermes-agent"
 
 
 def _canonical_github_remote(url: str | None) -> str:
-    """Return ``host/owner/repo`` for common GitHub remote URL forms."""
+    """返回常见 GitHub 远程 URL 格式的 ``host/owner/repo``。"""
     if not url:
         return ""
     value = url.strip()
@@ -474,7 +473,7 @@ def get_latest_release_tag(repo_dir: Optional[Path] = None) -> Optional[tuple]:
 
 
 def format_banner_version_label() -> str:
-    """Return the version label shown in the startup banner title."""
+    """返回启动横幅标题中显示的版本标签。"""
     base = f"Hermes Agent v{VERSION} ({RELEASE_DATE})"
     state = get_git_banner_state()
     if not state:
@@ -487,8 +486,8 @@ def format_banner_version_label() -> str:
     if ahead <= 0 or upstream == local:
         return f"{base} · upstream {upstream}"
 
-    carried_word = "commit" if ahead == 1 else "commits"
-    return f"{base} · upstream {upstream} · local {local} (+{ahead} carried {carried_word})"
+    carried_word = "个携带提交"
+    return f"{base} · upstream {upstream} · local {local} (+{ahead} {carried_word})"
 
 
 # =========================================================================
@@ -520,7 +519,7 @@ def get_update_result(timeout: float = 0.5) -> Optional[int]:
 # =========================================================================
 
 def _format_context_length(tokens: int) -> str:
-    """Format a token count for display (e.g. 128000 → '128K', 1048576 → '1M')."""
+    """格式化用于显示的令牌数（如 128000 → '128K'，1048576 → '1M'）。"""
     if tokens >= 1_000_000:
         val = tokens / 1_000_000
         rounded = round(val)
@@ -537,7 +536,7 @@ def _format_context_length(tokens: int) -> str:
 
 
 def _display_toolset_name(toolset_name: str) -> str:
-    """Normalize internal/legacy toolset identifiers for banner display."""
+    """规范化内部/遗留工具集标识符以在横幅中显示。"""
     if not toolset_name:
         return "unknown"
     return (
@@ -553,17 +552,17 @@ def build_welcome_banner(console: "Console", model: str, cwd: str,
                          session_id: str = None,
                          get_toolset_for_tool=None,
                          context_length: int = None):
-    """Build and print a welcome banner with caduceus on left and info on right.
+    """构建并打印欢迎横幅，左侧显示双蛇杖，右侧显示信息。
 
-    Args:
-        console: Rich Console instance.
-        model: Current model name.
-        cwd: Current working directory.
-        tools: List of tool definitions.
-        enabled_toolsets: List of enabled toolset names.
-        session_id: Session identifier.
-        get_toolset_for_tool: Callable to map tool name -> toolset name.
-        context_length: Model's context window size in tokens.
+    参数：
+        console: Rich Console 实例。
+        model: 当前模型名称。
+        cwd: 当前工作目录。
+        tools: 工具定义列表。
+        enabled_toolsets: 已启用的工具集名称列表。
+        session_id: 会话标识符。
+        get_toolset_for_tool: 将工具名称映射到工具集名称的可调用对象。
+        context_length: 模型的上下文窗口大小（以令牌数表示）。
     """
     from model_tools import check_tool_availability, TOOLSET_REQUIREMENTS
     from rich.panel import Panel
@@ -617,13 +616,13 @@ def build_welcome_banner(console: "Console", model: str, cwd: str,
     left_lines.append(f"[{accent}]{model_short}[/]{ctx_str} [dim {dim}]·[/] [dim {dim}]Nous Research[/]")
 
     if os.getenv("HERMES_YOLO_MODE"):
-        left_lines.append(f"[bold red]⚠ YOLO mode[/] [dim {dim}]— all approval prompts bypassed[/]")
+        left_lines.append(f"[bold red] YOLO 模式[/] [dim {dim}]— 绕过所有审批提示[/]")
     left_lines.append(f"[dim {dim}]{cwd}[/]")
     if session_id:
-        left_lines.append(f"[dim {session_color}]Session: {session_id}[/]")
+        left_lines.append(f"[dim {session_color}]会话: {session_id}[/]")
     left_content = "\n".join(left_lines)
 
-    right_lines = [f"[bold {accent}]Available Tools[/]"]
+    right_lines = [f"[bold {accent}]可用工具[/]"]
     toolsets_dict: Dict[str, list] = {}
 
     for tool in tools:
@@ -680,7 +679,7 @@ def build_welcome_banner(console: "Console", model: str, cwd: str,
         right_lines.append(f"[dim {dim}]{toolset}:[/] {tools_str}")
 
     if remaining_toolsets > 0:
-        right_lines.append(f"[dim {dim}](and {remaining_toolsets} more toolsets...)[/]")
+        right_lines.append(f"[dim {dim}](以及 {remaining_toolsets} 个更多工具集...)[/]")
 
     # MCP Servers section (only if configured)
     try:
@@ -691,37 +690,37 @@ def build_welcome_banner(console: "Console", model: str, cwd: str,
 
     if mcp_status:
         right_lines.append("")
-        right_lines.append(f"[bold {accent}]MCP Servers[/]")
+        right_lines.append(f"[bold {accent}]MCP 服务器[/]")
         for srv in mcp_status:
             status = srv.get("status")
             if srv["connected"]:
                 right_lines.append(
                     f"[dim {dim}]{srv['name']}[/] [{text}]({srv['transport']})[/] "
-                    f"[dim {dim}]—[/] [{text}]{srv['tools']} tool(s)[/]"
+                    f"[dim {dim}]—[/] [{text}]{srv['tools']} 个工具[/]"
                 )
             elif srv.get("disabled") or status == "disabled":
                 right_lines.append(
                     f"[dim {dim}]{srv['name']}[/] [dim]({srv['transport']})[/] "
-                    f"[dim {dim}]— disabled[/]"
+                    f"[dim {dim}]— 已禁用[/]"
                 )
             elif status == "connecting":
                 right_lines.append(
                     f"[dim {dim}]{srv['name']}[/] [dim]({srv['transport']})[/] "
-                    f"[yellow]— connecting[/]"
+                    f"[yellow]— 连接中[/]"
                 )
             elif status == "configured":
                 right_lines.append(
                     f"[dim {dim}]{srv['name']}[/] [dim]({srv['transport']})[/] "
-                    f"[dim {dim}]— configured[/]"
+                    f"[dim {dim}]— 已配置[/]"
                 )
             else:
                 right_lines.append(
                     f"[red]{srv['name']}[/] [dim]({srv['transport']})[/] "
-                    f"[red]— failed[/]"
+                    f"[red]— 失败[/]"
                 )
 
     right_lines.append("")
-    right_lines.append(f"[bold {accent}]Available Skills[/]")
+    right_lines.append(f"[bold {accent}]可用技能[/]")
     skills_by_category = get_available_skills()
     total_skills = sum(len(s) for s in skills_by_category.values())
 
@@ -737,14 +736,14 @@ def build_welcome_banner(console: "Console", model: str, cwd: str,
                 skills_str = skills_str[:47] + "..."
             right_lines.append(f"[dim {dim}]{category}:[/] [{text}]{skills_str}[/]")
     else:
-        right_lines.append(f"[dim {dim}]No skills installed[/]")
+        right_lines.append(f"[dim {dim}]未安装技能[/]")
 
     right_lines.append("")
     mcp_connected = sum(1 for s in mcp_status if s["connected"]) if mcp_status else 0
-    summary_parts = [f"{len(tools)} tools", f"{total_skills} skills"]
+    summary_parts = [f"{len(tools)} 个工具", f"{total_skills} 个技能"]
     if mcp_connected:
-        summary_parts.append(f"{mcp_connected} MCP servers")
-    summary_parts.append("/help for commands")
+        summary_parts.append(f"{mcp_connected} 个 MCP 服务器")
+    summary_parts.append("/help 获取命令帮助")
     # Indicate when the codex_app_server runtime is active so users
     # understand why tool counts may not match what's actually reachable
     # (codex builds its own tool list inside the spawned subprocess).
@@ -753,8 +752,8 @@ def build_welcome_banner(console: "Console", model: str, cwd: str,
         from hermes_cli.config import load_config as _load_cfg
         if get_current_runtime(_load_cfg()) == "codex_app_server":
             right_lines.append(
-                f"[bold {accent}]Runtime:[/] [{text}]codex app-server[/] "
-                f"[dim {dim}](terminal/file ops/MCP run inside codex)[/]"
+                f"[bold {accent}]运行时:[/] [{text}]codex app-server[/] "
+                f"[dim {dim}](终端/文件操作/MCP 在 codex 内部运行)[/]"
             )
     except Exception:
         pass
@@ -763,7 +762,7 @@ def build_welcome_banner(console: "Console", model: str, cwd: str,
         from hermes_cli.profiles import get_active_profile_name
         _profile_name = get_active_profile_name()
         if _profile_name and _profile_name != "default":
-            right_lines.append(f"[bold {accent}]Profile:[/] [{text}]{_profile_name}[/]")
+            right_lines.append(f"[bold {accent}]配置:[/] [{text}]{_profile_name}[/]")
     except Exception:
         pass  # Never break the banner over a profiles.py bug
 
@@ -775,19 +774,19 @@ def build_welcome_banner(console: "Console", model: str, cwd: str,
         if behind is not None and behind != 0:
             from hermes_cli.config import get_managed_update_command, recommended_update_command
             if behind > 0:
-                commits_word = "commit" if behind == 1 else "commits"
+                commits_word = "次提交"
                 right_lines.append(
-                    f"[bold yellow]⚠ {behind} {commits_word} behind[/]"
-                    f"[dim yellow] — run [bold]{recommended_update_command()}[/bold] to update[/]"
+                    f"[bold yellow] 落后 {behind} {commits_word}[/]"
+                    f"[dim yellow] — 运行 [bold]{recommended_update_command()}[/bold] 来更新[/]"
                 )
             else:
                 # UPDATE_AVAILABLE_NO_COUNT: nix-built hermes; we know an update
                 # exists but not by how much, and we don't know how the user
                 # installed it (nix run, profile, system flake, home-manager).
                 managed_cmd = get_managed_update_command()
-                line = "[bold yellow]⚠ update available[/]"
+                line = "[bold yellow] 有可用更新[/]"
                 if managed_cmd:
-                    line += f"[dim yellow] — run [bold]{managed_cmd}[/bold][/]"
+                    line += f"[dim yellow] — 运行 [bold]{managed_cmd}[/bold][/]"
                 right_lines.append(line)
     except Exception:
         pass  # Never break the banner over an update check
@@ -800,9 +799,9 @@ def build_welcome_banner(console: "Console", model: str, cwd: str,
         from hermes_cli.config import detect_install_method
         if detect_install_method() == "pip":
             right_lines.append(
-                "[bold yellow]⚠ pip install not officially supported[/]"
-                "[dim yellow] — exists for reasons other than user install; "
-                "expect instability and an inability to support issues[/]"
+                "[bold yellow] pip 安装非官方支持[/]"
+                "[dim yellow] — 此安装方式仅供内部使用，非用户安装途径；"
+                "可能存在不稳定因素且无法提供问题支持[/]"
             )
     except Exception:
         pass  # Never break the banner over the install-method check

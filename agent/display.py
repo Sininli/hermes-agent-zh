@@ -133,7 +133,7 @@ def get_skin_tool_prefix() -> str:
     return "┊"
 
 
-def get_tool_emoji(tool_name: str, default: str = "⚡") -> str:
+def get_tool_emoji(tool_name: str, default: str = "") -> str:
     """Get the display emoji for a tool.
 
     Resolution order:
@@ -209,15 +209,15 @@ def build_tool_preview(tool_name: str, args: dict, max_len: int | None = None) -
         todos_arg = args.get("todos")
         merge = args.get("merge", False)
         if todos_arg is None:
-            return "reading task list"
+            return "读取任务列表"
         elif merge:
-            return f"updating {len(todos_arg)} task(s)"
+            return f"更新 {len(todos_arg)} 个任务"
         else:
-            return f"planning {len(todos_arg)} task(s)"
+            return f"规划 {len(todos_arg)} 个任务"
 
     if tool_name == "session_search":
         query = _oneline(args.get("query", ""))
-        return f"recall: \"{query[:25]}{'...' if len(query) > 25 else ''}\""
+        return f"回忆: \"{query[:25]}{'...' if len(query) > 25 else ''}\""
 
     if tool_name == "memory":
         action = args.get("action", "")
@@ -226,10 +226,10 @@ def build_tool_preview(tool_name: str, args: dict, max_len: int | None = None) -
             content = _oneline(args.get("content", ""))
             return f"+{target}: \"{content[:25]}{'...' if len(content) > 25 else ''}\""
         elif action == "replace":
-            old = _oneline(args.get("old_text") or "") or "<missing old_text>"
+            old = _oneline(args.get("old_text") or "") or "<缺少 old_text>"
             return f"~{target}: \"{old[:20]}\""
         elif action == "remove":
-            old = _oneline(args.get("old_text") or "") or "<missing old_text>"
+            old = _oneline(args.get("old_text") or "") or "<缺少 old_text>"
             return f"-{target}: \"{old[:20]}\""
         return action
 
@@ -238,7 +238,7 @@ def build_tool_preview(tool_name: str, args: dict, max_len: int | None = None) -
         msg = _oneline(args.get("message", ""))
         if len(msg) > 20:
             msg = msg[:17] + "..."
-        return f"to {target}: \"{msg}\""
+        return f"发送至 {target}: \"{msg}\""
 
     key = primary_args.get(tool_name)
     if not key:
@@ -423,7 +423,7 @@ def _emit_inline_diff(diff_text: str, print_fn) -> bool:
     if print_fn is None or not diff_text:
         return False
     try:
-        print_fn("  ┊ review diff")
+        print_fn("  ┊ 查看差异")
         for line in diff_text.rstrip("\n").splitlines():
             print_fn(line)
         return True
@@ -519,9 +519,9 @@ def _summarize_rendered_diff_sections(
         break
 
     if omitted_files or omitted_lines:
-        summary = f"… omitted {omitted_lines} diff line(s)"
+        summary = f"… 省略了 {omitted_lines} 行差异"
         if omitted_files:
-            summary += f" across {omitted_files} additional file(s)/section(s)"
+            summary += f"，涉及 {omitted_files} 个额外文件/段落"
         rendered.append(f"{_diff_hunk()}{summary}{_ANSI_RESET}")
 
     return rendered
@@ -566,26 +566,26 @@ class KawaiiSpinner:
         'arrows': ['←', '↖', '↑', '↗', '→', '↘', '↓', '↙'],
         'star': ['✶', '✷', '✸', '✹', '✺', '✹', '✸', '✷'],
         'moon': ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'],
-        'pulse': ['◜', '◠', '◝', '◞', '◡', '◟'],
-        'brain': ['🧠', '💭', '💡', '✨', '💫', '🌟', '💡', '💭'],
-        'sparkle': ['⁺', '˚', '*', '✧', '✦', '✧', '*', '˚'],
+        'pulse': ['', '', '', '', '', ''],
+        'brain': ['', '', '💡', '', '💫', '🌟', '💡', ''],
+        'sparkle': ['⁺', '˚', '*', '✧', '', '✧', '*', '˚'],
     }
 
     KAWAII_WAITING = [
-        "(｡◕‿◕｡)", "(◕‿◕✿)", "٩(◕‿◕｡)۶", "(✿◠‿◠)", "( ˘▽˘)っ",
-        "♪(´ε` )", "(◕ᴗ◕✿)", "ヾ(＾∇＾)", "(≧◡≦)", "(★ω★)",
+        "(｡‿｡)", "(‿✿)", "٩(‿｡)۶", "(✿‿)", "( ˘▽˘)っ",
+        "♪(´ε` )", "(ᴗ✿)", "ヾ(＾∇＾)", "(≧≦)", "(★ω★)",
     ]
 
     KAWAII_THINKING = [
-        "(｡•́︿•̀｡)", "(◔_◔)", "(¬‿¬)", "( •_•)>⌐■-■", "(⌐■_■)",
-        "(´･_･`)", "◉_◉", "(°ロ°)", "( ˘⌣˘)♡", "ヽ(>∀<☆)☆",
+        "(｡́︿̀｡)", "(_)", "(¬‿¬)", "( _)>⌐-", "(⌐_)",
+        "(´･_･`)", "_", "(°ロ°)", "( ˘⌣˘)♡", "ヽ(>∀<)",
         "٩(๑❛ᴗ❛๑)۶", "(⊙_⊙)", "(¬_¬)", "( ͡° ͜ʖ ͡°)", "ಠ_ಠ",
     ]
 
     THINKING_VERBS = [
-        "pondering", "contemplating", "musing", "cogitating", "ruminating",
-        "deliberating", "mulling", "reflecting", "processing", "reasoning",
-        "analyzing", "computing", "synthesizing", "formulating", "brainstorming",
+        "思考中", "沉思中", "冥想中", "推理中", "反思中",
+        "斟酌中", "权衡中", "考量中", "处理中", "推理中",
+        "分析中", "计算中", "综合中", "构思中", "头脑风暴",
     ]
 
     @classmethod
@@ -691,7 +691,7 @@ class KawaiiSpinner:
         # skip the animation entirely — it creates massive log bloat.
         # Just log the start once and let stop() log the completion.
         if not self._is_tty:
-            self._write(f"  [tool] {self.message}", flush=True)
+            self._write(f"  [工具] {self.message}", flush=True)
             while self.running:
                 time.sleep(0.5)
             return
@@ -772,7 +772,7 @@ class KawaiiSpinner:
             if is_tty:
                 self._write(f"  {final_message}", flush=True)
             else:
-                self._write(f"  [done] {final_message}{elapsed}", flush=True)
+                self._write(f"  [完成] {final_message}{elapsed}", flush=True)
 
     def __enter__(self):
         self.start()
@@ -802,7 +802,7 @@ def _trim_error(msg: str) -> str:
         _, _, tail = msg.partition("File not found:")
         tail = tail.strip()
         if "/" in tail:
-            msg = f"File not found: {tail.rsplit('/', 1)[-1]}"
+            msg = f"文件未找到: {tail.rsplit('/', 1)[-1]}"
     if len(msg) > _ERROR_SUFFIX_MAX_LEN:
         msg = msg[: _ERROR_SUFFIX_MAX_LEN - 3] + "..."
     return msg
@@ -831,14 +831,14 @@ def _detect_tool_failure(tool_name: str, result: str | None) -> tuple[bool, str]
                 err_msg = data.get("error")
                 if err_msg:
                     return True, f" [{_trim_error(str(err_msg))}]"
-                return True, f" [exit {exit_code}]"
+                return True, f" [退出码 {exit_code}]"
         return False, ""
 
     # Memory: distinguish "store full" from real errors.
     if tool_name == "memory":
         if isinstance(data, dict):
             if data.get("success") is False and "exceed the limit" in data.get("error", ""):
-                return True, " [full]"
+                return True, " [已满]"
 
     # Structured error in JSON result (any tool that surfaces {"error": ...}).
     if isinstance(data, dict):
@@ -895,57 +895,57 @@ def get_cute_tool_message(
         return f"{line}{failure_suffix}"
 
     if tool_name == "web_search":
-        return _wrap(f"┊ 🔍 search    {_trunc(args.get('query', ''), 42)}  {dur}")
+        return _wrap(f"┊  搜索      {_trunc(args.get('query', ''), 42)}  {dur}")
     if tool_name == "web_extract":
         urls = args.get("urls", [])
         if urls:
             url = urls[0] if isinstance(urls, list) else str(urls)
             domain = url.replace("https://", "").replace("http://", "").split("/")[0]
             extra = f" +{len(urls)-1}" if len(urls) > 1 else ""
-            return _wrap(f"┊ 📄 fetch     {_trunc(domain, 35)}{extra}  {dur}")
-        return _wrap(f"┊ 📄 fetch     pages  {dur}")
+            return _wrap(f"┊  抓取     {_trunc(domain, 35)}{extra}  {dur}")
+        return _wrap(f"┊  抓取     页面  {dur}")
     if tool_name == "terminal":
-        return _wrap(f"┊ 💻 $         {_trunc(args.get('command', ''), 42)}  {dur}")
+        return _wrap(f"┊  $         {_trunc(args.get('command', ''), 42)}  {dur}")
     if tool_name == "process":
         action = args.get("action", "?")
         sid = args.get("session_id", "")[:12]
-        labels = {"list": "ls processes", "poll": f"poll {sid}", "log": f"log {sid}",
-                  "wait": f"wait {sid}", "kill": f"kill {sid}", "write": f"write {sid}", "submit": f"submit {sid}"}
-        return _wrap(f"┊ ⚙️  proc      {labels.get(action, f'{action} {sid}')}  {dur}")
+        labels = {"list": "列出进程", "poll": f"轮询 {sid}", "log": f"日志 {sid}",
+                  "wait": f"等待 {sid}", "kill": f"终止 {sid}", "write": f"写入 {sid}", "submit": f"提交 {sid}"}
+        return _wrap(f"┊ ️  进程      {labels.get(action, f'{action} {sid}')}  {dur}")
     if tool_name == "read_file":
-        return _wrap(f"┊ 📖 read      {_path(args.get('path', ''))}  {dur}")
+        return _wrap(f"┊  读取      {_path(args.get('path', ''))}  {dur}")
     if tool_name == "write_file":
-        return _wrap(f"┊ ✍️  write     {_path(args.get('path', ''))}  {dur}")
+        return _wrap(f"┊ ️  写入      {_path(args.get('path', ''))}  {dur}")
     if tool_name == "patch":
-        return _wrap(f"┊ 🔧 patch     {_path(args.get('path', ''))}  {dur}")
+        return _wrap(f"┊  补丁      {_path(args.get('path', ''))}  {dur}")
     if tool_name == "search_files":
         pattern = _trunc(args.get("pattern", ""), 35)
         target = args.get("target", "content")
-        verb = "find" if target == "files" else "grep"
-        return _wrap(f"┊ 🔎 {verb:9} {pattern}  {dur}")
+        verb = "查找文件" if target == "files" else "搜索内容"
+        return _wrap(f"┊  {verb:9} {pattern}  {dur}")
     if tool_name == "browser_navigate":
         url = args.get("url", "")
         domain = url.replace("https://", "").replace("http://", "").split("/")[0]
-        return _wrap(f"┊ 🌐 navigate  {_trunc(domain, 35)}  {dur}")
+        return _wrap(f"┊  导航      {_trunc(domain, 35)}  {dur}")
     if tool_name == "browser_snapshot":
-        mode = "full" if args.get("full") else "compact"
-        return _wrap(f"┊ 📸 snapshot  {mode}  {dur}")
+        mode = "全屏" if args.get("full") else "紧凑"
+        return _wrap(f"┊  快照      {mode}  {dur}")
     if tool_name == "browser_click":
-        return _wrap(f"┊ 👆 click     {args.get('ref', '?')}  {dur}")
+        return _wrap(f"┊  点击      {args.get('ref', '?')}  {dur}")
     if tool_name == "browser_type":
-        return _wrap(f"┊ ⌨️  type      \"{_trunc(args.get('text', ''), 30)}\"  {dur}")
+        return _wrap(f"┊ ⌨️  输入      \"{_trunc(args.get('text', ''), 30)}\"  {dur}")
     if tool_name == "browser_scroll":
         d = args.get("direction", "down")
         arrow = {"down": "↓", "up": "↑", "right": "→", "left": "←"}.get(d, "↓")
-        return _wrap(f"┊ {arrow}  scroll    {d}  {dur}")
+        return _wrap(f"┊ {arrow}  滚动      {d}  {dur}")
     if tool_name == "browser_back":
-        return _wrap(f"┊ ◀️  back      {dur}")
+        return _wrap(f"┊ ️  后退      {dur}")
     if tool_name == "browser_press":
-        return _wrap(f"┊ ⌨️  press     {args.get('key', '?')}  {dur}")
+        return _wrap(f"┊ ⌨️  按键      {args.get('key', '?')}  {dur}")
     if tool_name == "browser_get_images":
-        return _wrap(f"┊ 🖼️  images    extracting  {dur}")
+        return _wrap(f"┊ ️  图片      正在提取  {dur}")
     if tool_name == "browser_vision":
-        return _wrap(f"┊ 👁️  vision    analyzing page  {dur}")
+        return _wrap(f"┊ ️  视觉      正在分析页面  {dur}")
     if tool_name == "todo":
         todos_arg = args.get("todos")
         merge = args.get("merge", False)
@@ -963,67 +963,67 @@ def get_cute_tool_message(
                 pass
         if todos_arg is None:
             if total > 0:
-                return _wrap(f"┊ 📋 plan      {done}/{total} task(s)  {dur}")
-            return _wrap(f"┊ 📋 plan      reading tasks  {dur}")
+                return _wrap(f"┊  计划      {done}/{total} 个任务  {dur}")
+            return _wrap(f"┊  计划      正在读取任务  {dur}")
         elif merge:
             if total > 0 and done > 0:
-                return _wrap(f"┊ 📋 plan      update {done}/{total} ✓  {dur}")
-            return _wrap(f"┊ 📋 plan      update {len(todos_arg)} task(s)  {dur}")
+                return _wrap(f"┊  计划      更新 {done}/{total} {dur}")
+            return _wrap(f"┊  计划      更新 {len(todos_arg)} 个任务  {dur}")
         else:
             if total > 0 and done > 0:
-                return _wrap(f"┊ 📋 plan      {done}/{total} task(s)  {dur}")
-            return _wrap(f"┊ 📋 plan      {len(todos_arg)} task(s)  {dur}")
+                return _wrap(f"┊  计划      {done}/{total} 个任务  {dur}")
+            return _wrap(f"┊  计划      {len(todos_arg)} 个任务  {dur}")
     if tool_name == "session_search":
-        return _wrap(f"┊ 🔍 recall    \"{_trunc(args.get('query', ''), 35)}\"  {dur}")
+        return _wrap(f"┊  回忆      \"{_trunc(args.get('query', ''), 35)}\"  {dur}")
     if tool_name == "memory":
         action = args.get("action", "?")
         target = args.get("target", "")
         if action == "add":
-            return _wrap(f"┊ 🧠 memory    +{target}: \"{_trunc(args.get('content', ''), 30)}\"  {dur}")
+            return _wrap(f"┊  记忆      +{target}: \"{_trunc(args.get('content', ''), 30)}\"  {dur}")
         elif action == "replace":
             old = args.get("old_text") or ""
-            old = old if old else "<missing old_text>"
-            return _wrap(f"┊ 🧠 memory    ~{target}: \"{_trunc(old, 20)}\"  {dur}")
+            old = old if old else "<缺少 old_text>"
+            return _wrap(f"┊  记忆      ~{target}: \"{_trunc(old, 20)}\"  {dur}")
         elif action == "remove":
             old = args.get("old_text") or ""
-            old = old if old else "<missing old_text>"
-            return _wrap(f"┊ 🧠 memory    -{target}: \"{_trunc(old, 20)}\"  {dur}")
-        return _wrap(f"┊ 🧠 memory    {action}  {dur}")
+            old = old if old else "<缺少 old_text>"
+            return _wrap(f"┊  记忆      -{target}: \"{_trunc(old, 20)}\"  {dur}")
+        return _wrap(f"┊  记忆      {action}  {dur}")
     if tool_name == "skills_list":
-        return _wrap(f"┊ 📚 skills    list {args.get('category', 'all')}  {dur}")
+        return _wrap(f"┊  技能      列出 {args.get('category', '全部')}  {dur}")
     if tool_name == "skill_view":
-        return _wrap(f"┊ 📚 skill     {_trunc(args.get('name', ''), 30)}  {dur}")
+        return _wrap(f"┊  技能      {_trunc(args.get('name', ''), 30)}  {dur}")
     if tool_name == "image_generate":
-        return _wrap(f"┊ 🎨 create    {_trunc(args.get('prompt', ''), 35)}  {dur}")
+        return _wrap(f"┊  生成      {_trunc(args.get('prompt', ''), 35)}  {dur}")
     if tool_name == "text_to_speech":
-        return _wrap(f"┊ 🔊 speak     {_trunc(args.get('text', ''), 30)}  {dur}")
+        return _wrap(f"┊  朗读      {_trunc(args.get('text', ''), 30)}  {dur}")
     if tool_name == "vision_analyze":
-        return _wrap(f"┊ 👁️  vision    {_trunc(args.get('question', ''), 30)}  {dur}")
+        return _wrap(f"┊ ️  视觉      {_trunc(args.get('question', ''), 30)}  {dur}")
     if tool_name == "mixture_of_agents":
-        return _wrap(f"┊ 🧠 reason    {_trunc(args.get('user_prompt', ''), 30)}  {dur}")
+        return _wrap(f"┊  推理      {_trunc(args.get('user_prompt', ''), 30)}  {dur}")
     if tool_name == "send_message":
-        return _wrap(f"┊ 📨 send      {args.get('target', '?')}: \"{_trunc(args.get('message', ''), 25)}\"  {dur}")
+        return _wrap(f"┊  发送      {args.get('target', '?')}: \"{_trunc(args.get('message', ''), 25)}\"  {dur}")
     if tool_name == "cronjob":
         action = args.get("action", "?")
         if action == "create":
             skills = args.get("skills") or ([] if not args.get("skill") else [args.get("skill")])
-            label = args.get("name") or (skills[0] if skills else None) or args.get("prompt", "task")
-            return _wrap(f"┊ ⏰ cron      create {_trunc(label, 24)}  {dur}")
+            label = args.get("name") or (skills[0] if skills else None) or args.get("prompt", "任务")
+            return _wrap(f"┊  定时      创建 {_trunc(label, 24)}  {dur}")
         if action == "list":
-            return _wrap(f"┊ ⏰ cron      listing  {dur}")
-        return _wrap(f"┊ ⏰ cron      {action} {args.get('job_id', '')}  {dur}")
+            return _wrap(f"┊  定时      列出  {dur}")
+        return _wrap(f"┊  定时      {action} {args.get('job_id', '')}  {dur}")
     if tool_name == "execute_code":
         code = args.get("code", "")
         first_line = code.strip().split("\n")[0] if code.strip() else ""
-        return _wrap(f"┊ 🐍 exec      {_trunc(first_line, 35)}  {dur}")
+        return _wrap(f"┊  执行      {_trunc(first_line, 35)}  {dur}")
     if tool_name == "delegate_task":
         tasks = args.get("tasks")
         if tasks and isinstance(tasks, list):
-            return _wrap(f"┊ 🔀 delegate  {len(tasks)} parallel tasks  {dur}")
-        return _wrap(f"┊ 🔀 delegate  {_trunc(args.get('goal', ''), 35)}  {dur}")
+            return _wrap(f"┊ 🔀 委托      {len(tasks)} 个并行任务  {dur}")
+        return _wrap(f"┊ 🔀 委托      {_trunc(args.get('goal', ''), 35)}  {dur}")
 
     preview = build_tool_preview(tool_name, args) or ""
-    return _wrap(f"┊ ⚡ {tool_name[:9]:9} {_trunc(preview, 35)}  {dur}")
+    return _wrap(f"┊  {tool_name[:9]:9} {_trunc(preview, 35)}  {dur}")
 
 
 # =========================================================================

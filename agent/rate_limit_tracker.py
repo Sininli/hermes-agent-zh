@@ -214,7 +214,7 @@ def format_rate_limit_display(state: RateLimitState) -> str:
     ]:
         if bucket.limit > 0 and bucket.usage_pct >= 80:
             reset = _fmt_seconds(bucket.remaining_seconds_now)
-            warnings.append(f"  ⚠ {label} at {bucket.usage_pct:.0f}% — resets in {reset}")
+            warnings.append(f"   {label} at {bucket.usage_pct:.0f}% — resets in {reset}")
 
     if warnings:
         lines.append("")

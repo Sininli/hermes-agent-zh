@@ -321,7 +321,7 @@ def evaluate_credits_notices(
             _level = current_band[1]  # type: ignore[index]  (current_band set when target_band set)
             to_show.append(
                 AgentNotice(
-                    text=f"{'⚠' if _level == 'warn' else '•'} Credits {target_band}% used · ${_cap_usd} cap",
+                    text=f"{'' if _level == 'warn' else ''} 信用额度已用 {target_band}% · 上限 ${_cap_usd}",
                     level=_level,
                     kind=CREDITS_NOTICE_KIND,
                     key=CREDITS_USAGE_KEY,
@@ -335,7 +335,7 @@ def evaluate_credits_notices(
     if grant_cond and "credits.grant_spent" not in active:
         to_show.append(
             AgentNotice(
-                text=f"• Grant spent · ${state.purchased_usd} top-up left",
+                text=f" 赠金已用完 · 剩余充值 ${state.purchased_usd}",
                 level="info",
                 kind=CREDITS_NOTICE_KIND,
                 key="credits.grant_spent",
@@ -355,7 +355,7 @@ def evaluate_credits_notices(
     if show_depleted and "credits.depleted" not in active:
         to_show.append(
             AgentNotice(
-                text="✕ Credit access paused · run /credits to top up",
+                text="✕ 信用访问已暂停 · 运行 /credits 充值",
                 level="error",
                 kind=CREDITS_NOTICE_KIND,
                 key="credits.depleted",
@@ -372,7 +372,7 @@ def evaluate_credits_notices(
             # still depleted must NOT claim access was restored.
             to_show.append(
                 AgentNotice(
-                    text="✓ Credit access restored",
+                    text=" 信用访问已恢复",
                     level="success",
                     kind="ttl",
                     ttl_ms=CREDITS_RESTORED_TTL_MS,
@@ -433,7 +433,7 @@ def parse_credits_headers(
             if version_val > 1 and not _version_warning_emitted:
                 _version_warning_emitted = True
                 logger.warning(
-                    "credits header version %d unsupported, ignoring — update Hermes",
+                    "credit 头部版本 %d 不受支持，已忽略 — 请更新 Hermes",
                     version_val,
                 )
             return None
@@ -575,7 +575,7 @@ def parse_credits_headers(
         # Fail-open → miss, but leave a breadcrumb so a parser/import regression
         # (feature silently dead) is distinguishable from a legitimate no-headers
         # response in agent.log, without needing a dev flag.
-        logger.debug("credits ▸ parse_credits_headers raised (fail-open miss)", exc_info=True)
+        logger.debug("credits  parse_credits_headers raised (fail-open miss)", exc_info=True)
         return None
 
 
@@ -715,7 +715,7 @@ def _credits_state_from_account(info) -> Optional[CreditsState]:
             captured_at=time.time(),
         )
     except Exception:
-        logger.debug("credits ▸ seed account→state mapping failed", exc_info=True)
+        logger.debug("credits  seed account→state mapping failed", exc_info=True)
         return None
 
 
@@ -782,7 +782,7 @@ def seed_credits_at_session_start(agent) -> bool:
                 if state is not None:
                     _hydrate_seed_state(agent, state)
             except Exception:
-                logger.debug("credits ▸ session-start seed (background) failed", exc_info=True)
+                logger.debug("credits  session-start seed (background) failed", exc_info=True)
 
         threading.Thread(target=_bg_seed, name="credits-seed", daemon=True).start()
         return True
@@ -790,5 +790,5 @@ def seed_credits_at_session_start(agent) -> bool:
         # Fail-open: any auth/portal hiccup leaves _credits_state as-is, never blocks.
         # Innermost log across all four call sites (TUI build / CLI build / first
         # turn / desktop), so a dead session-open seed is diagnosable in agent.log.
-        logger.debug("credits ▸ session-start seed failed (fail-open)", exc_info=True)
+        logger.debug("credits  session-start seed failed (fail-open)", exc_info=True)
         return False

@@ -8,7 +8,7 @@ Wires one behaviour:
   subprocess(shell=True), dangerouslySetInnerHTML, verify=False, ECB,
   XXE-prone XML parsers, GitHub Actions ``${{ github.event.* }}`` injection,
   torch.load without ``weights_only=True``, ...). When any pattern matches,
-  the plugin appends a ``⚠️ Security warning`` block to the JSON tool-result
+  the plugin appends a ``️ Security warning`` block to the JSON tool-result
   string. The file is still written; the model sees the warning in the next
   turn's tool message and can self-correct.
 
@@ -169,7 +169,7 @@ def _format_warning_block(findings: List[Tuple[str, str]]) -> str:
     lines = [
         "",
         "---",
-        f"⚠️ Security guidance — {len(findings)} pattern{'s' if len(findings) != 1 else ''} matched ({names})",
+        f"️ Security guidance — {len(findings)} pattern{'s' if len(findings) != 1 else ''} matched ({names})",
         "",
     ]
     for _, reminder in findings:

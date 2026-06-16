@@ -79,7 +79,7 @@ def _build_codex_gpt55_autoraise_notice(autoraise: Dict[str, float]) -> str:
     from_pct = int(round(autoraise["from"] * 100))
     to_pct = int(round(autoraise["to"] * 100))
     return (
-        f"ℹ Codex gpt-5.5 caps context at 272K, so auto-compaction was raised "
+        f" Codex gpt-5.5 caps context at 272K, so auto-compaction was raised "
         f"to {to_pct}% (from {from_pct}%) to use more of the window before "
         f"summarizing.\n"
         f"  Opt back out: hermes config set compression.codex_gpt55_autoraise false"
@@ -634,7 +634,7 @@ def init_agent(
             agent.client = None
             agent._client_kwargs = {}
             if not agent.quiet_mode:
-                print(f"🤖 AI Agent initialized with model: {agent.model} (AWS Bedrock + AnthropicBedrock SDK, {_br_region})")
+                print(f" AI Agent initialized with model: {agent.model} (AWS Bedrock + AnthropicBedrock SDK, {_br_region})")
         else:
             # Only fall back to ANTHROPIC_TOKEN when the provider is actually Anthropic.
             # Other anthropic_messages providers (MiniMax, Alibaba, etc.) must use their own API key.
@@ -683,7 +683,7 @@ def init_agent(
             agent.client = None
             agent._client_kwargs = {}
             if not agent.quiet_mode:
-                print(f"🤖 AI Agent initialized with model: {agent.model} (Anthropic native)")
+                print(f" AI Agent initialized with model: {agent.model} (Anthropic native)")
                 # ``effective_key`` may be a callable Entra ID bearer
                 # provider for Azure Foundry anthropic_messages mode.
                 # The Anthropic adapter installs an httpx event hook
@@ -692,9 +692,9 @@ def init_agent(
                 from agent.azure_identity_adapter import is_token_provider
 
                 if is_token_provider(effective_key):
-                    print("🔑 Using credentials: Microsoft Entra ID")
+                    print(" Using credentials: Microsoft Entra ID")
                 elif isinstance(effective_key, str) and len(effective_key) > 12:
-                    print(f"🔑 Using token: {effective_key[:8]}...{effective_key[-4:]}")
+                    print(f" Using token: {effective_key[:8]}...{effective_key[-4:]}")
     elif agent.api_mode == "bedrock_converse":
         # AWS Bedrock — uses boto3 directly, no OpenAI client needed.
         # Region is extracted from the base_url or defaults to us-east-1.
@@ -720,7 +720,7 @@ def init_agent(
         agent._client_kwargs = {}
         if not agent.quiet_mode:
             _gr_label = " + Guardrails" if agent._bedrock_guardrail_config else ""
-            print(f"🤖 AI Agent initialized with model: {agent.model} (AWS Bedrock, {agent._bedrock_region}{_gr_label})")
+            print(f" AI Agent initialized with model: {agent.model} (AWS Bedrock, {agent._bedrock_region}{_gr_label})")
     else:
         if api_key and base_url:
             # Explicit credentials from CLI/gateway — construct directly.
@@ -905,9 +905,9 @@ def init_agent(
             verify_ca_bundle_with_fallback()
             agent.client = agent._create_openai_client(client_kwargs, reason="agent_init", shared=True)
             if not agent.quiet_mode:
-                print(f"🤖 AI Agent initialized with model: {agent.model}")
+                print(f" AI Agent initialized with model: {agent.model}")
                 if base_url:
-                    print(f"🔗 Using custom base URL: {base_url}")
+                    print(f" Using custom base URL: {base_url}")
                 # ``api_key`` may be a callable Entra ID bearer
                 # provider (Azure Foundry). The OpenAI SDK mints a
                 # fresh JWT per request internally — the banner
@@ -916,11 +916,11 @@ def init_agent(
 
                 key_used = client_kwargs.get("api_key", "none")
                 if is_token_provider(key_used):
-                    print("🔑 Using credentials: Microsoft Entra ID")
+                    print(" Using credentials: Microsoft Entra ID")
                 elif isinstance(key_used, str) and key_used and key_used != "dummy-key" and len(key_used) > 12:
-                    print(f"🔑 Using API key: {key_used[:8]}...{key_used[-4:]}")
+                    print(f" Using API key: {key_used[:8]}...{key_used[-4:]}")
                 else:
-                    print("⚠️  Warning: API key appears invalid or missing")
+                    print("️  Warning: API key appears invalid or missing")
         except Exception as e:
             raise RuntimeError(f"Failed to initialize OpenAI client: {e}")
     
@@ -965,9 +965,9 @@ def init_agent(
             print(f"🛠️  Loaded {len(agent.tools)} tools: {', '.join(tool_names)}")
             # Show filtering info if applied
             if enabled_toolsets:
-                print(f"   ✅ Enabled toolsets: {', '.join(enabled_toolsets)}")
+                print(f"    Enabled toolsets: {', '.join(enabled_toolsets)}")
             if disabled_toolsets:
-                print(f"   ❌ Disabled toolsets: {', '.join(disabled_toolsets)}")
+                print(f"    Disabled toolsets: {', '.join(disabled_toolsets)}")
     elif not agent.quiet_mode:
         print("🛠️  No tools loaded (all tools filtered out or unavailable)")
 
@@ -987,16 +987,16 @@ def init_agent(
         requirements = _ra().check_toolset_requirements()
         missing_reqs = [name for name, available in requirements.items() if not available]
         if missing_reqs:
-            print(f"⚠️  Some tools may not work due to missing requirements: {missing_reqs}")
+            print(f"️  Some tools may not work due to missing requirements: {missing_reqs}")
     
     # Show trajectory saving status
     if agent.save_trajectories and not agent.quiet_mode:
-        print("📝 Trajectory saving enabled")
+        print(" Trajectory saving enabled")
     
     # Show ephemeral system prompt status
     if agent.ephemeral_system_prompt and not agent.quiet_mode:
         prompt_preview = agent.ephemeral_system_prompt[:60] + "..." if len(agent.ephemeral_system_prompt) > 60 else agent.ephemeral_system_prompt
-        print(f"🔒 Ephemeral system prompt: '{prompt_preview}' (not saved to trajectories)")
+        print(f" Ephemeral system prompt: '{prompt_preview}' (not saved to trajectories)")
     
     # Show prompt caching status
     if agent._use_prompt_caching and not agent.quiet_mode:
@@ -1335,7 +1335,7 @@ def init_agent(
                     _config_max_tokens,
                 )
                 print(
-                    f"\n⚠ Invalid model.max_tokens in config.yaml: {_config_max_tokens!r}\n"
+                    f"\n Invalid model.max_tokens in config.yaml: {_config_max_tokens!r}\n"
                     f"  Must be a positive integer (e.g. 4096).\n"
                     f"  Falling back to provider default.\n",
                     file=sys.stderr,
@@ -1358,7 +1358,7 @@ def init_agent(
                 _config_context_length,
             )
             print(
-                f"\n⚠ Invalid model.context_length in config.yaml: {_config_context_length!r}\n"
+                f"\n Invalid model.context_length in config.yaml: {_config_context_length!r}\n"
                 f"  Must be a plain integer (e.g. 256000, not '256K').\n"
                 f"  Falling back to auto-detected context window.\n",
                 file=sys.stderr,
@@ -1422,7 +1422,7 @@ def init_agent(
                                         agent.model, _cp_ctx,
                                     )
                                     print(
-                                        f"\n⚠ Invalid context_length for model {agent.model!r} in custom_providers: {_cp_ctx!r}\n"
+                                        f"\n Invalid context_length for model {agent.model!r} in custom_providers: {_cp_ctx!r}\n"
                                         f"  Must be a positive integer (e.g. 256000, not '256K').\n"
                                         f"  Falling back to auto-detected context window.\n",
                                         file=sys.stderr,
@@ -1651,9 +1651,9 @@ def init_agent(
 
     if not agent.quiet_mode:
         if compression_enabled:
-            print(f"📊 Context limit: {agent.context_compressor.context_length:,} tokens (compress at {int(compression_threshold*100)}% = {agent.context_compressor.threshold_tokens:,})")
+            print(f" Context limit: {agent.context_compressor.context_length:,} tokens (compress at {int(compression_threshold*100)}% = {agent.context_compressor.threshold_tokens:,})")
         else:
-            print(f"📊 Context limit: {agent.context_compressor.context_length:,} tokens (auto-compression disabled)")
+            print(f" Context limit: {agent.context_compressor.context_length:,} tokens (auto-compression disabled)")
         # One-time notice when the Codex gpt-5.5 autoraise kicked in, with the
         # exact opt-back-out command. Printed inline at startup for CLI users;
         # gateway users get the same text replayed via _compression_warning on

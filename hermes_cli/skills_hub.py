@@ -467,7 +467,7 @@ def do_browse(page: int = 1, page_size: int = 20, source: str = "all",
         c.print(f"  [dim]Sources: {', '.join(parts)}[/]")
 
     if timed_out:
-        c.print(f"  [yellow]⚡ Slow sources skipped: {', '.join(timed_out)} "
+        c.print(f"  [yellow] Slow sources skipped: {', '.join(timed_out)} "
                 f"— run again for cached results[/]")
 
     c.print("[dim]Tip: 'hermes skills inspect <identifier>' to preview, "

@@ -53,33 +53,33 @@ from hermes_cli.cli_output import (  # noqa: E402 — late import block
 # Each entry: (toolset_name, label, description)
 # These map to keys in toolsets.py TOOLSETS dict.
 CONFIGURABLE_TOOLSETS = [
-    ("web",             "🔍 Web Search & Scraping",    "web_search, web_extract"),
-    ("browser",         "🌐 Browser Automation",       "navigate, click, type, scroll"),
-    ("terminal",        "💻 Terminal & Processes",      "terminal, process"),
-    ("file",            "📁 File Operations",           "read, write, patch, search"),
-    ("code_execution",  "⚡ Code Execution",            "execute_code"),
-    ("vision",          "👁️  Vision / Image Analysis",  "vision_analyze"),
-    ("video",           "🎬 Video Analysis",            "video_analyze (requires video-capable model)"),
-    ("image_gen",       "🎨 Image Generation",          "image_generate"),
-    ("video_gen",       "🎬 Video Generation",          "video_generate (text-to-video + image-to-video)"),
-    ("x_search",        "🐦 X (Twitter) Search",        "x_search (requires xAI OAuth or XAI_API_KEY)"),
-    ("moa",             "🧠 Mixture of Agents",         "mixture_of_agents"),
-    ("tts",             "🔊 Text-to-Speech",            "text_to_speech"),
-    ("skills",          "📚 Skills",                    "list, view, manage"),
-    ("todo",            "📋 Task Planning",             "todo"),
+    ("web",             " Web Search & Scraping",    "web_search, web_extract"),
+    ("browser",         " Browser Automation",       "navigate, click, type, scroll"),
+    ("terminal",        " Terminal & Processes",      "terminal, process"),
+    ("file",            " File Operations",           "read, write, patch, search"),
+    ("code_execution",  " Code Execution",            "execute_code"),
+    ("vision",          "️  Vision / Image Analysis",  "vision_analyze"),
+    ("video",           " Video Analysis",            "video_analyze (requires video-capable model)"),
+    ("image_gen",       " Image Generation",          "image_generate"),
+    ("video_gen",       " Video Generation",          "video_generate (text-to-video + image-to-video)"),
+    ("x_search",        " X (Twitter) Search",        "x_search (requires xAI OAuth or XAI_API_KEY)"),
+    ("moa",             " Mixture of Agents",         "mixture_of_agents"),
+    ("tts",             " Text-to-Speech",            "text_to_speech"),
+    ("skills",          " Skills",                    "list, view, manage"),
+    ("todo",            " Task Planning",             "todo"),
     ("memory",          "💾 Memory",                    "persistent memory across sessions"),
     ("context_engine",  "🧩 Context Engine",            "runtime tools from the active context engine"),
-    ("session_search",  "🔎 Session Search",            "search past conversations"),
-    ("clarify",         "❓ Clarifying Questions",      "clarify"),
+    ("session_search",  " Session Search",            "search past conversations"),
+    ("clarify",         " Clarifying Questions",      "clarify"),
     ("delegation",      "👥 Task Delegation",           "delegate_task"),
-    ("cronjob",         "⏰ Cron Jobs",                 "create/list/update/pause/resume/run, with optional attached skills"),
-    ("messaging",       "📨 Cross-Platform Messaging",  "send_message"),
-    ("homeassistant",    "🏠 Home Assistant",           "smart home device control"),
-    ("spotify",          "🎵 Spotify",                  "playback, search, playlists, library"),
-    ("discord",         "💬 Discord (read/participate)", "fetch messages, search members, create thread"),
+    ("cronjob",         " Cron Jobs",                 "create/list/update/pause/resume/run, with optional attached skills"),
+    ("messaging",       " Cross-Platform Messaging",  "send_message"),
+    ("homeassistant",    " Home Assistant",           "smart home device control"),
+    ("spotify",          " Spotify",                  "playback, search, playlists, library"),
+    ("discord",         " Discord (read/participate)", "fetch messages, search members, create thread"),
     ("discord_admin",   "🛡️  Discord Server Admin",    "list channels/roles, pin, assign roles"),
-    ("yuanbao",          "🤖 Yuanbao",                  "group info, member queries, DM"),
-    ("computer_use",     "🖱️  Computer Use (macOS)",     "background desktop control via cua-driver"),
+    ("yuanbao",          " Yuanbao",                  "group info, member queries, DM"),
+    ("computer_use",     "️  Computer Use (macOS)",     "background desktop control via cua-driver"),
 ]
 
 
@@ -240,7 +240,7 @@ PLATFORMS = {
 TOOL_CATEGORIES = {
     "tts": {
         "name": "Text-to-Speech",
-        "icon": "🔊",
+        "icon": "",
         "providers": [
             {
                 "name": "Microsoft Edge TTS",
@@ -323,9 +323,9 @@ TOOL_CATEGORIES = {
     },
     "web": {
         "name": "Web Search & Extract",
-        "setup_title": "Select Search Provider",
+        "setup_title": "选择搜索提供商",
         "setup_note": "A free DuckDuckGo search skill is also included — skip this if you don't need a premium provider.",
-        "icon": "🔍",
+        "icon": "",
         # Per-provider rows are injected at runtime from
         # plugins.web.<vendor>.provider via _plugin_web_search_providers()
         # in _visible_providers(). Only non-provider UX setup-flow rows
@@ -359,7 +359,7 @@ TOOL_CATEGORIES = {
     },
     "image_gen": {
         "name": "Image Generation",
-        "icon": "🎨",
+        "icon": "",
         # Per-provider rows for FAL.ai (`plugins/image_gen/fal`), OpenAI,
         # OpenAI Codex, and xAI are injected at runtime from each
         # ``plugins.image_gen.<vendor>`` package via
@@ -385,7 +385,7 @@ TOOL_CATEGORIES = {
     },
     "video_gen": {
         "name": "Video Generation",
-        "icon": "🎬",
+        "icon": "",
         # "Nous Subscription" row mirrors the image_gen pattern — managed
         # FAL video generation billed via the Nous Portal.  Plugin-backed
         # provider rows (FAL BYOK, xAI, …) are injected at runtime by
@@ -409,7 +409,7 @@ TOOL_CATEGORIES = {
     },
     "x_search": {
         "name": "X (Twitter) Search",
-        "setup_title": "Select xAI Credential Source",
+        "setup_title": "选择 xAI 凭证来源",
         "setup_note": (
             "Hermes routes X searches through xAI's built-in x_search "
             "Responses tool. Both credential sources hit the same "
@@ -417,7 +417,7 @@ TOOL_CATEGORIES = {
             "already have. SuperGrok OAuth is preferred when both are set "
             "(uses your subscription quota instead of API spend)."
         ),
-        "icon": "🐦",
+        "icon": "",
         "providers": [
             {
                 "name": "xAI Grok OAuth (SuperGrok / Premium+)",
@@ -442,7 +442,7 @@ TOOL_CATEGORIES = {
     },
     "browser": {
         "name": "Browser Automation",
-        "icon": "🌐",
+        "icon": "",
         # Per-provider rows for Browserbase, Browser Use, and Firecrawl are
         # injected at runtime from plugins.browser.<vendor>.provider via
         # _plugin_browser_providers() in _visible_providers(). Only
@@ -492,7 +492,7 @@ TOOL_CATEGORIES = {
     },
     "homeassistant": {
         "name": "Smart Home",
-        "icon": "🏠",
+        "icon": "",
         "providers": [
             {
                 "name": "Home Assistant",
@@ -506,7 +506,7 @@ TOOL_CATEGORIES = {
     },
     "spotify": {
         "name": "Spotify",
-        "icon": "🎵",
+        "icon": "",
         "providers": [
             {
                 "name": "Spotify Web API",
@@ -518,7 +518,7 @@ TOOL_CATEGORIES = {
     },
     "computer_use": {
         "name": "Computer Use (macOS)",
-        "icon": "🖱️",
+        "icon": "️",
         "platform_gate": "darwin",
         "providers": [
             {
@@ -539,7 +539,7 @@ TOOL_CATEGORIES = {
     },
     "langfuse": {
         "name": "Langfuse Observability",
-        "icon": "📊",
+        "icon": "",
         "providers": [
             {
                 "name": "Langfuse Cloud",
@@ -2272,7 +2272,7 @@ def _configure_tool_category(
         # Multiple providers - let user choose
         print()
         # Use custom title if provided (e.g. "Select Search Provider")
-        title = cat.get("setup_title", "Choose a provider")
+        title = cat.get("setup_title", "选择提供商")
         print(color(f"  --- {icon} {name} - {title} ---", Colors.CYAN))
         if cat.get("setup_note"):
             _print_info(f"  {cat['setup_note']}")
@@ -3393,7 +3393,7 @@ def tools_command(args=None, first_install: bool = False, config: dict = None):
     # Non-interactive summary mode for CLI usage
     if getattr(args, "summary", False):
         total = len(_get_effective_configurable_toolsets())
-        print(color("⚕ Tool Summary", Colors.CYAN, Colors.BOLD))
+        print(color(" Tool Summary", Colors.CYAN, Colors.BOLD))
         print()
         summary = _platform_toolset_summary(config, enabled_platforms)
         for pkey in enabled_platforms:
@@ -3404,12 +3404,12 @@ def tools_command(args=None, first_install: bool = False, config: dict = None):
             if enabled:
                 for ts_key in sorted(enabled):
                     label = next((l for k, l, _ in _get_effective_configurable_toolsets() if k == ts_key), ts_key)
-                    print(color(f"    ✓ {label}", Colors.GREEN))
+                    print(color(f"     {label}", Colors.GREEN))
             else:
                 print(color("    (none enabled)", Colors.DIM))
         print()
         return
-    print(color("⚕ Hermes Tool Configuration", Colors.CYAN, Colors.BOLD))
+    print(color(" Hermes Tool Configuration", Colors.CYAN, Colors.BOLD))
     print(color("  Enable or disable tools per platform.", Colors.DIM))
     print(color("  Tools that need API keys will be configured when enabled.", Colors.DIM))
     print(color("  Guide: https://hermes-agent.nousresearch.com/docs/user-guide/features/tools", Colors.DIM))
@@ -3452,7 +3452,7 @@ def tools_command(args=None, first_install: bool = False, config: dict = None):
             )
             for ts_key in sorted(auto_configured):
                 label = next((l for k, l, _ in CONFIGURABLE_TOOLSETS if k == ts_key), ts_key)
-                print(color(f"  ✓ {label}: using your Nous subscription defaults", Colors.GREEN))
+                print(color(f"   {label}: using your Nous subscription defaults", Colors.GREEN))
 
             # Walk through ALL selected tools that have provider options or
             # need API keys.  This ensures browser (Local vs Browserbase),
@@ -3469,7 +3469,7 @@ def tools_command(args=None, first_install: bool = False, config: dict = None):
                 print(color(f"  Configuring {len(to_configure)} tool(s):", Colors.YELLOW))
                 for ts_key in to_configure:
                     label = next((l for k, l, _ in _get_effective_configurable_toolsets() if k == ts_key), ts_key)
-                    print(color(f"    • {label}", Colors.DIM))
+                    print(color(f"     {label}", Colors.DIM))
                 print(color("  You can skip any tool you don't need right now.", Colors.DIM))
                 print()
                 for ts_key in to_configure:
@@ -3477,7 +3477,7 @@ def tools_command(args=None, first_install: bool = False, config: dict = None):
 
             _save_platform_tools(config, pkey, new_enabled)
             save_config(config)
-            print(color(f"  ✓ Saved {pinfo['label']} tool configuration", Colors.GREEN))
+            print(color(f"   Saved {pinfo['label']} tool configuration", Colors.GREEN))
             print()
 
         return
@@ -3512,7 +3512,7 @@ def tools_command(args=None, first_install: bool = False, config: dict = None):
     _done_idx = _reconfig_idx + (2 if _has_mcp else 1)
 
     while True:
-        idx = _prompt_choice("Select an option:", platform_choices, default=0)
+        idx = _prompt_choice("选择一个选项：", platform_choices, default=0)
 
         # "Done" selected
         if idx == _done_idx:
@@ -3570,7 +3570,7 @@ def tools_command(args=None, first_install: bool = False, config: dict = None):
                                 _configure_toolset(ts_key, config)
                     _save_platform_tools(config, pk, new_enabled)
                 save_config(config)
-                print(color("  ✓ Saved configuration for all platforms", Colors.GREEN))
+                print(color("   Saved configuration for all platforms", Colors.GREEN))
                 # Update choice labels
                 for ci, pk in enumerate(platform_keys):
                     new_count = len(_get_platform_tools(config, pk, include_default_mcp_servers=False))
@@ -3623,7 +3623,7 @@ def tools_command(args=None, first_install: bool = False, config: dict = None):
 
             _save_platform_tools(config, pkey, new_enabled)
             save_config(config)
-            print(color(f"  ✓ Saved {pinfo['label']} configuration", Colors.GREEN))
+            print(color(f"   Saved {pinfo['label']} configuration", Colors.GREEN))
         else:
             print(color(f"  No changes to {pinfo['label']}", Colors.DIM))
 
@@ -3675,7 +3675,7 @@ def _configure_mcp_tools_interactive(config: dict):
         from tools.mcp_tool import probe_mcp_server_tools
         server_tools = probe_mcp_server_tools()
     except Exception as exc:
-        _print_error(f"Failed to probe MCP servers: {exc}")
+        _print_error(f"MCP 服务器探测失败：{exc}")
         return
 
     if not server_tools:
@@ -3772,7 +3772,7 @@ def _configure_mcp_tools_interactive(config: dict):
     if any_changes:
         save_config(config)
         print()
-        print(color("  ✓ MCP tool configuration saved", Colors.GREEN))
+        print(color("   MCP tool configuration saved", Colors.GREEN))
     else:
         print(color("  No changes to MCP tools", Colors.DIM))
 
@@ -3828,8 +3828,8 @@ def _print_tools_list(enabled_toolsets: set, mcp_servers: dict, platform: str = 
     for ts_key, label, _ in effective:
         if ts_key not in builtin_keys:
             continue
-        status = (color("✓ enabled", Colors.GREEN) if ts_key in enabled_toolsets
-                  else color("✗ disabled", Colors.RED))
+        status = (color(" enabled", Colors.GREEN) if ts_key in enabled_toolsets
+                  else color(" disabled", Colors.RED))
         print(f"  {status}  {ts_key}  {color(label, Colors.DIM)}")
 
     # Plugin toolsets
@@ -3838,8 +3838,8 @@ def _print_tools_list(enabled_toolsets: set, mcp_servers: dict, platform: str = 
         print()
         print(f"Plugin toolsets ({platform}):")
         for ts_key, label in plugin_entries:
-            status = (color("✓ enabled", Colors.GREEN) if ts_key in enabled_toolsets
-                      else color("✗ disabled", Colors.RED))
+            status = (color(" enabled", Colors.GREEN) if ts_key in enabled_toolsets
+                      else color(" disabled", Colors.RED))
             print(f"  {status}  {ts_key}  {color(label, Colors.DIM)}")
 
     if mcp_servers:

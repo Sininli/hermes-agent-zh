@@ -21,7 +21,7 @@ The helper is deliberately conservative:
   table rows and flush them once the block is complete.
 
 There is a small, intentional caveat: ``wcwidth`` returns ``-1`` for some
-emoji-with-variation-selector sequences (e.g. ``⚠️``); we clamp those to
+emoji-with-variation-selector sequences (e.g. ``️``); we clamp those to
 0 so they do not corrupt the column width math. The 1-cell drift on
 those specific glyphs is preferable to silently widening every table
 that contains one.

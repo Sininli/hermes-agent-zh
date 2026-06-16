@@ -1120,7 +1120,7 @@ def prompt_enable_tool_gateway(
         save_config(config)
         for key in sorted(changed):
             label = _GATEWAY_TOOL_LABELS.get(key, key)
-            print(f"  ✓ {label}: enabled via {source_label}")
+            print(f"   {label}: enabled via {source_label}")
     return changed
 
 

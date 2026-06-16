@@ -795,7 +795,7 @@ class PluginContext:
                 label="IRC",
                 adapter_factory=lambda cfg: IRCAdapter(cfg),
                 check_fn=lambda: True,
-                emoji="💬",
+                emoji="",
                 setup_fn=irc_interactive_setup,
             )
         """

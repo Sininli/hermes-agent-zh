@@ -854,7 +854,7 @@ def _build_child_progress_callback(
             if spinner:
                 short = (text[:55] + "...") if len(text) > 55 else text
                 try:
-                    spinner.print_above(f' {prefix}├─ 💭 "{short}"')
+                    spinner.print_above(f' {prefix}├─  "{short}"')
                 except Exception as e:
                     logger.debug("Spinner print_above failed: %s", e)
             _relay("subagent.thinking", preview=text)
@@ -2284,7 +2284,7 @@ def delegate_task(
                     )
                     dur = entry.get("duration_seconds", 0)
                     status = entry.get("status", "?")
-                    icon = "✓" if status == "completed" else "✗"
+                    icon = "" if status == "completed" else ""
                     remaining = n_tasks - completed_count
                     completion_line = f"{icon} [{idx+1}/{n_tasks}] {label}  ({dur}s)"
                     if spinner_ref:

@@ -242,9 +242,9 @@ def apply(
                 )
             msg_lines.append(f"  (config: {mig_report.target_path})")
             for err in mig_report.errors:
-                msg_lines.append(f"⚠ MCP migration: {err}")
+                msg_lines.append(f" MCP migration: {err}")
         except Exception as exc:
-            msg_lines.append(f"⚠ MCP migration skipped: {exc}")
+            msg_lines.append(f" MCP migration skipped: {exc}")
         msg_lines.append(
             "OpenAI/Codex turns now run through `codex app-server` "
             "(terminal/file ops/patching inside Codex; "

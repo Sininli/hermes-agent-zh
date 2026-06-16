@@ -574,7 +574,7 @@ registry.register(
     handler=_handle_yb_query_group_members,
     check_fn=_check_yuanbao,
     is_async=True,
-    emoji="📋",
+    emoji="",
 )
 
 registry.register(
@@ -684,7 +684,7 @@ registry.register(
     handler=_handle_yb_search_sticker,
     check_fn=_check_yuanbao,
     is_async=True,
-    emoji="🔍",
+    emoji="",
 )
 
 
@@ -733,5 +733,5 @@ registry.register(
     handler=_handle_yb_send_sticker,
     check_fn=_check_yuanbao,
     is_async=True,
-    emoji="🎨",
+    emoji="",
 )

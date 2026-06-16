@@ -286,18 +286,18 @@ def _gateway_provider_error_reply(text: str) -> str:
     """Map raw provider/API errors to a short user-safe Telegram reply."""
     if _GATEWAY_AUTH_ERROR_RE.search(text):
         return (
-            "⚠️ Provider authentication failed. Check the configured credentials; "
+            "️ Provider authentication failed. Check the configured credentials; "
             "raw provider details are in the gateway logs."
         )
     if _GATEWAY_PROVIDER_POLICY_RE.search(text):
         return (
-            "⚠️ The model provider rejected the request. I kept the raw provider "
+            "️ The model provider rejected the request. I kept the raw provider "
             "error out of chat; check gateway logs for details or try rephrasing."
         )
     if _GATEWAY_RATE_LIMIT_RE.search(text):
-        return "⏱️ The model provider is rate-limiting requests. Please wait a moment and try again."
+        return "️ The model provider is rate-limiting requests. Please wait a moment and try again."
     return (
-        "⚠️ The model provider failed after retries. I kept raw provider details "
+        "️ The model provider failed after retries. I kept raw provider details "
         "out of chat; check gateway logs for diagnostics."
     )
 
@@ -379,9 +379,9 @@ def render_notice_line(notice) -> str:
 
     Messaging has no persistent status bar (unlike the TUI), so a notice is a
     one-shot standalone push. The notice policy already bakes the level glyph
-    (⚠ / • / ✕ / ✓) into the text, and the TUI + CLI REPL render that text
+    ( /  / ✕ / ) into the text, and the TUI + CLI REPL render that text
     verbatim — so we emit it as-is here too. Prepending a per-level glyph would
-    DOUBLE it ("⚠ ⚠ Credits 90% used", "⛔ ✕ Credit access paused"). Plaintext
+    DOUBLE it (" Credits 90% used", "⛔  Credit access paused"). Plaintext
     only — no markdown — so it renders uniformly across Telegram/Discord/Slack/
     SMS without per-platform escaping. Fail-soft: a malformed/empty notice
     degrades to "" rather than raising on the agent's callback path.
@@ -1955,7 +1955,7 @@ def _normalize_empty_agent_response(
         ) or ("400" in error_str and history_len > 50)
         if is_context_failure:
             return (
-                "⚠️ Session too large for the model's context window.\n"
+                "️ Session too large for the model's context window.\n"
                 "Use /compact to compress the conversation, or "
                 "/reset to start fresh."
             )
@@ -1968,9 +1968,9 @@ def _normalize_empty_agent_response(
     if api_calls > 0 and not agent_result.get("interrupted"):
         if agent_result.get("partial"):
             err = agent_result.get("error", "processing incomplete")
-            return f"⚠️ Processing stopped: {str(err)[:200]}. Try again."
+            return f"️ Processing stopped: {str(err)[:200]}. Try again."
         return (
-            "⚠️ Processing completed but no response was generated. "
+            "️ Processing completed but no response was generated. "
             "This may be a transient error — try sending your message again."
         )
 
@@ -3094,8 +3094,8 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         elif not self.adapters and self._failed_platforms:
             # All platforms are down and queued for background reconnection.
             # Keep the gateway alive so:
-            #   • cron jobs still run
-            #   • the reconnect watcher can recover platforms when the
+            #    cron jobs still run
+            #    the reconnect watcher can recover platforms when the
             #     underlying problem clears (proxy comes back, user runs
             #     `hermes whatsapp`, etc.)
             # We used to exit-with-failure here to trigger systemd restart,
@@ -3794,9 +3794,9 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             thread_meta = self._thread_metadata_for_source(event.source, reply_anchor)
             if self._queue_during_drain_enabled():
                 self._queue_or_replace_pending_event(session_key, event)
-                message = f"⏳ Gateway {self._status_action_gerund()} — queued for the next turn after it comes back."
+                message = f" Gateway {self._status_action_gerund()} — queued for the next turn after it comes back."
             else:
-                message = f"⏳ Gateway is {self._status_action_gerund()} and is not accepting another turn right now."
+                message = f" Gateway is {self._status_action_gerund()} and is not accepting another turn right now."
 
             await adapter._send_with_retry(
                 chat_id=event.source.chat_id,
@@ -3947,7 +3947,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         status_detail = f" ({', '.join(status_parts)})" if status_parts else ""
         if is_steer_mode:
             message = (
-                f"⏩ Steered into current run{status_detail}. "
+                f" Steered into current run{status_detail}. "
                 f"Your message arrives after the next tool call."
             )
         elif is_queue_mode and demoted_for_subagents:
@@ -3955,17 +3955,17 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             # follow-up didn't accidentally kill the subagent and
             # discovers `/stop` as the explicit escape hatch.
             message = (
-                f"⏳ Subagent working{status_detail} — your message is queued for "
+                f" Subagent working{status_detail} — your message is queued for "
                 f"when it finishes (use /stop to cancel everything)."
             )
         elif is_queue_mode:
             message = (
-                f"⏳ Queued for the next turn{status_detail}. "
+                f" Queued for the next turn{status_detail}. "
                 f"I'll respond once the current task finishes."
             )
         else:
             message = (
-                f"⚡ Interrupting current task{status_detail}. "
+                f" Interrupting current task{status_detail}. "
                 f"I'll respond to your message shortly."
             )
 
@@ -4073,7 +4073,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             if self._restart_requested
             else "Your current task will be interrupted."
         )
-        msg = f"⚠️ Gateway {action} — {hint}"
+        msg = f"️ Gateway {action} — {hint}"
 
         notified: set[tuple[str, str, Optional[str]]] = set()
         for session_key in active:
@@ -5112,9 +5112,9 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                         error_code=None,
                         error_message=None,
                     )
-                    logger.info("✓ %s connected", platform.value)
+                    logger.info(" %s connected", platform.value)
                 else:
-                    logger.warning("✗ %s failed to connect", platform.value)
+                    logger.warning(" %s failed to connect", platform.value)
                     # Defensive cleanup: a failed connect() may have
                     # allocated resources (aiohttp.ClientSession, poll
                     # tasks, bridge subprocesses) before giving up.
@@ -5163,7 +5163,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                             "next_retry": time.monotonic() + 30,
                         }
             except Exception as e:
-                logger.error("✗ %s error: %s", platform.value, e)
+                logger.error(" %s error: %s", platform.value, e)
                 # Same defensive cleanup path for exceptions — an adapter
                 # that raised mid-connect may still have a live
                 # aiohttp.ClientSession or child subprocess.
@@ -5199,8 +5199,8 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                     # All enabled platforms hit retryable failures (network
                     # blip, bridge not paired, npm install timeout, etc.).
                     # Keep the gateway alive so:
-                    #   • cron jobs still run
-                    #   • the reconnect watcher gets a chance to recover the
+                    #    cron jobs still run
+                    #    the reconnect watcher gets a chance to recover the
                     #     failing platforms once the underlying problem is
                     #     fixed (e.g. user runs `hermes whatsapp`, fixes
                     #     proxy, etc.)
@@ -5842,7 +5842,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                             error_code=None,
                             error_message=None,
                         )
-                        logger.info("✓ %s reconnected successfully", platform.value)
+                        logger.info(" %s reconnected successfully", platform.value)
 
                         # Rebuild channel directory with the new adapter
                         try:
@@ -6157,17 +6157,17 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                 try:
                     await adapter.cancel_background_tasks()
                 except Exception as e:
-                    logger.debug("✗ %s background-task cancel error: %s", platform.value, e)
+                    logger.debug(" %s background-task cancel error: %s", platform.value, e)
                 try:
                     await adapter.disconnect()
                     logger.info(
-                        "✓ %s disconnected (%.2fs)",
+                        " %s disconnected (%.2fs)",
                         platform.value,
                         time.monotonic() - _adapter_started_at,
                     )
                 except Exception as e:
                     logger.error(
-                        "✗ %s disconnect error after %.2fs: %s",
+                        " %s disconnect error after %.2fs: %s",
                         platform.value,
                         time.monotonic() - _adapter_started_at,
                         e,
@@ -6699,8 +6699,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                     if adapter:
                         await adapter.send(
                             source.chat_id,
-                            "Too many pairing requests right now~ "
-                            "Please try again later!"
+                            "当前配对请求太多，请稍后重试！"
                         )
                     # Record rate limit so subsequent messages are silently ignored
                     self.pairing_store._record_rate_limit(platform_name, source.user_id)
@@ -6751,10 +6750,10 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                     prompt_path.unlink(missing_ok=True)
                 except OSError as e:
                     logger.warning("Failed to write update response: %s", e)
-                    return f"✗ Failed to send response to update process: {e}"
+                    return f" Failed to send response to update process: {e}"
                 _update_prompts.pop(_quick_key, None)
                 label = response_text if len(response_text) <= 20 else response_text[:20] + "…"
-                return f"✓ Sent `{label}` to the update process."
+                return f" Sent `{label}` to the update process."
             # Recognized slash command during a pending update prompt:
             # unblock the detached update subprocess by writing a blank
             # response so ``_gateway_prompt`` returns the prompt's default
@@ -7041,10 +7040,10 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                         accepted = running_agent.steer(steer_text)
                     except Exception as exc:
                         logger.warning("Steer failed for session %s: %s", _quick_key, exc)
-                        return f"⚠️ Steer failed: {exc}"
+                        return f"️ Steer failed: {exc}"
                     if accepted:
                         preview = steer_text[:60] + ("..." if len(steer_text) > 60 else "")
-                        return f"⏩ Steer queued — arrives after the next tool call: '{preview}'"
+                        return f" Steer queued — arrives after the next tool call: '{preview}'"
                     return "Steer rejected (empty payload)."
                 # Running agent is missing or lacks steer() — fall back to queue.
                 adapter = self.adapters.get(source.platform)
@@ -7155,7 +7154,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             # producing a zero-char response. See #5057, #6252, #10370.
             if _cmd_def_inner:
                 return (
-                    f"⏳ Agent is running — `/{_cmd_def_inner.name}` can't run "
+                    f" Agent is running — `/{_cmd_def_inner.name}` can't run "
                     f"mid-turn. Wait for the current response or `/stop` first."
                 )
 
@@ -7202,7 +7201,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                     # Force-clean the sentinel so the session is unlocked.
                     self._release_running_agent_state(_quick_key)
                     logger.info("HARD STOP (pending) for session %s — sentinel cleared", _quick_key)
-                    return EphemeralReply("⚡ Force-stopped. The agent was still starting — session unlocked.")
+                    return EphemeralReply(" Force-stopped. The agent was still starting — session unlocked.")
                 # Queue the message so it will be picked up after the
                 # agent starts.
                 adapter = self.adapters.get(source.platform)
@@ -7218,9 +7217,9 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                 if self._queue_during_drain_enabled():
                     self._queue_or_replace_pending_event(_quick_key, event)
                 return (
-                    f"⏳ Gateway {self._status_action_gerund()} — queued for the next turn after it comes back."
+                    f" Gateway {self._status_action_gerund()} — queued for the next turn after it comes back."
                     if self._queue_during_drain_enabled()
-                    else f"⏳ Gateway is {self._status_action_gerund()} and is not accepting another turn right now."
+                    else f" Gateway is {self._status_action_gerund()} and is not accepting another turn right now."
                 )
             if self._busy_input_mode == "queue":
                 logger.debug("PRIORITY queue follow-up for session %s", _quick_key)
@@ -7588,7 +7587,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             return await self._handle_voice_command(event)
 
         if self._draining:
-            return f"⏳ Gateway is {self._status_action_gerund()} and is not accepting new work right now."
+            return f" Gateway is {self._status_action_gerund()} and is not accepting new work right now."
 
         # User-defined quick commands (bypass agent loop, no LLM call)
         if command:
@@ -7939,7 +7938,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                             try:
                                 await _echo_adapter.send(
                                     source.chat_id,
-                                    f'🎙️ "{_tx}"',
+                                    f'️ "{_tx}"',
                                     metadata=_echo_meta,
                                 )
                             except Exception as _echo_exc:
@@ -7958,7 +7957,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                     if _stt_adapter:
                         try:
                             _stt_msg = (
-                                "🎤 I received your voice message but can't transcribe it — "
+                                " I received your voice message but can't transcribe it — "
                                 "no speech-to-text provider is configured.\n\n"
                                 "To enable voice: install faster-whisper "
                                 "(`uv pip install faster-whisper` in the Hermes venv; "
@@ -8314,7 +8313,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                             duration = f"{hours}h" if not mins else f"{hours}h {mins}m" if hours else f"{mins}m"
                             reason_text = f"inactive for {duration}"
                         notice = (
-                            f"◐ Session automatically reset ({reason_text}). "
+                            f" Session automatically reset ({reason_text}). "
                             f"Conversation history cleared.\n"
                             f"Use /resume to browse and restore a previous session.\n"
                             f"Adjust reset timing in config.yaml under session_reset."
@@ -8640,7 +8639,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                                     if _comp is not None and getattr(_comp, "_last_compress_aborted", False):
                                         _err = getattr(_comp, "_last_summary_error", None) or "unknown error"
                                         _warn_msg = (
-                                            "⚠️ Context compression aborted "
+                                            "️ Context compression aborted "
                                             f"({_err}). No messages were dropped — "
                                             "conversation is unchanged. Run /compress "
                                             "to retry, /reset for a clean session, or "
@@ -8666,7 +8665,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                                         _aux_model = getattr(_comp, "_last_aux_model_failure_model", "")
                                         _aux_err = getattr(_comp, "_last_aux_model_failure_error", None) or "unknown error"
                                         _aux_msg = (
-                                            f"ℹ️ Configured compression model `{_aux_model}` "
+                                            f"️ Configured compression model `{_aux_model}` "
                                             f"failed ({_aux_err}). Recovered using your main "
                                             "model — context is intact — but you may want to "
                                             "check `auxiliary.compression.model` in config.yaml."
@@ -8745,7 +8744,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                     else "/sethome"
                 )
                 notice = (
-                    f"📬 No home channel is set for {platform_name.title()}. "
+                    f" No home channel is set for {platform_name.title()}. "
                     f"A home channel is where Hermes delivers cron job results "
                     f"and cross-platform messages.\n\n"
                     f"Type {sethome_cmd} to make this chat your home channel, "
@@ -8861,7 +8860,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             # looks like a bug; a short explanation is more helpful.
             if response == "(empty)" and not _intentional_silence:
                 response = (
-                    "⚠️ The model returned no response after processing tool "
+                    "️ The model returned no response after processing tool "
                     "results. This can happen with some models — try again or "
                     "rephrase your question."
                 )
@@ -8947,7 +8946,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                         display_reasoning += f"\n_... ({len(lines) - 15} more lines)_"
                     else:
                         display_reasoning = last_reasoning.strip()
-                    response = f"💭 **Reasoning:**\n```\n{display_reasoning}\n```\n\n{response}"
+                    response = f" **Reasoning:**\n```\n{display_reasoning}\n```\n\n{response}"
 
             # Runtime-metadata footer — only on the FINAL message of the turn.
             # Off by default (display.runtime_footer.enabled=false).  When
@@ -9333,7 +9332,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                 # for the API to process — treat it the same way.
                 if _hist_len > 50:
                     return (
-                        "⚠️ Session too large for the model's context window.\n"
+                        "️ Session too large for the model's context window.\n"
                         "Use /compact to compress the conversation, or "
                         "/reset to start fresh."
                     )
@@ -9457,14 +9456,14 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             ctx_display = str(context_length)
 
         lines = [
-            f"◆ Model: `{model}`",
-            f"◆ Provider: {provider or 'openrouter'}",
-            f"◆ Context: {ctx_display} tokens ({ctx_source})",
+            f" Model: `{model}`",
+            f" Provider: {provider or 'openrouter'}",
+            f" Context: {ctx_display} tokens ({ctx_source})",
         ]
 
         # Show endpoint for local/custom setups
         if base_url and ("localhost" in base_url or "127.0.0.1" in base_url or "0.0.0.0" in base_url):
-            lines.append(f"◆ Endpoint: {base_url}")
+            lines.append(f" Endpoint: {base_url}")
 
         return "\n".join(lines)
 
@@ -9511,7 +9510,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                 "platform. Ask an admin to add you to allow_admin_from "
                 "or to set user_allowed_commands."
             )
-        return f"⛔ /{canonical_cmd} is admin-only here. {suffix}"
+        return f" /{canonical_cmd} is admin-only here. {suffix}"
 
 
 
@@ -9832,7 +9831,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         # Defer the status line until after the adapter has delivered the
         # agent's visible final response. The judge runs after the response is
         # produced but before BasePlatformAdapter sends it, so sending here
-        # would show "✓ Goal achieved" before the answer itself. Registering
+        # would show " Goal achieved" before the answer itself. Registering
         # an awaited post-delivery callback preserves delivery reliability
         # without reversing the user-visible ordering.
         if msg and source is not None:
@@ -9915,11 +9914,8 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             adapter._voice_input_callback = None
             err_lower = str(e).lower()
             if "pynacl" in err_lower or "nacl" in err_lower or "davey" in err_lower:
-                return (
-                    "Voice dependencies are missing (PyNaCl / davey). "
-                    f"Install with: `{sys.executable} -m pip install PyNaCl`"
-                )
-            return f"Failed to join voice channel: {e}"
+                return f"语音依赖缺失（PyNaCl / davey）。请用以下命令安装：`{sys.executable} -m pip install PyNaCl`"
+            return f"加入语音频道失败：{e}"
 
         if success:
             adapter._voice_text_channels[guild_id] = int(event.source.chat_id)
@@ -9934,7 +9930,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             )
         # Join failed — clear callback
         adapter._voice_input_callback = None
-        return "Failed to join voice channel. Check bot permissions (Connect + Speak)."
+        return "加入语音频道失败。请检查机器人权限（连接和发言）。"
 
     async def _handle_voice_channel_leave(self, event: MessageEvent) -> str:
         """Leave the Discord voice channel."""
@@ -10362,7 +10358,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             if not runtime_kwargs.get("api_key"):
                 await adapter.send(
                     source.chat_id,
-                    f"❌ Background task {task_id} failed: no provider credentials configured.",
+                    f" Background task {task_id} failed: no provider credentials configured.",
                     metadata=_thread_metadata,
                 )
                 return
@@ -10450,7 +10446,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                 images, text_content = adapter.extract_images(response)
 
                 preview = prompt[:60] + ("..." if len(prompt) > 60 else "")
-                header = f'✅ Background task complete\nPrompt: "{preview}"\n\n'
+                header = f' Background task complete\nPrompt: "{preview}"\n\n'
 
                 if text_content:
                     await adapter.send(
@@ -10518,7 +10514,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                 preview = prompt[:60] + ("..." if len(prompt) > 60 else "")
                 await adapter.send(
                     chat_id=source.chat_id,
-                    content=f'✅ Background task complete\nPrompt: "{preview}"\n\n(No response generated)',
+                    content=f' Background task complete\nPrompt: "{preview}"\n\n(No response generated)',
                     metadata=_thread_metadata,
                 )
 
@@ -10527,7 +10523,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             try:
                 await adapter.send(
                     chat_id=source.chat_id,
-                    content=f"❌ Background task {task_id} failed: {e}",
+                    content=f" Background task {task_id} failed: {e}",
                     metadata=_thread_metadata,
                 )
             except Exception:
@@ -10832,7 +10828,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             return format_session_db_unavailable(prefix=t("gateway.shared.session_db_unavailable_prefix"))
         chat_id = str(source.chat_id or "")
         if not chat_id:
-            return "Could not determine chat ID."
+            return "无法确定聊天 ID。"
         # No-op if never enabled.
         try:
             currently_enabled = self._session_db.is_telegram_topic_mode_enabled(
@@ -10842,12 +10838,12 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         except Exception:
             currently_enabled = False
         if not currently_enabled:
-            return "Multi-session topic mode is not currently enabled for this chat."
+            return "多会话主题模式当前未对此聊天启用。"
         try:
             self._session_db.disable_telegram_topic_mode(chat_id=chat_id)
         except Exception as exc:
             logger.exception("Failed to disable Telegram topic mode")
-            return f"Failed to disable topic mode: {exc}"
+            return f"关闭主题模式失败：{exc}"
         # Reset per-chat debounce state so the user doesn't see a stale
         # cooldown on the next activation.
         for attr in ("_telegram_lobby_reminder_ts", "_telegram_capability_hint_ts"):
@@ -11150,7 +11146,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             result = await execute()
             if choice == "always":
                 note = (
-                    "\n\nℹ️ Future /clear, /new, /reset, and /undo will run "
+                    "\n\n️ Future /clear, /new, /reset, and /undo will run "
                     "without confirmation. Re-enable via "
                     "`approvals.destructive_slash_confirm: true` in config.yaml."
                 )
@@ -11164,12 +11160,12 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
 
         _p = self._typed_command_prefix_for(event.source.platform)
         prompt_message = (
-            f"⚠️ **Confirm /{command}**\n\n"
+            f"️ **Confirm /{command}**\n\n"
             f"{detail}\n\n"
             "Choose:\n"
-            "• **Approve Once** — proceed this time only\n"
-            "• **Always Approve** — proceed and silence this prompt permanently\n"
-            "• **Cancel** — keep current conversation\n\n"
+            " **Approve Once** — proceed this time only\n"
+            " **Always Approve** — proceed and silence this prompt permanently\n"
+            " **Cancel** — keep current conversation\n\n"
             f"_Text fallback: reply `{_p}approve`, `{_p}always`, or `{_p}cancel`._"
         )
         return await self._request_slash_confirm(
@@ -11502,11 +11498,11 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                     exit_code_raw = exit_code_path.read_text().strip() or "1"
                     exit_code = int(exit_code_raw)
                     if exit_code == 0:
-                        await adapter.send(chat_id, "✅ Hermes update finished.", metadata=metadata)
+                        await adapter.send(chat_id, " Hermes update finished.", metadata=metadata)
                     else:
                         await adapter.send(
                             chat_id,
-                            "❌ Hermes update failed (exit code {}).".format(exit_code),
+                            " Hermes update failed (exit code {}).".format(exit_code),
                             metadata=metadata,
                         )
                     logger.info("Update finished (exit=%s), notified %s", exit_code, session_key)
@@ -11568,7 +11564,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                             _p = getattr(adapter, "typed_command_prefix", "/")
                             await adapter.send(
                                 chat_id,
-                                f"⚕ **Update needs your input:**\n\n"
+                                f" **Update needs your input:**\n\n"
                                 f"{prompt_text}{default_hint}\n\n"
                                 f"Reply `{_p}approve` (yes) or `{_p}deny` (no), "
                                 f"or type your answer directly.",
@@ -11595,7 +11591,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             try:
                 await adapter.send(
                     chat_id,
-                    "❌ Hermes update timed out after 30 minutes.",
+                    " Hermes update timed out after 30 minutes.",
                     metadata=metadata,
                 )
             except Exception:
@@ -11695,13 +11691,13 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                     if len(output) > 3500:
                         output = "…" + output[-3500:]
                     if exit_code == 0:
-                        msg = f"✅ Hermes update finished.\n\n```\n{output}\n```"
+                        msg = f" Hermes update finished.\n\n```\n{output}\n```"
                     else:
-                        msg = f"❌ Hermes update failed.\n\n```\n{output}\n```"
+                        msg = f" Hermes update failed.\n\n```\n{output}\n```"
                 elif exit_code == 0:
-                    msg = "✅ Hermes update finished successfully."
+                    msg = " Hermes update finished successfully."
                 else:
-                    msg = "❌ Hermes update failed. Check the gateway logs or run `hermes update` manually for details."
+                    msg = " Hermes update failed. Check the gateway logs or run `hermes update` manually for details."
                 await adapter.send(chat_id, msg, metadata=metadata)
                 logger.info(
                     "Sent post-update notification to %s:%s (exit=%s)",
@@ -11764,7 +11760,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             )
             result = await adapter.send(
                 str(chat_id),
-                "♻ Gateway restarted successfully. Your session continues.",
+                " Gateway restarted successfully. Your session continues.",
                 metadata=metadata,
             )
             # adapter.send() catches provider errors (e.g. "Chat not found")
@@ -11805,7 +11801,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         """
         delivered: set[tuple[str, str, Optional[str]]] = set()
         skipped = skip_targets or set()
-        message = "♻️ Gateway online — Hermes is back and ready."
+        message = "️ Gateway online — Hermes is back and ready."
 
         for platform, adapter in self.adapters.items():
             home = self.config.get_home_channel(platform)
@@ -12102,7 +12098,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
 
         This helper fills that gap: when the dequeued event has audio media,
         we transcribe inline, echo the raw transcript back to the user (same
-        "🎙️" format as the fresh-message path), and return enriched text.
+        "️" format as the fresh-message path), and return enriched text.
         Non-audio events fall back to _build_media_placeholder, matching the
         original _dequeue_pending_text behavior.
         """
@@ -12138,7 +12134,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                         try:
                             await echo_adapter.send(
                                 source.chat_id,
-                                f'🎙️ "{tx}"',
+                                f'️ "{tx}"',
                                 metadata=echo_meta,
                             )
                         except Exception as echo_exc:
@@ -13136,7 +13132,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             from aiohttp import ClientSession as _AioClientSession, ClientTimeout
         except ImportError:
             return {
-                "final_response": "⚠️ Proxy mode requires aiohttp. Install with: pip install aiohttp",
+                "final_response": "️ Proxy mode requires aiohttp. Install with: pip install aiohttp",
                 "messages": [],
                 "api_calls": 0,
                 "tools": [],
@@ -13145,7 +13141,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         proxy_url = self._get_proxy_url()
         if not proxy_url:
             return {
-                "final_response": "⚠️ Proxy URL not configured (GATEWAY_PROXY_URL or gateway.proxy_url)",
+                "final_response": "️ Proxy URL not configured (GATEWAY_PROXY_URL or gateway.proxy_url)",
                 "messages": [],
                 "api_calls": 0,
                 "tools": [],
@@ -13287,7 +13283,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                             resp.status, proxy_url, error_text[:500],
                         )
                         return {
-                            "final_response": f"⚠️ Proxy error ({resp.status}): {error_text[:300]}",
+                            "final_response": f"️ Proxy error ({resp.status}): {error_text[:300]}",
                             "messages": [],
                             "api_calls": 0,
                             "tools": [],
@@ -13343,7 +13339,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             logger.error("Proxy connection error to %s: %s", proxy_url, e)
             if not full_response:
                 return {
-                    "final_response": f"⚠️ Proxy connection error: {e}",
+                    "final_response": f"️ Proxy connection error: {e}",
                     "messages": [],
                     "api_calls": 0,
                     "tools": [],
@@ -13515,7 +13511,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         repeat_count = [0]  # How many times the same message repeated
         # True when the previously enqueued progress line was a terminal
         # fenced code block — consecutive terminal calls then drop the
-        # repeated "💻 terminal" header and render back-to-back blocks.
+        # repeated " terminal" header and render back-to-back blocks.
         last_was_terminal_block = [False]
 
         # ── Discord voice "verbal ack before tool calls" ────────────────
@@ -13562,7 +13558,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         # Auto-cleanup of temporary progress bubbles (Telegram + any adapter
         # that implements ``delete_message``). When enabled via
         # ``display.platforms.<platform>.cleanup_progress: true``, message IDs
-        # from the tool-progress / "⏳ Working — N min" / status-callback bubbles
+        # from the tool-progress / " Working — N min" / status-callback bubbles
         # are collected here and deleted after the final response lands.
         # Failed runs skip cleanup so the bubbles remain as breadcrumbs.
         _cleanup_progress = bool(
@@ -13624,7 +13620,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             # When the LLM response carries N parallel tool calls, the agent
             # fires N "tool.started" events back-to-back before checking for
             # interrupts — without this guard, a late `stop` still renders
-            # all N as 🔍 bubbles, making the interrupt feel ignored.
+            # all N as  bubbles, making the interrupt feel ignored.
             # (agent lives in run_sync's scope; agent_holder[0] is the shared
             # handle across nested scopes — see line ~9607.)
             try:
@@ -13643,7 +13639,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             
             # Build progress message with primary argument preview
             from agent.display import get_tool_emoji
-            emoji = get_tool_emoji(tool_name, default="⚙️")
+            emoji = get_tool_emoji(tool_name, default="️")
 
             # Markdown-capable platforms render a terminal command as a fenced
             # code block instead of the compact `terminal: "cmd…"` preview.
@@ -13674,7 +13670,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                 from agent.display import get_tool_preview_max_len
                 _cmd_full = args["command"].rstrip()
                 # Consecutive terminal calls: drop the repeated
-                # "💻 terminal" header so back-to-back commands render as
+                # " terminal" header so back-to-back commands render as
                 # adjacent code blocks under a single header.
                 _block_header = (
                     "" if last_was_terminal_block[0] else f"{emoji} {tool_name}\n"
@@ -13930,7 +13926,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
 
                     # Drain silently when interrupted: events queued in the
                     # window between tool parse and interrupt processing
-                    # should not render as bubbles.  The "⚡ Interrupting
+                    # should not render as bubbles.  The " Interrupting
                     # current task" message is sent separately and is the
                     # last progress-flavored bubble the user should see.
                     try:
@@ -14238,7 +14234,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                 )
             except Exception as exc:
                 return {
-                    "final_response": f"⚠️ Provider authentication failed: {exc}",
+                    "final_response": f"️ Provider authentication failed: {exc}",
                     "messages": [],
                     "api_calls": 0,
                     "tools": [],
@@ -14485,7 +14481,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             # hop onto the gateway loop with safe_schedule_threadsafe — same
             # pattern as _status_callback_sync. The fired-once latch lives on the
             # cached agent and persists across turns, so a band crosses → one
-            # push (no per-turn re-nag). Recovery ("✓ Credit access restored")
+            # push (no per-turn re-nag). Recovery (" Credit access restored")
             # rides the same show path (it's emitted as a success notice, not a
             # clear). The clear callback is a no-op: a sent platform message
             # can't be cleanly retracted, and the band already fired once.
@@ -14752,7 +14748,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                 _p = getattr(_status_adapter, "typed_command_prefix", "/")
                 cmd_preview = cmd[:200] + "..." if len(cmd) > 200 else cmd
                 msg = (
-                    f"⚠️ **Dangerous command requires approval:**\n"
+                    f"️ **Dangerous command requires approval:**\n"
                     f"```\n{cmd_preview}\n```\n"
                     f"Reason: {desc}\n\n"
                     f"Reply `{_p}approve` to execute, `{_p}approve session` to approve this pattern "
@@ -15007,7 +15003,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             _effective_history_offset = 0 if _session_was_split else len(agent_history)
 
             if not final_response:
-                error_msg = f"⚠️ {result['error']}" if result.get("error") else ""
+                error_msg = f"️ {result['error']}" if result.get("error") else ""
                 return {
                     "final_response": error_msg,
                     "messages": result.get("messages", []),
@@ -15221,7 +15217,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                                 # real transcript instead of an empty string
                                 # (or file-path placeholder). Matches the UX
                                 # of fresh voice messages including the
-                                # 🎙️ echo back to the user.
+                                # ️ echo back to the user.
                                 _media_urls = getattr(_peek_event, "media_urls", None) or []
                                 _media_types = getattr(_peek_event, "media_types", None) or []
                                 _audio_paths = []
@@ -15245,7 +15241,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                                                 try:
                                                     await _adapter.send(
                                                         source.chat_id,
-                                                        f'🎙️ "{_tx}"',
+                                                        f'️ "{_tx}"',
                                                         metadata=_echo_meta,
                                                     )
                                                 except Exception as _echo_exc:
@@ -15332,7 +15328,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                             _status_detail = " — " + ", ".join(_parts)
                     except Exception:
                         pass
-                _heartbeat_text = f"⏳ Working — {_elapsed_mins} min{_status_detail}"
+                _heartbeat_text = f" Working — {_elapsed_mins} min{_status_detail}"
                 try:
                     _notify_res = None
                     if _heartbeat_msg_id:
@@ -15445,7 +15441,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                             try:
                                 await _warn_adapter.send(
                                     source.chat_id,
-                                    f"⚠️ No activity for {_elapsed_warn} min. "
+                                    f"️ No activity for {_elapsed_warn} min. "
                                     f"If the agent does not respond soon, it will "
                                     f"be timed out in {_remaining_mins} min. "
                                     f"You can continue waiting or use /reset.",
@@ -15507,7 +15503,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
 
                 # Construct a user-facing message with diagnostic context.
                 _diag_lines = [
-                    f"⏱️ Agent inactive for {_timeout_mins} min — no tool calls "
+                    f"️ Agent inactive for {_timeout_mins} min — no tool calls "
                     f"or API responses."
                 ]
                 if _cur_tool:
@@ -15587,7 +15583,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                     # handed back as the next user turn, so queued/interrupting
                     # voice messages drain with the real transcript instead of
                     # a file-path placeholder. Echo each transcript back to the
-                    # user (same 🎙️ format as fresh voice messages) so voice
+                    # user (same ️ format as fresh voice messages) so voice
                     # interrupts feel identical to text interrupts.
                     _pending_text = pending_event.text or ""
                     _media_urls = getattr(pending_event, "media_urls", None) or []
@@ -15613,7 +15609,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                                     try:
                                         await adapter.send(
                                             source.chat_id,
-                                            f'🎙️ "{_tx}"',
+                                            f'️ "{_tx}"',
                                             metadata=_echo_meta,
                                         )
                                     except Exception as _echo_exc:
@@ -16310,7 +16306,7 @@ async def start_gateway(config: Optional[GatewayConfig] = None, replace: bool = 
                 existing_pid, hermes_home,
             )
             print(
-                f"\n❌ Gateway already running (PID {existing_pid}).\n"
+                f"\n Gateway already running (PID {existing_pid}).\n"
                 f"   Use 'hermes gateway restart' to replace it,\n"
                 f"   or 'hermes gateway stop' to kill it first.\n"
                 f"   Or use 'hermes gateway run --replace' to auto-replace.\n"

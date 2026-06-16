@@ -740,7 +740,7 @@ class HindsightMemoryProvider(MemoryProvider):
         print("\n  Checking dependencies...")
         uv_path = shutil.which("uv")
         if not uv_path:
-            print("  ⚠ uv not found — install it: curl -LsSf https://astral.sh/uv/install.sh | sh")
+            print("   uv not found — install it: curl -LsSf https://astral.sh/uv/install.sh | sh")
             print(f"  Then run manually: uv pip install --python {sys.executable} {' '.join(deps_to_install)}")
         else:
             try:
@@ -749,9 +749,9 @@ class HindsightMemoryProvider(MemoryProvider):
                     check=True, timeout=120, capture_output=True,
                     stdin=subprocess.DEVNULL,
                 )
-                print("  ✓ Dependencies up to date")
+                print("   Dependencies up to date")
             except Exception as e:
-                print(f"  ⚠ Install failed: {e}")
+                print(f"   Install failed: {e}")
                 print(f"  Run manually: uv pip install --python {sys.executable} {' '.join(deps_to_install)}")
 
         # Step 3: Mode-specific config
@@ -890,7 +890,7 @@ class HindsightMemoryProvider(MemoryProvider):
                 llm_api_key=llm_api_key or None,
             )
 
-        print(f"\n  ✓ Hindsight memory configured ({mode} mode)")
+        print(f"\n   Hindsight memory configured ({mode} mode)")
         if env_writes:
             print("  API keys saved to .env")
         print("\n  Start a new session to activate.\n")

@@ -34,12 +34,12 @@ from hermes_cli.profiles import get_active_profile_name, get_profile_dir, seed_p
 # ---------------------------------------------------------------------------
 
 _STATUS_ICONS = {
-    "todo":     "◻",
-    "ready":    "▶",
-    "running":  "●",
-    "scheduled":"⏱",
+    "todo":     "",
+    "ready":    "",
+    "running":  "",
+    "scheduled":"",
     "blocked":  "⊘",
-    "done":     "✓",
+    "done":     "",
     "archived": "—",
 }
 
@@ -1047,13 +1047,13 @@ def _cmd_boards_list(args: argparse.Namespace) -> int:
     if getattr(args, "json", False):
         print(json.dumps(boards, indent=2, ensure_ascii=False))
         return 0
-    # Human table: marker (•) for current, slug, display name, counts.
+    # Human table: marker () for current, slug, display name, counts.
     if not boards:
         print("(no boards — create one with `hermes kanban boards create <slug>`)")
         return 0
     print(f"{'':2s}  {'SLUG':24s}  {'NAME':28s}  COUNTS")
     for b in boards:
-        marker = "●" if b["is_current"] else " "
+        marker = "" if b["is_current"] else " "
         counts = b["counts"] or {}
         counts_str = (
             ", ".join(f"{k}={v}" for k, v in sorted(counts.items()))
@@ -1363,7 +1363,7 @@ def _cmd_create(args: argparse.Namespace) -> int:
         if task.status == "ready" and task.assignee:
             running, message = _check_dispatcher_presence()
             if not running and message:
-                print(f"\n⚠  {message}", file=sys.stderr)
+                print(f"\n  {message}", file=sys.stderr)
     return 0
 
 
@@ -1544,7 +1544,7 @@ def _cmd_show(args: argparse.Namespace) -> int:
     from hermes_cli import kanban_diagnostics as kd
     diags = kd.compute_task_diagnostics(task, events, runs)
     if diags:
-        sev_marker = {"warning": "⚠", "error": "!!", "critical": "!!!"}
+        sev_marker = {"warning": "", "error": "!!", "critical": "!!!"}
         print(f"\n  Diagnostics ({len(diags)}):")
         for d in diags:
             print(f"    {sev_marker.get(d.severity, '?')} [{d.severity}] {d.title}")
@@ -1764,7 +1764,7 @@ def _cmd_diagnostics(args: argparse.Namespace) -> int:
 
     # Human-readable summary: grouped by task, severity-marked, with
     # suggested actions inline.
-    sev_marker = {"warning": "⚠", "error": "!!", "critical": "!!!"}
+    sev_marker = {"warning": "", "error": "!!", "critical": "!!!"}
     total = sum(len(dl) for dl in diags_by_task.values())
     print(
         f"{total} active diagnostic(s) across "
@@ -2811,9 +2811,9 @@ def run_slash(rest: str) -> str:
         if exc.code in {0, None} and out:
             return out
         body = err or out
-        return f"⚠ /kanban usage error\n{body}" if body else "⚠ /kanban usage error"
+        return f" /kanban usage error\n{body}" if body else " /kanban usage error"
     except argparse.ArgumentError as exc:
-        return f"⚠ /kanban usage error\n{_usage_for_error()}\n{exc}"
+        return f" /kanban usage error\n{_usage_for_error()}\n{exc}"
 
     with contextlib.redirect_stdout(buf_out), contextlib.redirect_stderr(buf_err):
         try:

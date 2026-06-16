@@ -328,8 +328,8 @@ class PlatformConfig:
     # - "all": All chunks in multi-part replies thread to user's message
     reply_to_mode: str = "first"
 
-    # Whether the gateway is allowed to send "♻️ Gateway online" /
-    # "♻ Gateway restarted" lifecycle notifications on this platform.
+    # Whether the gateway is allowed to send "️ Gateway online" /
+    # " Gateway restarted" lifecycle notifications on this platform.
     # Default True preserves prior behavior. Set False on platforms used
     # by end users (e.g. Slack) where operator-flavored restart pings are
     # noise; keep True for back-channels where the operator wants them.

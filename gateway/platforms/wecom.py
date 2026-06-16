@@ -1297,7 +1297,7 @@ class WeComAdapter(BasePlatformAdapter):
         if prepared["rejected"]:
             await self._send_followup_markdown(
                 chat_id,
-                f"⚠️ {prepared['reject_reason']}",
+                f"️ {prepared['reject_reason']}",
                 reply_to=reply_to,
             )
             return SendResult(success=False, error=prepared["reject_reason"])
@@ -1341,7 +1341,7 @@ class WeComAdapter(BasePlatformAdapter):
         if prepared["downgraded"] and prepared["downgrade_note"]:
             downgrade_result = await self._send_followup_markdown(
                 chat_id,
-                f"ℹ️ {prepared['downgrade_note']}",
+                f"️ {prepared['downgrade_note']}",
                 reply_to=reply_to,
             )
 

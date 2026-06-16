@@ -997,25 +997,25 @@ def print_credential_summary(emit: Any = print) -> None:
     """Pretty-print the credential status table via the *emit* callback.
 
     Every secret-bearing read is reduced to a display literal inside this
-    function (``"✓ stored"`` / ``"✗ missing"`` / a non-secret id); the
+    function (``" stored"`` / ``" missing"`` / a non-secret id); the
     callback only ever receives the assembled banner string, so no tainted
     value escapes into the caller's scope.
     """
     labels: Dict[str, str] = {}
     labels["device_token"] = (
-        "✓ stored" if load_photon_token()
-        else "✗ missing (run `hermes photon setup`)"
+        " stored" if load_photon_token()
+        else " missing (run `hermes photon setup`)"
     )
     sid, sec = load_project_credentials()
-    labels["spectrum_project_id"] = sid if sid else "✗ missing"
+    labels["spectrum_project_id"] = sid if sid else " missing"
     labels["dashboard_project_id"] = load_dashboard_project_id() or "—"
-    labels["project_key"] = "✓ stored" if sec else "✗ missing"
+    labels["project_key"] = " stored" if sec else " missing"
     phone, assigned = load_user_numbers()
     labels["phone_number"] = (
-        phone if phone else "✗ missing (run `hermes photon setup --phone ...`)"
+        phone if phone else " missing (run `hermes photon setup --phone ...`)"
     )
     labels["assigned_phone_number"] = (
-        assigned if assigned else "✗ missing (run `hermes photon setup`)"
+        assigned if assigned else " missing (run `hermes photon setup`)"
     )
 
     rows = [
@@ -1035,25 +1035,25 @@ def credential_summary() -> Dict[str, str]:
     """Return a fully pre-formatted credential status dict (no raw secrets)."""
     def _present_token() -> str:
         return (
-            "✓ stored" if load_photon_token()
-            else "✗ missing (run `hermes photon setup`)"
+            " stored" if load_photon_token()
+            else " missing (run `hermes photon setup`)"
         )
 
     def _present_spectrum_id() -> str:
         sid, _sec = load_project_credentials()
-        return sid or "✗ missing"
+        return sid or " missing"
 
     def _present_secret() -> str:
         _sid, sec = load_project_credentials()
-        return "✓ stored" if sec else "✗ missing"
+        return " stored" if sec else " missing"
 
     def _present_phone() -> str:
         phone, _assigned = load_user_numbers()
-        return phone or "✗ missing (run `hermes photon setup --phone ...`)"
+        return phone or " missing (run `hermes photon setup --phone ...`)"
 
     def _present_assigned_phone() -> str:
         _phone, assigned = load_user_numbers()
-        return assigned or "✗ missing (run `hermes photon setup`)"
+        return assigned or " missing (run `hermes photon setup`)"
 
     return {
         "device_token": _present_token(),

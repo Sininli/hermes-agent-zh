@@ -442,38 +442,38 @@ if __name__ == "__main__":
     """
     Simple test/demo when run directly
     """
-    print("🤖 Mixture-of-Agents Tool Module")
+    print(" Mixture-of-Agents Tool Module")
     print("=" * 50)
     
     # Check if API key is available
     api_available = check_openrouter_api_key()
     
     if not api_available:
-        print("❌ OPENROUTER_API_KEY environment variable not set")
+        print(" OPENROUTER_API_KEY environment variable not set")
         print("Please set your API key: export OPENROUTER_API_KEY='your-key-here'")
         print("Get API key at: https://openrouter.ai/")
         sys.exit(1)
     else:
-        print("✅ OpenRouter API key found")
+        print(" OpenRouter API key found")
     
     print("🛠️  MoA tools ready for use!")
     
     # Show current configuration
     config = get_moa_configuration()
-    print("\n⚙️  Current Configuration:")
-    print(f"  🤖 Reference models ({len(config['reference_models'])}): {', '.join(config['reference_models'])}")
-    print(f"  🧠 Aggregator model: {config['aggregator_model']}")
+    print("\n️  Current Configuration:")
+    print(f"   Reference models ({len(config['reference_models'])}): {', '.join(config['reference_models'])}")
+    print(f"   Aggregator model: {config['aggregator_model']}")
     print(f"  🌡️  Reference temperature: {config['reference_temperature']}")
     print(f"  🌡️  Aggregator temperature: {config['aggregator_temperature']}")
     print(f"  🛡️  Failure tolerance: {config['failure_tolerance']}")
-    print(f"  📊 Minimum successful models: {config['min_successful_references']}")
+    print(f"   Minimum successful models: {config['min_successful_references']}")
     
     # Show debug mode status
     if _debug.active:
-        print(f"\n🐛 Debug mode ENABLED - Session ID: {_debug.session_id}")
+        print(f"\n Debug mode ENABLED - Session ID: {_debug.session_id}")
         print(f"   Debug logs will be saved to: ./logs/moa_tools_debug_{_debug.session_id}.json")
     else:
-        print("\n🐛 Debug mode disabled (set MOA_TOOLS_DEBUG=true to enable)")
+        print("\n Debug mode disabled (set MOA_TOOLS_DEBUG=true to enable)")
     
     print("\nBasic usage:")
     print("  from mixture_of_agents_tool import mixture_of_agents_tool")
@@ -538,5 +538,5 @@ registry.register(
     check_fn=check_moa_requirements,
     requires_env=["OPENROUTER_API_KEY"],
     is_async=True,
-    emoji="🧠",
+    emoji="",
 )

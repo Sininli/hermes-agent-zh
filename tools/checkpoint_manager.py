@@ -1180,7 +1180,7 @@ def format_checkpoint_list(checkpoints: List[Dict], directory: str) -> str:
     if not checkpoints:
         return f"No checkpoints found for {directory}"
 
-    lines = [f"📸 Checkpoints for {directory}:\n"]
+    lines = [f" Checkpoints for {directory}:\n"]
     for i, cp in enumerate(checkpoints, 1):
         ts = cp["timestamp"]
         if "T" in ts:

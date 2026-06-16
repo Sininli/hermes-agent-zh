@@ -1892,7 +1892,7 @@ class FeishuAdapter(BasePlatformAdapter):
             card = {
                 "config": {"wide_screen_mode": True},
                 "header": {
-                    "title": {"content": "⚠️ Command Approval Required", "tag": "plain_text"},
+                    "title": {"content": "️ Command Approval Required", "tag": "plain_text"},
                     "template": "orange",
                 },
                 "elements": [
@@ -1903,10 +1903,10 @@ class FeishuAdapter(BasePlatformAdapter):
                     {
                         "tag": "action",
                         "actions": [
-                            _btn("✅ Allow Once", "approve_once", "primary"),
-                            _btn("✅ Session", "approve_session"),
-                            _btn("✅ Always", "approve_always"),
-                            _btn("❌ Deny", "deny", "danger"),
+                            _btn(" Allow Once", "approve_once", "primary"),
+                            _btn(" Session", "approve_session"),
+                            _btn(" Always", "approve_always"),
+                            _btn(" Deny", "deny", "danger"),
                         ],
                     },
                 ],
@@ -1951,7 +1951,7 @@ class FeishuAdapter(BasePlatformAdapter):
         return {
             "config": {"wide_screen_mode": True},
             "header": {
-                "title": {"content": "⚕ Update Needs Your Input", "tag": "plain_text"},
+                "title": {"content": " Update Needs Your Input", "tag": "plain_text"},
                 "template": "orange",
             },
             "elements": [
@@ -1959,8 +1959,8 @@ class FeishuAdapter(BasePlatformAdapter):
                 {
                     "tag": "action",
                     "actions": [
-                        _btn("✓ Yes", "y", "primary"),
-                        _btn("✗ No", "n", "danger"),
+                        _btn(" Yes", "y", "primary"),
+                        _btn(" No", "n", "danger"),
                     ],
                 },
             ],
@@ -2004,7 +2004,7 @@ class FeishuAdapter(BasePlatformAdapter):
     @staticmethod
     def _build_resolved_approval_card(*, choice: str, user_name: str) -> Dict[str, Any]:
         """Build raw card JSON for a resolved approval action."""
-        icon = "❌" if choice == "deny" else "✅"
+        icon = "" if choice == "deny" else ""
         label = _APPROVAL_LABEL_MAP.get(choice, "Resolved")
         return {
             "config": {"wide_screen_mode": True},
@@ -2027,7 +2027,7 @@ class FeishuAdapter(BasePlatformAdapter):
         return {
             "config": {"wide_screen_mode": True},
             "header": {
-                "title": {"content": f"{'✅' if yes else '❌'} Update prompt answered: {label}", "tag": "plain_text"},
+                "title": {"content": f"{'&#x2705;' if yes else '&#x274C;'} Update prompt answered: {label}", "tag": "plain_text"},
                 "template": "green" if yes else "red",
             },
             "elements": [

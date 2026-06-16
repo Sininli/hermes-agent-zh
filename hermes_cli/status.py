@@ -1,7 +1,7 @@
 """
-Status command for hermes CLI.
+Hermes CLI 的状态命令。
 
-Shows the status of all Hermes Agent components.
+显示所有 Hermes Agent 组件的状态。
 """
 
 import os
@@ -26,23 +26,20 @@ from tools.tool_backend_helpers import managed_nous_tools_enabled
 
 def check_mark(ok: bool) -> str:
     if ok:
-        return color("✓", Colors.GREEN)
-    return color("✗", Colors.RED)
+        return color("", Colors.GREEN)
+    return color("", Colors.RED)
 
 def redact_key(key: str) -> str:
-    """Redact an API key for display.
+    """隐藏 API 密钥以显示。
 
-    Thin wrapper over :func:`agent.redact.mask_secret`. Preserves the
-    "(not set)" placeholder in dim color to match ``hermes config``'s
-    output (previously this variant was missing the DIM color —
-    consolidated via PR that also introduced ``mask_secret``).
-    """
+    封装 :func:`agent.redact.mask_secret`。保留暗色中的
+    \"(not set)\" 占位符以匹配 ``hermes config`` 的输出。"""
     from agent.redact import mask_secret
     return mask_secret(key, empty=color("(not set)", Colors.DIM))
 
 
 def _format_iso_timestamp(value) -> str:
-    """Format ISO timestamps for status output, converting to local timezone."""
+    """格式化 ISO 时间戳以显示状态，转换为本地时区。"""
     if not value or not isinstance(value, str):
         return "(unknown)"
     from datetime import datetime, timezone
@@ -90,25 +87,25 @@ from hermes_constants import is_termux as _is_termux
 
 
 def show_status(args):
-    """Show status of all Hermes Agent components."""
+    """显示所有 Hermes Agent 组件的状态。"""
     show_all = getattr(args, 'all', False)
     deep = getattr(args, 'deep', False)
 
     print()
     print(color("┌─────────────────────────────────────────────────────────┐", Colors.CYAN))
-    print(color("│                 ⚕ Hermes Agent Status                  │", Colors.CYAN))
+    print(color("│               Hermes Agent 状态                      │", Colors.CYAN))
     print(color("└─────────────────────────────────────────────────────────┘", Colors.CYAN))
 
     # =========================================================================
     # Environment
     # =========================================================================
     print()
-    print(color("◆ Environment", Colors.CYAN, Colors.BOLD))
-    print(f"  Project:      {PROJECT_ROOT}")
-    print(f"  Python:       {sys.version.split()[0]}")
+    print(color(" 环境", Colors.CYAN, Colors.BOLD))
+    print(f"  项目路径:      {PROJECT_ROOT}")
+    print(f"  Python:        {sys.version.split()[0]}")
 
     env_path = get_env_path()
-    print(f"  .env file:    {check_mark(env_path.exists())} {'exists' if env_path.exists() else 'not found'}")
+    print(f"  .env 文件:     {check_mark(env_path.exists())} {'存在' if env_path.exists() else '未找到'}")
 
     try:
         config = load_config()
@@ -122,7 +119,7 @@ def show_status(args):
     # API Keys
     # =========================================================================
     print()
-    print(color("◆ API Keys", Colors.CYAN, Colors.BOLD))
+    print(color(" API Keys", Colors.CYAN, Colors.BOLD))
 
     # Values may be a single env var name (str) or a tuple of alternates (first found wins).
     keys: dict[str, str | tuple[str, ...]] = {
@@ -177,7 +174,7 @@ def show_status(args):
     # Auth Providers (OAuth)
     # =========================================================================
     print()
-    print(color("◆ Auth Providers", Colors.CYAN, Colors.BOLD))
+    print(color(" Auth Providers", Colors.CYAN, Colors.BOLD))
 
     try:
         from hermes_cli.auth import (
@@ -319,11 +316,11 @@ def show_status(args):
     if managed_nous_tools_enabled():
         features = get_nous_subscription_features(config)
         print()
-        print(color("◆ Nous Tool Gateway", Colors.CYAN, Colors.BOLD))
+        print(color(" Nous Tool Gateway", Colors.CYAN, Colors.BOLD))
         if not features.nous_auth_present:
-            print("  Nous Portal   ✗ not logged in")
+            print("  Nous Portal    not logged in")
         else:
-            print("  Nous Portal   ✓ managed tools available")
+            print("  Nous Portal    managed tools available")
         for feature in features.items():
             if feature.managed_by_nous:
                 state = "active via Nous subscription"
@@ -341,7 +338,7 @@ def show_status(args):
         # Nous OAuth without entitlement, or an opaque inference key without
         # Portal account information, cannot enable the Tool Gateway.
         print()
-        print(color("◆ Nous Tool Gateway", Colors.CYAN, Colors.BOLD))
+        print(color(" Nous Tool Gateway", Colors.CYAN, Colors.BOLD))
         message = format_nous_portal_entitlement_message(
             nous_account_info,
             capability="managed web, image, TTS, STT, browser, and Modal tools",
@@ -354,7 +351,7 @@ def show_status(args):
     # API-Key Providers
     # =========================================================================
     print()
-    print(color("◆ API-Key Providers", Colors.CYAN, Colors.BOLD))
+    print(color(" API-Key Providers", Colors.CYAN, Colors.BOLD))
 
     apikey_providers = {
         "Z.AI / GLM":       ("GLM_API_KEY", "ZAI_API_KEY", "Z_AI_API_KEY"),
@@ -394,7 +391,7 @@ def show_status(args):
     # Terminal Configuration
     # =========================================================================
     print()
-    print(color("◆ Terminal Backend", Colors.CYAN, Colors.BOLD))
+    print(color(" Terminal Backend", Colors.CYAN, Colors.BOLD))
 
     terminal_cfg = config.get("terminal", {}) if isinstance(config.get("terminal"), dict) else {}
     terminal_env = os.getenv("TERMINAL_ENV", "")
@@ -421,7 +418,7 @@ def show_status(args):
     # Messaging Platforms
     # =========================================================================
     print()
-    print(color("◆ Messaging Platforms", Colors.CYAN, Colors.BOLD))
+    print(color(" Messaging Platforms", Colors.CYAN, Colors.BOLD))
 
     platforms = {
         "Telegram": ("TELEGRAM_BOT_TOKEN", "TELEGRAM_HOME_CHANNEL"),
@@ -473,7 +470,7 @@ def show_status(args):
     # Gateway Status
     # =========================================================================
     print()
-    print(color("◆ Gateway Service", Colors.CYAN, Colors.BOLD))
+    print(color(" Gateway Service", Colors.CYAN, Colors.BOLD))
 
     try:
         from hermes_cli.gateway import get_gateway_runtime_snapshot, _format_gateway_pids
@@ -509,7 +506,7 @@ def show_status(args):
     # Cron Jobs
     # =========================================================================
     print()
-    print(color("◆ Scheduled Jobs", Colors.CYAN, Colors.BOLD))
+    print(color(" Scheduled Jobs", Colors.CYAN, Colors.BOLD))
 
     jobs_file = get_hermes_home() / "cron" / "jobs.json"
     if jobs_file.exists():
@@ -529,7 +526,7 @@ def show_status(args):
     # Sessions
     # =========================================================================
     print()
-    print(color("◆ Sessions", Colors.CYAN, Colors.BOLD))
+    print(color(" Sessions", Colors.CYAN, Colors.BOLD))
 
     sessions_file = get_hermes_home() / "sessions" / "sessions.json"
     if sessions_file.exists():
@@ -548,7 +545,7 @@ def show_status(args):
     # =========================================================================
     if deep:
         print()
-        print(color("◆ Deep Checks", Colors.CYAN, Colors.BOLD))
+        print(color(" Deep Checks", Colors.CYAN, Colors.BOLD))
         
         # Check OpenRouter connectivity
         openrouter_key = os.getenv("OPENROUTER_API_KEY", "")

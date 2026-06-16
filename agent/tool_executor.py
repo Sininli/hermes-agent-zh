@@ -251,11 +251,11 @@ def execute_tool_calls_concurrent(agent, assistant_message, messages: list, effe
 
     # ── Pre-flight: interrupt check ──────────────────────────────────
     if agent._interrupt_requested:
-        print(f"{agent.log_prefix}⚡ Interrupt: skipping {num_tools} tool call(s)")
+        print(f"{agent.log_prefix} 中断：跳过 {num_tools} 个工具调用")
         for tc in tool_calls:
             messages.append(make_tool_result_message(
                 tc.function.name,
-                f"[Tool execution cancelled — {tc.function.name} was skipped due to user interrupt]",
+                f"[工具执行已取消——{tc.function.name} 因用户中断被跳过]",
                 tc.id,
             ))
         return
@@ -306,8 +306,8 @@ def execute_tool_calls_concurrent(agent, assistant_message, messages: list, effe
                     else:
                         _ts_scope_block = json.dumps({
                             "error": (
-                                f"'{_underlying}' is not available in this session. "
-                                "Use tool_search to find tools you can call."
+                                f"'{_underlying}' 在此会话中不可用。"
+                                "请使用 tool_search 查找你可以调用的工具。"
                             ),
                         }, ensure_ascii=False)
         except Exception:
@@ -385,7 +385,7 @@ def execute_tool_calls_concurrent(agent, assistant_message, messages: list, effe
                         tool_call_id=getattr(tool_call, "id", "") or "",
                         status="blocked",
                         error_type="guardrail_block",
-                        error_message=getattr(guardrail_decision, "message", None) or "Tool blocked by guardrail policy",
+                        error_message=getattr(guardrail_decision, "message", None) or "工具被护栏策略阻止",
                         middleware_trace=list(middleware_trace),
                     )
 
@@ -418,15 +418,15 @@ def execute_tool_calls_concurrent(agent, assistant_message, messages: list, effe
     # ── Logging / callbacks ──────────────────────────────────────────
     tool_names_str = ", ".join(name for _, name, _, _, _, _ in parsed_calls)
     if not agent.quiet_mode and getattr(agent, "tool_progress_mode", "all") != "off":
-        print(f"  ⚡ Concurrent: {num_tools} tool calls — {tool_names_str}")
+        print(f"   并发执行：{num_tools} 个工具调用——{tool_names_str}")
         for i, (tc, name, args, middleware_trace, block_result, blocked_by_guardrail) in enumerate(parsed_calls, 1):
             args_str = json.dumps(args, ensure_ascii=False)
             if agent.verbose_logging:
-                print(f"  📞 Tool {i}: {name}({list(args.keys())})")
-                print(agent._wrap_verbose("Args: ", json.dumps(args, indent=2, ensure_ascii=False)))
+                print(f"   工具 {i}: {name}({list(args.keys())})")
+                print(agent._wrap_verbose("参数：", json.dumps(args, indent=2, ensure_ascii=False)))
             else:
                 args_preview = args_str[:agent.log_prefix_chars] + "..." if len(args_str) > agent.log_prefix_chars else args_str
-                print(f"  📞 Tool {i}: {name}({list(args.keys())}) - {args_preview}")
+                print(f"   工具 {i}: {name}({list(args.keys())}) - {args_preview}")
 
     for tc, name, args, middleware_trace, block_result, blocked_by_guardrail in parsed_calls:
         if block_result is not None:
@@ -547,7 +547,7 @@ def execute_tool_calls_concurrent(agent, assistant_message, messages: list, effe
     spinner = None
     if agent._should_emit_quiet_tool_messages() and agent._should_start_quiet_spinner():
         face = random.choice(KawaiiSpinner.get_waiting_faces())
-        spinner = KawaiiSpinner(f"{face} ⚡ running {num_tools} tools concurrently", spinner_type='dots', print_fn=agent._print_fn)
+        spinner = KawaiiSpinner(f"{face}  正在并发运行 {num_tools} 个工具", spinner_type='dots', print_fn=agent._print_fn)
         spinner.start()
 
     try:
@@ -592,8 +592,8 @@ def execute_tool_calls_concurrent(agent, assistant_message, messages: list, effe
                         if not _interrupt_logged:
                             _interrupt_logged = True
                             agent._vprint(
-                                f"{agent.log_prefix}⚡ Interrupt: cancelling "
-                                f"{len(not_done)} pending concurrent tool(s)",
+                                f"{agent.log_prefix} 中断：取消 "
+                                f"{len(not_done)} 个待处理的并发工具",
                                 force=True,
                             )
                         for f in not_done:
@@ -620,7 +620,7 @@ def execute_tool_calls_concurrent(agent, assistant_message, messages: list, effe
             # Build a summary message for the spinner stop
             completed = sum(1 for r in results if r is not None)
             total_dur = sum(r[3] for r in results if r is not None)
-            spinner.stop(f"⚡ {completed}/{num_tools} tools completed in {total_dur:.1f}s total")
+            spinner.stop(f" {completed}/{num_tools} 个工具完成，共耗时 {total_dur:.1f}s")
 
     # ── Post-execution: display per-tool results ─────────────────────
     for i, (tc, name, args, middleware_trace, block_result, blocked_by_guardrail) in enumerate(parsed_calls):
@@ -629,7 +629,7 @@ def execute_tool_calls_concurrent(agent, assistant_message, messages: list, effe
         if r is None:
             # Tool was cancelled (interrupt) or thread didn't return
             if agent._interrupt_requested:
-                function_result = f"[Tool execution cancelled — {name} was skipped due to user interrupt]"
+                function_result = f"[工具执行已取消——{name} 因用户中断被跳过]"
                 _emit_terminal_post_tool_call(
                     agent,
                     function_name=name,
@@ -643,7 +643,7 @@ def execute_tool_calls_concurrent(agent, assistant_message, messages: list, effe
                     middleware_trace=list(middleware_trace),
                 )
             else:
-                function_result = f"Error executing tool '{name}': thread did not return a result"
+                function_result = f"执行工具 '{name}': 线程未返回结果"
                 _emit_terminal_post_tool_call(
                     agent,
                     function_name=name,
@@ -705,11 +705,11 @@ def execute_tool_calls_concurrent(agent, assistant_message, messages: list, effe
         elif not agent.quiet_mode and getattr(agent, "tool_progress_mode", "all") != "off":
             _preview_str = _multimodal_text_summary(function_result)
             if agent.verbose_logging:
-                print(f"  ✅ Tool {i+1} completed in {tool_duration:.2f}s")
-                print(agent._wrap_verbose("Result: ", _preview_str))
+                print(f"   工具 {i+1} 在 {tool_duration:.2f}s 内完成")
+                print(agent._wrap_verbose("结果：", _preview_str))
             else:
                 response_preview = _preview_str[:agent.log_prefix_chars] + "..." if len(_preview_str) > agent.log_prefix_chars else _preview_str
-                print(f"  ✅ Tool {i+1} completed in {tool_duration:.2f}s - {response_preview}")
+                print(f"   工具 {i+1} 在 {tool_duration:.2f}s 内完成 - {response_preview}")
 
         agent._current_tool = None
         agent._touch_activity(f"tool completed: {name} ({tool_duration:.1f}s)")
@@ -776,13 +776,13 @@ def execute_tool_calls_sequential(agent, assistant_message, messages: list, effe
         if agent._interrupt_requested:
             remaining_calls = assistant_message.tool_calls[i-1:]
             if remaining_calls:
-                agent._vprint(f"{agent.log_prefix}⚡ Interrupt: skipping {len(remaining_calls)} tool call(s)", force=True)
+                agent._vprint(f"{agent.log_prefix} 中断：跳过 {len(remaining_calls)} 个工具调用", force=True)
             for skipped_tc in remaining_calls:
                 skipped_name = skipped_tc.function.name
                 skip_msg = {
                     "role": "tool",
                     "name": skipped_name,
-                    "content": f"[Tool execution cancelled — {skipped_name} was skipped due to user interrupt]",
+                    "content": f"[工具执行已取消——{skipped_name} 因用户中断被跳过]",
                     "tool_call_id": skipped_tc.id,
                 }
                 messages.append(skip_msg)
@@ -812,8 +812,8 @@ def execute_tool_calls_sequential(agent, assistant_message, messages: list, effe
                         function_args = _underlying_args
                     else:
                         _ts_scope_block = (
-                            f"'{_underlying}' is not available in this session. "
-                            "Use tool_search to find tools you can call."
+                            f"'{_underlying}' 在此会话中不可用。"
+                            "请使用 tool_search 查找你可以调用的工具。"
                         )
         except Exception:
             pass
@@ -869,11 +869,11 @@ def execute_tool_calls_sequential(agent, assistant_message, messages: list, effe
         if not agent.quiet_mode and getattr(agent, "tool_progress_mode", "all") != "off":
             args_str = json.dumps(function_args, ensure_ascii=False)
             if agent.verbose_logging:
-                print(f"  📞 Tool {i}: {function_name}({list(function_args.keys())})")
-                print(agent._wrap_verbose("Args: ", json.dumps(function_args, indent=2, ensure_ascii=False)))
+                print(f"   工具 {i}: {function_name}({list(function_args.keys())})")
+                print(agent._wrap_verbose("参数：", json.dumps(function_args, indent=2, ensure_ascii=False)))
             else:
                 args_preview = args_str[:agent.log_prefix_chars] + "..." if len(args_str) > agent.log_prefix_chars else args_str
-                print(f"  📞 Tool {i}: {function_name}({list(function_args.keys())}) - {args_preview}")
+                print(f"   工具 {i}: {function_name}({list(function_args.keys())}) - {args_preview}")
 
         if not _execution_blocked:
             agent._current_tool = function_name
@@ -958,7 +958,7 @@ def execute_tool_calls_sequential(agent, assistant_message, messages: list, effe
                 tool_call_id=getattr(tool_call, "id", "") or "",
                 status="blocked",
                 error_type="guardrail_block",
-                error_message=getattr(_guardrail_block_decision, "message", None) or "Tool blocked by guardrail policy",
+                error_message=getattr(_guardrail_block_decision, "message", None) or "工具被护栏策略阻止",
                 middleware_trace=list(middleware_trace),
             )
         elif function_name == "todo":
@@ -1386,16 +1386,16 @@ def execute_tool_calls_sequential(agent, assistant_message, messages: list, effe
 
         if not agent.quiet_mode and getattr(agent, "tool_progress_mode", "all") != "off":
             if agent.verbose_logging:
-                print(f"  ✅ Tool {i} completed in {tool_duration:.2f}s")
-                print(agent._wrap_verbose("Result: ", function_result))
+                print(f"   工具 {i} 在 {tool_duration:.2f}s 内完成")
+                print(agent._wrap_verbose("结果：", function_result))
             else:
                 _fr_str = function_result if isinstance(function_result, str) else str(function_result)
                 response_preview = _fr_str[:agent.log_prefix_chars] + "..." if len(_fr_str) > agent.log_prefix_chars else _fr_str
-                print(f"  ✅ Tool {i} completed in {tool_duration:.2f}s - {response_preview}")
+                print(f"   工具 {i} 在 {tool_duration:.2f}s 内完成 - {response_preview}")
 
         if agent._interrupt_requested and i < len(assistant_message.tool_calls):
             remaining = len(assistant_message.tool_calls) - i
-            agent._vprint(f"{agent.log_prefix}⚡ Interrupt: skipping {remaining} remaining tool call(s)", force=True)
+            agent._vprint(f"{agent.log_prefix} 中断：跳过 {remaining} 个剩余工具调用", force=True)
             for skipped_tc in assistant_message.tool_calls[i:]:
                 skipped_name = skipped_tc.function.name
                 messages.append(make_tool_result_message(

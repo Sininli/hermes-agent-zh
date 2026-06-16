@@ -1366,7 +1366,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
             if creds is not None:
                 who = sender_key or "shared (legacy)"
                 await _reply(
-                    "✅ Native attachment delivery is **active** for "
+                    " Native attachment delivery is **active** for "
                     f"`{who}`.\n"
                     f"Token: `{token_path}`\n"
                     "Send `/setup-files revoke` to disable."
@@ -1374,7 +1374,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
                 return True
             if not client_secret_present:
                 await _reply(
-                    "🔧 Native attachment delivery is **not configured**.\n"
+                    " Native attachment delivery is **not configured**.\n"
                     "**Step 1 (one-time, on the host):** create OAuth client "
                     "credentials at "
                     "https://console.cloud.google.com/apis/credentials → "
@@ -1388,7 +1388,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
                 )
                 return True
             await _reply(
-                "🔧 Client credentials are stored but you haven't "
+                " Client credentials are stored but you haven't "
                 "authorized yet. Send `/setup-files start` to begin."
             )
             return True
@@ -1396,7 +1396,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
         if arg == "start":
             if not oauth_helper._client_secret_path().exists():
                 await _reply(
-                    "⚠️ No client credentials stored for this profile. Send "
+                    "️ No client credentials stored for this profile. Send "
                     "`/setup-files` (no args) for setup instructions."
                 )
                 return True
@@ -1413,7 +1413,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
                 auth_url = buf.getvalue().strip().splitlines()[-1]
             except SystemExit:
                 await _reply(
-                    "❌ Couldn't generate the OAuth URL. Check the gateway "
+                    " Couldn't generate the OAuth URL. Check the gateway "
                     "logs and verify the client_secret.json is valid."
                 )
                 return True
@@ -1421,7 +1421,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
                 logger.warning(
                     "[GoogleChat] /setup-files start failed: %s", exc,
                 )
-                await _reply(f"❌ Error: {exc}")
+                await _reply(f" Error: {exc}")
                 return True
             await _reply(
                 "1. Open this URL in your browser and authorize:\n"
@@ -1449,7 +1449,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
                 logger.warning(
                     "[GoogleChat] /setup-files revoke failed: %s", exc,
                 )
-                await _reply(f"❌ Error revoking: {exc}")
+                await _reply(f" Error revoking: {exc}")
                 return True
             # Wipe in-memory creds so subsequent uploads fall through to
             # the setup-instructions text notice immediately. Scope the
@@ -1462,7 +1462,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
             else:
                 self._user_credentials = None
                 self._user_chat_api = None
-            await _reply(f"✅ Done.\n```\n{output}\n```")
+            await _reply(f" Done.\n```\n{output}\n```")
             return True
 
         # Anything else is treated as the auth code or the failed-redirect
@@ -1478,7 +1478,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
             output = buf.getvalue().strip()
         except SystemExit:
             await _reply(
-                "❌ Token exchange failed. The code may have expired or "
+                " Token exchange failed. The code may have expired or "
                 "the URL is malformed. Send `/setup-files start` to get "
                 "a fresh OAuth URL."
             )
@@ -1487,7 +1487,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
             logger.warning(
                 "[GoogleChat] /setup-files exchange failed: %s", exc,
             )
-            await _reply(f"❌ Error: {exc}")
+            await _reply(f" Error: {exc}")
             return True
 
         # Re-load credentials into the adapter so the next file send uses
@@ -1507,7 +1507,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
                     self._user_credentials = new_creds
                     self._user_chat_api = new_api
                 await _reply(
-                    "✅ Authorized! Native attachment delivery is now "
+                    " Authorized! Native attachment delivery is now "
                     "active. Try asking me to send you a PDF."
                 )
                 return True
@@ -1517,7 +1517,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
             )
 
         await _reply(
-            "⚠️ Token exchanged but the gateway couldn't load the new "
+            "️ Token exchanged but the gateway couldn't load the new "
             "credentials in-memory. Restart the gateway and the token "
             f"at `{oauth_helper._token_path(sender_key)}` will be picked "
             f"up.\nHelper output:\n```\n{output}\n```"
@@ -1797,7 +1797,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
         self.pause_typing_for_chat(chat_id)
         try:
             # Convert standard Markdown emitted by the LLM to Chat's dialect
-            # and strip invisible Unicode that renders as tofu (□). Runs
+            # and strip invisible Unicode that renders as tofu (). Runs
             # BEFORE chunking so the size limit applies to the rendered
             # form, not the source markdown.
             chunks = self._chunk_text(self.format_message(content))
@@ -1884,7 +1884,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
         ``GatewayStreamConsumer`` and ``send_progress_messages`` both gate
         on this method being overridden (see gateway/run.py:10199 and
         gateway/stream_consumer.py). Without it, Google Chat shows no
-        tool activity (no "🔍 web_search…", no progressive token edits).
+        tool activity (no " web_search…", no progressive token edits).
 
         ``message_id`` is the Google Chat resource name
         ``spaces/X/messages/Y``. ``finalize`` is unused here — Google
@@ -1999,7 +1999,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
     # ------------------------------------------------------------------
     # Outbound formatting
     # ------------------------------------------------------------------
-    # Invisible Unicode codepoints that render as tofu (□) in Google
+    # Invisible Unicode codepoints that render as tofu () in Google
     # Chat's restricted font stack. ZWJ/ZWNJ/ZWS are the glue inside
     # composite emoji and bidirectional text; Variation Selectors
     # control text-vs-emoji presentation but Chat ignores them and
@@ -2890,7 +2890,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
         if caption:
             lines.append(caption)
         lines.extend([
-            f"⚠️ No he podido adjuntar **{filename}**.",
+            f"️ No he podido adjuntar **{filename}**.",
             "Google Chat sólo permite adjuntar archivos cuando el bot tiene "
             "permiso explícito tuyo (OAuth de usuario). Es un consentimiento "
             "único que se hace desde este chat.",
@@ -3106,7 +3106,7 @@ def interactive_setup() -> None:
             save_env_value("GOOGLE_CHAT_ALLOWED_USERS", "")
     else:
         save_env_value("GOOGLE_CHAT_ALLOW_ALL_USERS", "true")
-        print_warning("⚠️  Open access — anyone who can DM the bot can command it.")
+        print_warning("️  Open access — anyone who can DM the bot can command it.")
 
     home = prompt(
         "Home space for cron/notification delivery (e.g. spaces/AAAA, or empty)",
@@ -3322,7 +3322,7 @@ def register(ctx) -> None:
         # Chat caps text messages at 4096 chars; we leave margin to fit
         # the "Hermes is thinking..." marker patches and edit overhead.
         max_message_length=4000,
-        emoji="💬",
+        emoji="",
         allow_update_command=True,
         platform_hint=(
             "You are on Google Chat. Limited markdown subset is rendered: "

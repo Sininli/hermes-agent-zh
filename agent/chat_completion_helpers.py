@@ -398,13 +398,13 @@ def interruptible_api_call(agent, api_kwargs: dict):
             )
             if _silent_hint:
                 agent._buffer_status(
-                    f"⚠️ No first byte from provider in {int(_elapsed)}s "
+                    f"️ No first byte from provider in {int(_elapsed)}s "
                     f"(codex stream, model: {api_kwargs.get('model', 'unknown')}). "
                     f"Reconnecting. {_silent_hint}"
                 )
             else:
                 agent._buffer_status(
-                    f"⚠️ No first byte from provider in {int(_elapsed)}s "
+                    f"️ No first byte from provider in {int(_elapsed)}s "
                     f"(codex stream, model: {api_kwargs.get('model', 'unknown')}). "
                     f"Reconnecting."
                 )
@@ -450,7 +450,7 @@ def interruptible_api_call(agent, api_kwargs: dict):
                 f"{_est_tokens_for_codex_watchdog:,}",
             )
             agent._buffer_status(
-                f"⚠️ Codex stream sent no events for {int(_event_stale_elapsed)}s "
+                f"️ Codex stream sent no events for {int(_event_stale_elapsed)}s "
                 f"after first byte (model: {api_kwargs.get('model', 'unknown')}). "
                 f"Reconnecting."
             )
@@ -488,13 +488,13 @@ def interruptible_api_call(agent, api_kwargs: dict):
             )
             if _silent_hint:
                 agent._buffer_status(
-                    f"⚠️ No response from provider for {int(_elapsed)}s "
+                    f"️ No response from provider for {int(_elapsed)}s "
                     f"(non-streaming, model: {api_kwargs.get('model', 'unknown')}). "
                     f"{_silent_hint}"
                 )
             else:
                 agent._buffer_status(
-                    f"⚠️ No response from provider for {int(_elapsed)}s "
+                    f"️ No response from provider for {int(_elapsed)}s "
                     f"(non-streaming, model: {api_kwargs.get('model', 'unknown')}). "
                     f"Aborting call."
                 )
@@ -637,7 +637,7 @@ def build_api_kwargs(agent, api_messages: list) -> dict:
                 tools_for_api, _ = strip_slash_enum(tools_for_api)
             except Exception as exc:
                 logger.warning(
-                    "%s⚠️ Failed to sanitize tool schemas for xAI: %s",
+                    "%s️ Failed to sanitize tool schemas for xAI: %s",
                     getattr(agent, "log_prefix", ""), exc,
                 )
 
@@ -1304,7 +1304,7 @@ def try_activate_fallback(agent, reason: "FailoverReason | None" = None) -> bool
 
 def handle_max_iterations(agent, messages: list, api_call_count: int) -> str:
     """Request a summary when max iterations are reached. Returns the final response text."""
-    print(f"⚠️  Reached maximum iterations ({agent.max_iterations}). Requesting summary...")
+    print(f"️  Reached maximum iterations ({agent.max_iterations}). Requesting summary...")
 
     summary_request = (
         "You've reached the maximum number of tool-calling iterations allowed. "
@@ -1635,7 +1635,7 @@ def interruptible_streaming_api_call(agent, api_kwargs: dict, *, on_first_delta=
                     if is_streaming_access_denied_error(_bedrock_exc):
                         agent._disable_streaming = True
                         agent._safe_print(
-                            "\n⚠  AWS IAM denied bedrock:InvokeModelWithResponseStream — "
+                            "\n  AWS IAM denied bedrock:InvokeModelWithResponseStream — "
                             "falling back to non-streaming InvokeModel.\n"
                             "   Grant that action to restore streaming output.\n"
                         )
@@ -2331,7 +2331,7 @@ def interruptible_streaming_api_call(agent, api_kwargs: dict, *, on_first_delta=
                         # additional INFO line needed.
                         try:
                             agent._fire_stream_delta(
-                                "\n\n⚠ Connection dropped mid tool-call; "
+                                "\n\n Connection dropped mid tool-call; "
                                 "reconnecting…\n\n"
                             )
                         except Exception:
@@ -2433,12 +2433,12 @@ def interruptible_streaming_api_call(agent, api_kwargs: dict, *, on_first_delta=
                             diag=request_client_holder.get("diag"),
                         )
                         agent._buffer_status(
-                            "❌ Provider returned malformed streaming data after "
+                            " Provider returned malformed streaming data after "
                             f"{_max_stream_retries + 1} attempts. "
                             "The provider may be experiencing issues — "
                             "try again in a moment."
                             if _is_stream_parse_err else
-                            "❌ Connection to provider failed after "
+                            " Connection to provider failed after "
                             f"{_max_stream_retries + 1} attempts. "
                             "The provider may be experiencing issues — "
                             "try again in a moment."
@@ -2473,11 +2473,11 @@ def interruptible_streaming_api_call(agent, api_kwargs: dict, *, on_first_delta=
                         if _is_stream_unsupported or _is_bedrock_stream_denied:
                             agent._disable_streaming = True
                             agent._safe_print(
-                                "\n⚠  AWS IAM denied bedrock:InvokeModelWithResponseStream. "
+                                "\n  AWS IAM denied bedrock:InvokeModelWithResponseStream. "
                                 "Switching to non-streaming.\n"
                                 "   Grant that action to restore streaming output.\n"
                                 if _is_bedrock_stream_denied else
-                                "\n⚠  Streaming is not supported for this "
+                                "\n  Streaming is not supported for this "
                                 "model/provider. Switching to non-streaming.\n"
                                 "   To avoid this delay, set display.streaming: false "
                                 "in config.yaml\n"
@@ -2565,7 +2565,7 @@ def interruptible_streaming_api_call(agent, api_kwargs: dict, *, on_first_delta=
                 api_kwargs.get("model", "unknown"), f"{_est_ctx:,}",
             )
             agent._buffer_status(
-                f"⚠️ No response from provider for {int(_stale_elapsed)}s "
+                f"️ No response from provider for {int(_stale_elapsed)}s "
                 f"(model: {api_kwargs.get('model', 'unknown')}, "
                 f"context: ~{_est_ctx:,} tokens). "
                 f"Reconnecting..."
@@ -2625,7 +2625,7 @@ def interruptible_streaming_api_call(agent, api_kwargs: dict, *, on_first_delta=
                 if len(_partial_names) > 3:
                     _name_str += f", +{len(_partial_names) - 3} more"
                 _warn = (
-                    f"\n\n⚠ Stream stalled mid tool-call "
+                    f"\n\n Stream stalled mid tool-call "
                     f"({_name_str}); the action was not executed. "
                     f"Ask me to retry if you want to continue."
                 )

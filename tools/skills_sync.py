@@ -542,7 +542,7 @@ def sync_skills(quiet: bool = False) -> dict:
                         manifest[skill_name] = bundled_hash
                     elif not quiet:
                         print(
-                            f"  ⚠ {skill_name}: bundled version shipped but you "
+                            f"   {skill_name}: bundled version shipped but you "
                             f"already have a local skill by this name — yours "
                             f"was kept. Run `hermes skills reset {skill_name}` "
                             f"to replace it with the bundled version."

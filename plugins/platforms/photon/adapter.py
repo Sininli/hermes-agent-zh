@@ -948,7 +948,7 @@ class PhotonAdapter(BasePlatformAdapter):
 
     # -- Reactions (tapbacks) -----------------------------------------------
     #
-    # Same lifecycle-hook pattern as Telegram/Discord: 👀 while processing,
+    # Same lifecycle-hook pattern as Telegram/Discord:  while processing,
     # swapped for 👍/👎 on completion. Opt-in via PHOTON_REACTIONS — iMessage
     # is a personal-texting channel, and a tapback on every text is noisy.
 
@@ -1086,7 +1086,7 @@ class PhotonAdapter(BasePlatformAdapter):
         return {"success": True, "message_id": target}
 
     async def on_processing_start(self, event: MessageEvent) -> None:
-        """Tapback 👀 on the triggering message while the agent works."""
+        """Tapback  on the triggering message while the agent works."""
         if not self._reactions_enabled():
             return
         chat_id = getattr(event.source, "chat_id", None)
@@ -1097,7 +1097,7 @@ class PhotonAdapter(BasePlatformAdapter):
     async def on_processing_complete(
         self, event: MessageEvent, outcome: ProcessingOutcome
     ) -> None:
-        """Swap the 👀 progress tapback for a 👍/👎 result.
+        """Swap the  progress tapback for a 👍/👎 result.
 
         Remove-then-add rather than a bare replace: deterministic whether the
         platform replaces a sender's previous tapback or stacks them, and it
@@ -1504,7 +1504,7 @@ def register(ctx) -> None:
         allowed_users_env="PHOTON_ALLOWED_USERS",
         allow_all_env="PHOTON_ALLOW_ALL_USERS",
         max_message_length=_MAX_MESSAGE_LENGTH,
-        emoji="📱",
+        emoji="",
         # iMessage carries E.164 phone numbers — treat session descriptions
         # as PII-sensitive so they get redacted before reaching the LLM
         # (matches the BlueBubbles iMessage channel in _PII_SAFE_PLATFORMS).

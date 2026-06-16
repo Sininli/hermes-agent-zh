@@ -520,6 +520,6 @@ registry.register(
     handler=_handle_x_search,
     check_fn=check_x_search_requirements,
     requires_env=["XAI_API_KEY"],
-    emoji="🐦",
+    emoji="",
     max_result_size_chars=100_000,
 )

@@ -930,12 +930,12 @@ class MatrixAdapter(BasePlatformAdapter):
 
         # Matrix reaction-based dangerous command approvals.
         self._approval_reaction_map = {
-            "✅": "once",
+            "": "once",
             "♾️": "always",
             "♾": "always",
             "\u267e\ufe0f": "always",
             "\u267e": "always",
-            "❌": "deny",
+            "": "deny",
             "❎": "deny",
         }
         self._approval_prompts_by_event: Dict[str, _MatrixApprovalPrompt] = {}
@@ -1916,13 +1916,13 @@ class MatrixAdapter(BasePlatformAdapter):
         requester_user_id = str((metadata or {}).get("requester_user_id") or "") or None
         cmd_preview = command[:2000] + "..." if len(command) > 2000 else command
         text = (
-            "⚠️ **Dangerous command requires approval**\n"
+            "️ **Dangerous command requires approval**\n"
             f"```\n{cmd_preview}\n```\n"
             f"Reason: {description}\n\n"
             "Reply `!approve` to execute, `!approve session` to approve this pattern for the session, "
             "`!approve always` to approve permanently, or `!deny` to cancel.\n\n"
             "You can also click the reaction to approve:\n"
-            "✅ = approve\n"
+            " = approve\n"
             "❎ = deny"
         )
 
@@ -1943,7 +1943,7 @@ class MatrixAdapter(BasePlatformAdapter):
         self._approval_prompts_by_event[result.message_id] = prompt
         self._approval_prompt_by_session[session_key] = result.message_id
 
-        for emoji in ("✅", "♾️", "❌"):
+        for emoji in ("", "♾️", ""):
             try:
                 reaction_result = await self._send_reaction(chat_id, result.message_id, emoji)
                 # Save the bot's reaction event_id for later cleanup
@@ -1999,7 +1999,7 @@ class MatrixAdapter(BasePlatformAdapter):
             provider_label = current_provider
 
         lines = [
-            "⚙ **Model Configuration**",
+            " **Model Configuration**",
             f"Current model: `{current_model or 'unknown'}`",
             f"Provider: {provider_label or 'unknown'}",
             "",

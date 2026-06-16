@@ -381,7 +381,7 @@ def _prompt_plugin_env_vars(manifest: dict, console) -> None:
         if value:
             save_env_value(name, value)
             os.environ[name] = value
-            console.print(f"  [green]✓[/green] Saved to {display_hermes_home()}/.env")
+            console.print(f"  [green][/green] Saved to {display_hermes_home()}/.env")
         else:
             console.print(f"  [dim]  Skipped (set {name} in {display_hermes_home()}/.env later)[/dim]")
 
@@ -410,7 +410,7 @@ def _display_after_install(plugin_dir: Path, identifier: str) -> None:
                 f"[green bold]Plugin installed:[/] {identifier}\n"
                 f"[dim]Location:[/] {plugin_dir}",
                 border_style="green",
-                title="✓ Installed",
+                title=" Installed",
                 expand=False,
             )
         )
@@ -423,7 +423,7 @@ def _display_removed(name: str, plugins_dir: Path) -> None:
 
     console = Console()
     console.print()
-    console.print(f"[red]✗[/red] Plugin [bold]{name}[/bold] removed from {plugins_dir}")
+    console.print(f"[red][/red] Plugin [bold]{name}[/bold] removed from {plugins_dir}")
     console.print()
 
 
@@ -619,7 +619,7 @@ def cmd_install(
         _save_enabled_set(enabled)
         _save_disabled_set(disabled)
         console.print(
-            f"[green]✓[/green] Plugin [bold]{installed_name}[/bold] enabled.",
+            f"[green][/green] Plugin [bold]{installed_name}[/bold] enabled.",
         )
     else:
         console.print(
@@ -665,10 +665,10 @@ def cmd_update(name: str) -> None:
     out = output.strip()
     if "Already up to date" in out:
         console.print(
-            f"[green]✓[/green] Plugin [bold]{name}[/bold] is already up to date."
+            f"[green][/green] Plugin [bold]{name}[/bold] is already up to date."
         )
     else:
-        console.print(f"[green]✓[/green] Plugin [bold]{name}[/bold] updated.")
+        console.print(f"[green][/green] Plugin [bold]{name}[/bold] updated.")
         console.print(f"[dim]{out}[/dim]")
 
 
@@ -797,7 +797,7 @@ def cmd_enable(name: str) -> None:
     _save_enabled_set(enabled)
     _save_disabled_set(disabled)
     console.print(
-        f"[green]✓[/green] Plugin [bold]{key}[/bold] enabled. "
+        f"[green][/green] Plugin [bold]{key}[/bold] enabled. "
         "Takes effect on next session."
     )
 

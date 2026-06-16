@@ -761,7 +761,7 @@ def _needs_lightpanda_fallback(engine: str, command: str, result: Dict[str, Any]
 def _annotate_lightpanda_fallback(result: Dict[str, Any], reason: str) -> Dict[str, Any]:
     """Add a user-visible Chrome fallback warning to a browser command result."""
     warning = (
-        "⚠ Lightpanda fallback: Chrome was used for this browser action. "
+        " Lightpanda fallback: Chrome was used for this browser action. "
         f"{reason}"
     )
     annotated = dict(result)
@@ -3734,7 +3734,7 @@ if __name__ == "__main__":
     """
     Simple test/demo when run directly
     """
-    print("🌐 Browser Tool Module")
+    print(" Browser Tool Module")
     print("=" * 40)
 
     _cp = _get_cloud_provider()
@@ -3743,9 +3743,9 @@ if __name__ == "__main__":
 
     # Check requirements
     if check_browser_requirements():
-        print("✅ All requirements met")
+        print(" All requirements met")
     else:
-        print("❌ Missing requirements:")
+        print(" Missing requirements:")
         try:
             browser_cmd = _find_agent_browser()
             if _requires_real_termux_browser_install(browser_cmd):
@@ -3772,7 +3772,7 @@ if __name__ == "__main__":
             print(f"   - {_cp.provider_name()} credentials not configured")
             print("   Tip: set browser.cloud_provider to 'local' to use free local mode instead")
 
-    print("\n📋 Available Browser Tools:")
+    print("\n Available Browser Tools:")
     for schema in BROWSER_TOOL_SCHEMAS:
         print(f"  🔹 {schema['name']}: {schema['description'][:60]}...")
 
@@ -3795,7 +3795,7 @@ registry.register(
     schema=_BROWSER_SCHEMA_MAP["browser_navigate"],
     handler=lambda args, **kw: browser_navigate(url=args.get("url", ""), task_id=kw.get("task_id")),
     check_fn=check_browser_requirements,
-    emoji="🌐",
+    emoji="",
 )
 registry.register(
     name="browser_snapshot",
@@ -3804,7 +3804,7 @@ registry.register(
     handler=lambda args, **kw: browser_snapshot(
         full=args.get("full", False), task_id=kw.get("task_id"), user_task=kw.get("user_task")),
     check_fn=check_browser_requirements,
-    emoji="📸",
+    emoji="",
 )
 registry.register(
     name="browser_click",
@@ -3828,7 +3828,7 @@ registry.register(
     schema=_BROWSER_SCHEMA_MAP["browser_scroll"],
     handler=lambda args, **kw: browser_scroll(direction=args.get("direction", "down"), task_id=kw.get("task_id")),
     check_fn=check_browser_requirements,
-    emoji="📜",
+    emoji="",
 )
 registry.register(
     name="browser_back",
@@ -3836,7 +3836,7 @@ registry.register(
     schema=_BROWSER_SCHEMA_MAP["browser_back"],
     handler=lambda args, **kw: browser_back(task_id=kw.get("task_id")),
     check_fn=check_browser_requirements,
-    emoji="◀️",
+    emoji="️",
 )
 registry.register(
     name="browser_press",
@@ -3861,7 +3861,7 @@ registry.register(
     schema=_BROWSER_SCHEMA_MAP["browser_vision"],
     handler=lambda args, **kw: browser_vision(question=args.get("question", ""), annotate=args.get("annotate", False), task_id=kw.get("task_id")),
     check_fn=check_browser_vision_requirements,
-    emoji="👁️",
+    emoji="️",
 )
 registry.register(
     name="browser_console",

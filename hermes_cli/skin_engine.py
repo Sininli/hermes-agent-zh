@@ -61,15 +61,15 @@ All fields are optional. Missing values inherit from the ``default`` skin.
         - "plotting"
       wings:                              # Optional left/right spinner decorations
         - ["⟪⚔", "⚔⟫"]                  # Each entry is [left, right] pair
-        - ["⟪▲", "▲⟫"]
+        - ["⟪", "⟫"]
 
     # Branding: text strings used throughout the CLI
     branding:
       agent_name: "Hermes Agent"          # Banner title, status display
       welcome: "Welcome message"          # Shown at CLI startup
-      goodbye: "Goodbye! ⚕"              # Shown on exit
-      response_label: " ⚕ Hermes "       # Response box header label
-      prompt_symbol: "❯"                 # Input prompt symbol (bare token; renderers add trailing space)
+      goodbye: "Goodbye! "              # Shown on exit
+      response_label: "  Hermes "       # Response box header label
+      prompt_symbol: ""                 # Input prompt symbol (bare token; renderers add trailing space)
       help_header: "(^_^)? Commands"      # /help header text
 
     # Tool prefix: character for tool output lines (default: ┊)
@@ -189,9 +189,9 @@ _BUILTIN_SKINS: Dict[str, Dict[str, Any]] = {
         "branding": {
             "agent_name": "Hermes Agent",
             "welcome": "Welcome to Hermes Agent! Type your message or /help for commands.",
-            "goodbye": "Goodbye! ⚕",
-            "response_label": " ⚕ Hermes ",
-            "prompt_symbol": "❯",
+            "goodbye": "Goodbye! ",
+            "response_label": "  Hermes ",
+            "prompt_symbol": "",
             "help_header": "(^_^)? Available Commands",
         },
         "tool_prefix": "┊",
@@ -225,15 +225,15 @@ _BUILTIN_SKINS: Dict[str, Dict[str, Any]] = {
             "session_border": "#6E584B",
         },
         "spinner": {
-            "waiting_faces": ["(⚔)", "(⛨)", "(▲)", "(<>)", "(/)"],
-            "thinking_faces": ["(⚔)", "(⛨)", "(▲)", "(⌁)", "(<>)"],
+            "waiting_faces": ["(⚔)", "(⛨)", "()", "(<>)", "(/)"],
+            "thinking_faces": ["(⚔)", "(⛨)", "()", "(⌁)", "(<>)"],
             "thinking_verbs": [
                 "forging", "marching", "sizing the field", "holding the line",
                 "hammering plans", "tempering steel", "plotting impact", "raising the shield",
             ],
             "wings": [
                 ["⟪⚔", "⚔⟫"],
-                ["⟪▲", "▲⟫"],
+                ["⟪", "⟫"],
                 ["⟪╸", "╺⟫"],
                 ["⟪⛨", "⛨⟫"],
             ],
@@ -300,9 +300,9 @@ _BUILTIN_SKINS: Dict[str, Dict[str, Any]] = {
         "branding": {
             "agent_name": "Hermes Agent",
             "welcome": "Welcome to Hermes Agent! Type your message or /help for commands.",
-            "goodbye": "Goodbye! ⚕",
-            "response_label": " ⚕ Hermes ",
-            "prompt_symbol": "❯",
+            "goodbye": "Goodbye! ",
+            "response_label": "  Hermes ",
+            "prompt_symbol": "",
             "help_header": "[?] Available Commands",
         },
         "tool_prefix": "┊",
@@ -339,9 +339,9 @@ _BUILTIN_SKINS: Dict[str, Dict[str, Any]] = {
         "branding": {
             "agent_name": "Hermes Agent",
             "welcome": "Welcome to Hermes Agent! Type your message or /help for commands.",
-            "goodbye": "Goodbye! ⚕",
-            "response_label": " ⚕ Hermes ",
-            "prompt_symbol": "❯",
+            "goodbye": "Goodbye! ",
+            "response_label": "  Hermes ",
+            "prompt_symbol": "",
             "help_header": "(^_^)? Available Commands",
         },
         "tool_prefix": "┊",
@@ -376,9 +376,9 @@ _BUILTIN_SKINS: Dict[str, Dict[str, Any]] = {
         "branding": {
             "agent_name": "Hermes Agent",
             "welcome": "Welcome to Hermes Agent! Type your message or /help for commands.",
-            "goodbye": "Goodbye! ⚕",
-            "response_label": " ⚕ Hermes ",
-            "prompt_symbol": "❯",
+            "goodbye": "Goodbye! ",
+            "response_label": "  Hermes ",
+            "prompt_symbol": "",
             "help_header": "[?] Available Commands",
         },
         "tool_prefix": "│",
@@ -449,8 +449,8 @@ _BUILTIN_SKINS: Dict[str, Dict[str, Any]] = {
             "session_border": "#496884",
         },
         "spinner": {
-            "waiting_faces": ["(≈)", "(Ψ)", "(∿)", "(◌)", "(◠)"],
-            "thinking_faces": ["(Ψ)", "(∿)", "(≈)", "(⌁)", "(◌)"],
+            "waiting_faces": ["(≈)", "(Ψ)", "(∿)", "()", "()"],
+            "thinking_faces": ["(Ψ)", "(∿)", "(≈)", "(⌁)", "()"],
             "thinking_verbs": [
                 "charting currents", "sounding the depth", "reading foam lines",
                 "steering the trident", "tracking undertow", "plotting sea lanes",
@@ -460,7 +460,7 @@ _BUILTIN_SKINS: Dict[str, Dict[str, Any]] = {
                 ["⟪≈", "≈⟫"],
                 ["⟪Ψ", "Ψ⟫"],
                 ["⟪∿", "∿⟫"],
-                ["⟪◌", "◌⟫"],
+                ["⟪", "⟫"],
             ],
         },
         "branding": {
@@ -521,27 +521,27 @@ _BUILTIN_SKINS: Dict[str, Dict[str, Any]] = {
             "session_border": "#656565",
         },
         "spinner": {
-            "waiting_faces": ["(◉)", "(◌)", "(◬)", "(⬤)", "(::)"],
-            "thinking_faces": ["(◉)", "(◬)", "(◌)", "(○)", "(●)"],
+            "waiting_faces": ["()", "()", "()", "(⬤)", "(::)"],
+            "thinking_faces": ["()", "()", "()", "()", "()"],
             "thinking_verbs": [
                 "finding traction", "measuring the grade", "resetting the boulder",
                 "counting the ascent", "testing leverage", "setting the shoulder",
                 "pushing uphill", "enduring the loop",
             ],
             "wings": [
-                ["⟪◉", "◉⟫"],
-                ["⟪◬", "◬⟫"],
-                ["⟪◌", "◌⟫"],
+                ["⟪", "⟫"],
+                ["⟪", "⟫"],
+                ["⟪", "⟫"],
                 ["⟪⬤", "⬤⟫"],
             ],
         },
         "branding": {
             "agent_name": "Sisyphus Agent",
             "welcome": "Welcome to Sisyphus Agent! Type your message or /help for commands.",
-            "goodbye": "The boulder waits. ◉",
-            "response_label": " ◉ Sisyphus ",
-            "prompt_symbol": "◉",
-            "help_header": "(◉) Available Commands",
+            "goodbye": "The boulder waits. ",
+            "response_label": "  Sisyphus ",
+            "prompt_symbol": "",
+            "help_header": "() Available Commands",
         },
         "tool_prefix": "│",
         "banner_logo": """[bold #F5F5F5]███████╗██╗███████╗██╗   ██╗██████╗ ██╗  ██╗██╗   ██╗███████╗       █████╗  ██████╗ ███████╗███╗   ██╗████████╗[/]
@@ -599,27 +599,27 @@ _BUILTIN_SKINS: Dict[str, Dict[str, Any]] = {
             "completion_menu_meta_current_bg": "#5A260D",
         },
         "spinner": {
-            "waiting_faces": ["(✦)", "(▲)", "(◇)", "(<>)", "(🔥)"],
-            "thinking_faces": ["(✦)", "(▲)", "(◇)", "(⌁)", "(🔥)"],
+            "waiting_faces": ["()", "()", "()", "(<>)", "(🔥"],
+            "thinking_faces": ["()", "()", "()", "(⌁)", "(🔥"],
             "thinking_verbs": [
                 "banking into the draft", "measuring burn", "reading the updraft",
                 "tracking ember fall", "setting wing angle", "holding the flame core",
                 "plotting a hot landing", "coiling for lift",
             ],
             "wings": [
-                ["⟪✦", "✦⟫"],
-                ["⟪▲", "▲⟫"],
-                ["⟪◌", "◌⟫"],
-                ["⟪◇", "◇⟫"],
+                ["⟪", ""],
+                ["⟪", "⟫"],
+                ["⟪", "⟫"],
+                ["⟪", "⟫"],
             ],
         },
         "branding": {
             "agent_name": "Charizard Agent",
             "welcome": "Welcome to Charizard Agent! Type your message or /help for commands.",
-            "goodbye": "Flame out! ✦",
-            "response_label": " ✦ Charizard ",
-            "prompt_symbol": "✦",
-            "help_header": "(✦) Available Commands",
+            "goodbye": "Flame out! ",
+            "response_label": "  Charizard ",
+            "prompt_symbol": "",
+            "help_header": "() Available Commands",
         },
         "tool_prefix": "│",
         "banner_logo": """[bold #FFF0D4] ██████╗██╗  ██╗ █████╗ ██████╗ ██╗███████╗ █████╗ ██████╗ ██████╗        █████╗  ██████╗ ███████╗███╗   ██╗████████╗[/]
@@ -630,7 +630,7 @@ _BUILTIN_SKINS: Dict[str, Dict[str, Any]] = {
 [#7A3511] ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝       ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝[/]""",
         "banner_hero": """[#FFD39A]⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⠶⠶⠶⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀[/]
 [#F29C38]⠀⠀⠀⠀⠀⠀⣴⠟⠁⠀⠀⠀⠀⠈⠻⣦⠀⠀⠀⠀⠀⠀[/]
-[#F29C38]⠀⠀⠀⠀⠀⣼⠏⠀⠀⠀✦⠀⠀⠀⠀⠹⣧⠀⠀⠀⠀⠀[/]
+[#F29C38]⠀⠀⠀⠀⠀⣼⠏⠀⠀⠀⠀⠀⠀⠀⠹⣧⠀⠀⠀⠀⠀[/]
 [#E2832B]⠀⠀⠀⠀⢰⡟⠀⠀⣀⣤⣤⣤⣀⠀⠀⠀⢻⡆⠀⠀⠀⠀[/]
 [#E2832B]⠀⠀⣠⡾⠛⠁⣠⣾⠟⠉⠀⠉⠻⣷⣄⠀⠈⠛⢷⣄⠀⠀[/]
 [#C75B1D]⠀⣼⠟⠀⢀⣾⠟⠁⠀⠀⠀⠀⠀⠈⠻⣷⡀⠀⠻⣧⠀[/]
@@ -807,7 +807,7 @@ def init_skin_from_config(config: dict) -> None:
 # =============================================================================
 
 
-def get_active_prompt_symbol(fallback: str = "❯") -> str:
+def get_active_prompt_symbol(fallback: str = "") -> str:
     """Return the interactive prompt symbol with a single trailing space.
 
     Skins store ``prompt_symbol`` as a bare token (no spaces). The trailing
@@ -834,7 +834,7 @@ def get_active_help_header(fallback: str = "(^_^)? Available Commands") -> str:
 
 
 
-def get_active_goodbye(fallback: str = "Goodbye! ⚕") -> str:
+def get_active_goodbye(fallback: str = "Goodbye! ") -> str:
     """Get the goodbye line from the active skin."""
     try:
         return get_active_skin().get_branding("goodbye", fallback)

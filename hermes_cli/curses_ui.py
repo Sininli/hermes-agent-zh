@@ -570,7 +570,7 @@ def curses_checklist(
 
     def _draw_row(stdscr, y, i, is_cursor, max_x):
         import curses
-        check = "✓" if i in chosen else " "
+        check = "" if i in chosen else " "
         arrow = "→" if is_cursor else " "
         line = f" {arrow} [{check}] {items[i]}"
         attr = curses.A_NORMAL
@@ -851,7 +851,7 @@ def _numbered_fallback(
 
     while True:
         for i, label in enumerate(items):
-            marker = color("[✓]", Colors.GREEN) if i in chosen else "[ ]"
+            marker = color("[]", Colors.GREEN) if i in chosen else "[ ]"
             print(f"  {marker} {i + 1:>2}. {label}")
         if status_fn:
             status_text = status_fn(chosen)

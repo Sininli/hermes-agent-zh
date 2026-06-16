@@ -1205,7 +1205,7 @@ if __name__ == "__main__":
     """
     Simple test/demo when run directly
     """
-    print("🌐 Standalone Web Tools Module")
+    print(" Standalone Web Tools Module")
     print("=" * 40)
     
     # Check if API keys are available
@@ -1218,7 +1218,7 @@ if __name__ == "__main__":
 
     if web_available:
         backend = _get_backend()
-        print(f"✅ Web backend: {backend}")
+        print(f" Web backend: {backend}")
         if backend == "exa":
             print("   Using Exa API (https://exa.ai)")
         elif backend == "parallel":
@@ -1240,18 +1240,18 @@ if __name__ == "__main__":
         else:
             print("   Firecrawl backend selected but not configured")
     else:
-        print("❌ No web search backend configured")
+        print(" No web search backend configured")
         print(
             "Set EXA_API_KEY, PARALLEL_API_KEY, TAVILY_API_KEY, FIRECRAWL_API_KEY, FIRECRAWL_API_URL"
             f"{_firecrawl_backend_help_suffix()}"
         )
 
     if not nous_available:
-        print("❌ No auxiliary model available for LLM content processing")
+        print(" No auxiliary model available for LLM content processing")
         print("Set OPENROUTER_API_KEY, configure Nous Portal, or set OPENAI_BASE_URL + OPENAI_API_KEY")
-        print("⚠️  Without an auxiliary model, LLM content processing will be disabled")
+        print("️  Without an auxiliary model, LLM content processing will be disabled")
     else:
-        print(f"✅ Auxiliary model available: {default_summarizer_model}")
+        print(f" Auxiliary model available: {default_summarizer_model}")
 
     if not web_available:
         sys.exit(1)
@@ -1259,15 +1259,15 @@ if __name__ == "__main__":
     print("🛠️  Web tools ready for use!")
     
     if nous_available:
-        print(f"🧠 LLM content processing available with {default_summarizer_model}")
+        print(f" LLM content processing available with {default_summarizer_model}")
         print(f"   Default min length for processing: {DEFAULT_MIN_LENGTH_FOR_SUMMARIZATION} chars")
     
     # Show debug mode status
     if _debug.active:
-        print(f"🐛 Debug mode ENABLED - Session ID: {_debug.session_id}")
+        print(f" Debug mode ENABLED - Session ID: {_debug.session_id}")
         print(f"   Debug logs will be saved to: {_debug.log_dir}/web_tools_debug_{_debug.session_id}.json")
     else:
-        print("🐛 Debug mode disabled (set WEB_TOOLS_DEBUG=true to enable)")
+        print(" Debug mode disabled (set WEB_TOOLS_DEBUG=true to enable)")
     
     print("\nBasic usage:")
     print("  from web_tools import web_search_tool, web_extract_tool")
@@ -1306,7 +1306,7 @@ if __name__ == "__main__":
     print("  # - Final processed results")
     print("  # Logs saved to: ./logs/web_tools_debug_UUID.json")
     
-    print("\n📝 Run 'python test_web_tools_llm.py' to test LLM processing capabilities")
+    print("\n Run 'python test_web_tools_llm.py' to test LLM processing capabilities")
 
 
 # ---------------------------------------------------------------------------
@@ -1360,7 +1360,7 @@ registry.register(
     handler=lambda args, **kw: web_search_tool(args.get("query", ""), limit=args.get("limit", 5)),
     check_fn=check_web_api_key,
     requires_env=_web_requires_env(),
-    emoji="🔍",
+    emoji="",
     max_result_size_chars=100_000,
 )
 registry.register(
@@ -1372,6 +1372,6 @@ registry.register(
     check_fn=check_web_api_key,
     requires_env=_web_requires_env(),
     is_async=True,
-    emoji="📄",
+    emoji="",
     max_result_size_chars=100_000,
 )

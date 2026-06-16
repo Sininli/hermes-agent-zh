@@ -1059,7 +1059,7 @@ def interactive_setup() -> None:
     print_success("Mattermost token saved")
 
     print()
-    print_info("🔒 Security: Restrict who can use your bot")
+    print_info(" Security: Restrict who can use your bot")
     print_info("   To find your user ID: click your avatar → Profile")
     print_info("   or use the API: GET /api/v4/users/me")
     print()
@@ -1068,10 +1068,10 @@ def interactive_setup() -> None:
         save_env_value("MATTERMOST_ALLOWED_USERS", allowed_users.replace(" ", ""))
         print_success("Mattermost allowlist configured")
     else:
-        print_info("⚠️  No allowlist set - anyone who can message the bot can use it!")
+        print_info("️  No allowlist set - anyone who can message the bot can use it!")
 
     print()
-    print_info("📬 Home Channel: where Hermes delivers cron job results and notifications.")
+    print_info(" Home Channel: where Hermes delivers cron job results and notifications.")
     print_info("   To get a channel ID: click channel name → View Info → copy the ID")
     print_info("   You can also set this later by typing /set-home in a Mattermost channel.")
     home_channel = prompt("Home channel ID (leave empty to set later with /set-home)")
@@ -1187,6 +1187,6 @@ def register(ctx) -> None:
         # day one).
         max_message_length=MAX_POST_LENGTH,
         # Display
-        emoji="💬",
+        emoji="",
         allow_update_command=True,
     )

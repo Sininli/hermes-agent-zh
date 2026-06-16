@@ -50,7 +50,7 @@ def _cmd_status(args) -> int:
     print(color("  ───────────", Colors.MAGENTA))
     if logged_in:
         portal = auth.get("portal_base_url") or DEFAULT_PORTAL_URL
-        print(f"  Auth:    {color('✓ logged in', Colors.GREEN)}")
+        print(f"  Auth:    {color(' logged in', Colors.GREEN)}")
         print(f"  Portal:  {portal}")
         inference = auth.get("inference_base_url")
         if inference:
@@ -64,7 +64,7 @@ def _cmd_status(args) -> int:
     model_cfg = config.get("model") if isinstance(config.get("model"), dict) else {}
     provider = str(model_cfg.get("provider") or "").strip().lower()
     if provider == "nous":
-        print(f"  Model:   {color('✓ using Nous as inference provider', Colors.GREEN)}")
+        print(f"  Model:   {color(' using Nous as inference provider', Colors.GREEN)}")
     elif provider:
         print(f"  Model:   currently {provider} (switch with `hermes model`)")
 
@@ -152,7 +152,7 @@ def _cmd_tools(args) -> int:
         if feat is None:
             state = color("unknown", Colors.DIM)
         elif feat.managed_by_nous:
-            state = color("✓ via Nous Portal", Colors.GREEN)
+            state = color(" via Nous Portal", Colors.GREEN)
         elif feat.active and feat.current_provider:
             state = feat.current_provider
         elif feat.active:

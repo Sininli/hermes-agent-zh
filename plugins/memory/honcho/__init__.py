@@ -1019,7 +1019,7 @@ class HonchoMemoryProvider(MemoryProvider):
         # Structured output with sections/bullets is strong signal
         if "\n" in result and (
             "##" in result
-            or "•" in result
+            or "" in result
             or re.search(r"^[*-] ", result, re.MULTILINE)
             or re.search(r"^\s*\d+\. ", result, re.MULTILINE)
         ):

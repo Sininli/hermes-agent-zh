@@ -259,10 +259,10 @@ def _format_todo_result(result: Optional[str]) -> Optional[str]:
         return None
     summary = data.get("summary") if isinstance(data.get("summary"), dict) else {}
     icon = {
-        "completed": "✅",
+        "completed": "",
         "in_progress": "🔄",
-        "pending": "⏳",
-        "cancelled": "✗",
+        "pending": "",
+        "cancelled": "",
     }
     lines = ["**Todo list**", ""]
     for item in data["todos"]:
@@ -271,7 +271,7 @@ def _format_todo_result(result: Optional[str]) -> Optional[str]:
         status = str(item.get("status") or "pending")
         content = str(item.get("content") or item.get("id") or "").strip()
         if content:
-            lines.append(f"- {icon.get(status, '•')} {content}")
+            lines.append(f"- {icon.get(status, '')} {content}")
     if summary:
         cancelled = summary.get("cancelled", 0)
         lines.extend([
@@ -441,7 +441,7 @@ def _format_skill_manage_result(result: Optional[str], args: Optional[Dict[str, 
     name = str((args or {}).get("name") or data.get("name") or "skill").strip() or "skill"
     file_path = str((args or {}).get("file_path") or data.get("file_path") or "SKILL.md").strip() or "SKILL.md"
     success = data.get("success")
-    status = "✅ Skill updated" if success is not False else "✗ Skill update failed"
+    status = " Skill updated" if success is not False else " Skill update failed"
 
     lines = [f"**{status}**", "", f"- **Action:** `{action}`", f"- **Skill:** `{name}`"]
     if action not in {"delete"}:
@@ -476,7 +476,7 @@ def _format_web_search_result(result: Optional[str]) -> Optional[str]:
         title = str(item.get("title") or item.get("url") or "result").strip()
         url = str(item.get("url") or "").strip()
         desc = str(item.get("description") or "").strip()
-        lines.append(f"• {title}" + (f" — {url}" if url else ""))
+        lines.append(f" {title}" + (f" — {url}" if url else ""))
         if desc:
             lines.append(f"  {desc}")
     return _truncate_text("\n".join(lines))
@@ -571,7 +571,7 @@ def _format_delegate_result(result: Optional[str]) -> Optional[str]:
         return None
     total = data.get("total_duration_seconds")
     lines = [f"Delegation results: {len(results)} task{'s' if len(results) != 1 else ''}" + (f" in {total}s" if total is not None else "")]
-    icon = {"completed": "✅", "failed": "✗", "error": "✗", "timeout": "⏱", "interrupted": "⚠"}
+    icon = {"completed": "", "failed": "", "error": "", "timeout": "", "interrupted": ""}
     for item in results:
         if not isinstance(item, dict):
             lines.append(f"- {item}")
@@ -581,7 +581,7 @@ def _format_delegate_result(result: Optional[str]) -> Optional[str]:
         model = item.get("model")
         dur = item.get("duration_seconds")
         role = item.get("_child_role")
-        header = f"{icon.get(status, '•')} Task {idx + 1 if isinstance(idx, int) else '?'}: {status}"
+        header = f"{icon.get(status, '')} Task {idx + 1 if isinstance(idx, int) else '?'}: {status}"
         bits = []
         if model:
             bits.append(str(model))
@@ -644,13 +644,13 @@ def _format_memory_result(result: Optional[str], args: Optional[Dict[str, Any]])
     action = str((args or {}).get("action") or "memory").strip() or "memory"
     target = str(data.get("target") or (args or {}).get("target") or "memory")
     if data.get("success") is False:
-        lines = [f"✗ Memory {action} failed ({target})", str(data.get("error") or "unknown error")]
+        lines = [f" Memory {action} failed ({target})", str(data.get("error") or "unknown error")]
         matches = data.get("matches")
         if isinstance(matches, list) and matches:
             lines.append("Matches:")
             lines.extend(f"- {_truncate_text(str(m), 160)}" for m in matches[:5])
         return "\n".join(lines)
-    lines = [f"✅ Memory {action} saved ({target})"]
+    lines = [f" Memory {action} saved ({target})"]
     if data.get("message"):
         lines.append(str(data.get("message")))
     if data.get("entry_count") is not None:
@@ -672,7 +672,7 @@ def _format_edit_result(tool_name: str, result: Optional[str], args: Optional[Di
             return f"{tool_name} failed for {path}: {data.get('error', 'unknown error')}"
         message = str(data.get("message") or "").strip()
         replacements = data.get("replacements") or data.get("replacement_count")
-        lines = [f"✅ {tool_name} completed" + (f" for `{path}`" if path else "")]
+        lines = [f" {tool_name} completed" + (f" for `{path}`" if path else "")]
         if message:
             lines.append(message)
         if replacements is not None:
@@ -684,7 +684,7 @@ def _format_edit_result(tool_name: str, result: Optional[str], args: Optional[Di
         return "\n".join(lines)
     if isinstance(result, str) and result.strip():
         return _truncate_text(result, limit=3000)
-    return f"✅ {tool_name} completed" + (f" for `{path}`" if path else "")
+    return f" {tool_name} completed" + (f" for `{path}`" if path else "")
 
 
 def _format_browser_result(tool_name: str, result: Optional[str], args: Optional[Dict[str, Any]]) -> Optional[str]:
@@ -719,7 +719,7 @@ def _format_media_or_cron_result(tool_name: str, result: Optional[str]) -> Optio
         return result if isinstance(result, str) and result.strip() else None
     if data.get("success") is False or data.get("error"):
         return f"{tool_name} failed: {data.get('error', 'unknown error')}"
-    lines = [f"✅ {tool_name} completed"]
+    lines = [f" {tool_name} completed"]
     for key in ("file_path", "path", "url", "image_url", "job_id", "id", "status", "message", "next_run"):
         if data.get(key):
             lines.append(f"- **{key}:** {data.get(key)}")
@@ -839,7 +839,7 @@ def _format_generic_structured_result(
     if data.get("success") is False or data.get("error"):
         return f"{tool_name} failed: {data.get('error', 'unknown error')}"
 
-    lines = [f"✅ {tool_name} completed" if data.get("success") is True else f"{tool_name} result"]
+    lines = [f" {tool_name} completed" if data.get("success") is True else f"{tool_name} result"]
     priority_keys = (
         "message", "status", "id", "task_id", "issue_id", "title", "name", "entity_id",
         "state", "service", "url", "path", "file_path", "count", "total", "next_run",

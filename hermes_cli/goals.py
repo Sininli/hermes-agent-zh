@@ -514,7 +514,7 @@ class GoalManager:
             extra = f" — {s.paused_reason}" if s.paused_reason else ""
             return f"⏸ Goal (paused, {turns}{sub}{extra}): {s.goal}"
         if s.status == "done":
-            return f"✓ Goal done ({turns}{sub}): {s.goal}"
+            return f" Goal done ({turns}{sub}): {s.goal}"
         return f"Goal ({s.status}, {turns}{sub}): {s.goal}"
 
     # --- mutation -----------------------------------------------------
@@ -675,7 +675,7 @@ class GoalManager:
                 "continuation_prompt": None,
                 "verdict": "done",
                 "reason": reason,
-                "message": f"✓ Goal achieved: {reason}",
+                "message": f" Goal achieved: {reason}",
             }
 
         # Auto-pause when the judge model can't produce the expected JSON
@@ -732,7 +732,7 @@ class GoalManager:
             "verdict": "continue",
             "reason": reason,
             "message": (
-                f"↻ Continuing toward goal ({state.turns_used}/{state.max_turns}): {reason}"
+                f" Continuing toward goal ({state.turns_used}/{state.max_turns}): {reason}"
             ),
         }
 

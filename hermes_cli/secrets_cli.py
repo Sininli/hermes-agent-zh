@@ -121,9 +121,9 @@ def cmd_setup(args: argparse.Namespace) -> int:
             console.print("  No bws on PATH — downloading…")
             binary = bw.install_bws()
         version = _bws_version(binary)
-        console.print(f"  [green]✓[/green] {binary}  ({version})")
+        console.print(f"  [green][/green] {binary}  ({version})")
     except Exception as exc:  # noqa: BLE001
-        console.print(f"  [red]✗ Could not install bws: {exc}[/red]")
+        console.print(f"  [red] Could not install bws: {exc}[/red]")
         console.print(
             "  Manual install: "
             "https://github.com/bitwarden/sdk-sm/releases"
@@ -175,7 +175,7 @@ def cmd_setup(args: argparse.Namespace) -> int:
 
     save_env_value(token_env, token)
     os.environ[token_env] = token  # so the test fetch below sees it
-    console.print(f"  [green]✓[/green] stored in {get_env_path()} as {token_env}")
+    console.print(f"  [green][/green] stored in {get_env_path()} as {token_env}")
 
     # ------------------------------------------------------------------ region
     console.print()
@@ -184,10 +184,10 @@ def cmd_setup(args: argparse.Namespace) -> int:
     if server_url is None:
         return 1
     if server_url:
-        console.print(f"  [green]✓[/green] using {server_url}")
+        console.print(f"  [green][/green] using {server_url}")
     else:
         console.print(
-            "  [green]✓[/green] using bws default "
+            "  [green][/green] using bws default "
             "(US Cloud, https://vault.bitwarden.com)"
         )
 
@@ -244,7 +244,7 @@ def cmd_setup(args: argparse.Namespace) -> int:
             server_url=server_url,
         )
     except Exception as exc:  # noqa: BLE001
-        console.print(f"  [red]✗ Fetch failed: {exc}[/red]")
+        console.print(f"  [red] Fetch failed: {exc}[/red]")
         return 1
 
     if not secrets:
@@ -277,7 +277,7 @@ def cmd_setup(args: argparse.Namespace) -> int:
 
     console.print()
     console.print(
-        "[green]✓ Bitwarden Secrets Manager is enabled.[/green]  "
+        "[green] Bitwarden Secrets Manager is enabled.[/green]  "
         "Secrets will be pulled at the start of every Hermes process."
     )
     console.print(
@@ -431,7 +431,7 @@ def cmd_install(args: argparse.Namespace) -> int:
     console = Console()
     try:
         path = bw.install_bws(force=bool(args.force))
-        console.print(f"[green]✓[/green] {path}  ({_bws_version(path)})")
+        console.print(f"[green][/green] {path}  ({_bws_version(path)})")
         return 0
     except Exception as exc:  # noqa: BLE001
         console.print(f"[red]Install failed: {exc}[/red]")

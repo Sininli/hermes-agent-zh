@@ -1112,27 +1112,27 @@ if __name__ == "__main__":
     """
     Simple test/demo when run directly
     """
-    print("👁️ Vision Tools Module")
+    print("️ Vision Tools Module")
     print("=" * 40)
     
     # Check if vision model is available
     api_available = check_vision_requirements()
     
     if not api_available:
-        print("❌ No auxiliary vision model available")
+        print(" No auxiliary vision model available")
         print("Configure a supported multimodal backend (OpenRouter, Nous, Codex, Anthropic, or a custom OpenAI-compatible endpoint).")
         sys.exit(1)
     else:
-        print("✅ Vision model available")
+        print(" Vision model available")
     
     print("🛠️ Vision tools ready for use!")
     
     # Show debug mode status
     if _debug.active:
-        print(f"🐛 Debug mode ENABLED - Session ID: {_debug.session_id}")
+        print(f" Debug mode ENABLED - Session ID: {_debug.session_id}")
         print(f"   Debug logs will be saved to: ./logs/vision_tools_debug_{_debug.session_id}.json")
     else:
-        print("🐛 Debug mode disabled (set VISION_TOOLS_DEBUG=true to enable)")
+        print(" Debug mode disabled (set VISION_TOOLS_DEBUG=true to enable)")
     
     print("\nBasic usage:")
     print("  from vision_tools import vision_analyze_tool")
@@ -1224,7 +1224,7 @@ registry.register(
     handler=_handle_vision_analyze,
     check_fn=check_vision_requirements,
     is_async=True,
-    emoji="👁️",
+    emoji="️",
 )
 
 
@@ -1587,5 +1587,5 @@ registry.register(
     handler=_handle_video_analyze,
     check_fn=check_vision_requirements,
     is_async=True,
-    emoji="🎬",
+    emoji="",
 )

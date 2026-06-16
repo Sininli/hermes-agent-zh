@@ -225,7 +225,7 @@ def build_turn_context(
     if not agent.quiet_mode:
         _print_preview = summarize_user_message_for_log(user_message)
         agent._safe_print(
-            f"💬 Starting conversation: '{_print_preview[:60]}"
+            f" Starting conversation: '{_print_preview[:60]}"
             f"{'...' if len(_print_preview) > 60 else ''}'"
         )
 
@@ -287,7 +287,7 @@ def build_turn_context(
                 f"{_compressor.context_length:,}",
             )
             agent._emit_status(
-                f"📦 Preflight compression: ~{_preflight_tokens:,} tokens "
+                f" Preflight compression: ~{_preflight_tokens:,} tokens "
                 f">= {_compressor.threshold_tokens:,} threshold. "
                 "This may take a moment."
             )

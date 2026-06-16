@@ -1836,7 +1836,7 @@ class SlashCommandCompleter(Completer):
                     self._completion_text(cmd_name, word),
                     start_position=-len(word),
                     display=cmd,
-                    display_meta=f"⚡ {short_desc}",
+                    display_meta=f" {short_desc}",
                 )
 
         # Plugin-registered slash commands

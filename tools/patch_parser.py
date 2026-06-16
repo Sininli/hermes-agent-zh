@@ -355,7 +355,7 @@ def apply_v4a_operations(operations: List[PatchOperation],
         return PatchResult(
             success=False,
             error="Patch validation failed (no files were modified):\n"
-                  + "\n".join(f"  • {e}" for e in validation_errors),
+                  + "\n".join(f"   {e}" for e in validation_errors),
         )
 
     # ---- Phase 2: apply ----
@@ -438,7 +438,7 @@ def apply_v4a_operations(operations: List[PatchOperation],
             lint=lint_results if lint_results else None,
             lsp_diagnostics=combined_lsp,
             error="Apply phase failed (state may be inconsistent — run `git diff` to assess):\n"
-                  + "\n".join(f"  • {e}" for e in errors),
+                  + "\n".join(f"   {e}" for e in errors),
         )
 
     return PatchResult(

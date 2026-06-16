@@ -600,7 +600,7 @@ def _interactive_auth() -> None:
                 print(f"  Endpoint: {_base_url or '(not configured)'}")
                 print(f"  Scope: {_scope}")
                 if not has_azure_identity_installed():
-                    print("  Status: ⚠ azure-identity not installed "
+                    print("  Status:  azure-identity not installed "
                           "(pip install azure-identity)")
                 else:
                     _entra_cfg = EntraIdentityConfig(
@@ -610,10 +610,10 @@ def _interactive_auth() -> None:
                     _env_sources = _info.get("env_sources") or []
                     if _info.get("ok"):
                         _tag = ", ".join(_env_sources) if _env_sources else "default chain"
-                        print(f"  Status: ✓ token acquired ({_tag})")
+                        print(f"  Status:  token acquired ({_tag})")
                     else:
                         _err = _info.get("error") or "credential chain exhausted"
-                        print(f"  Status: ⚠ {_err}")
+                        print(f"  Status:  {_err}")
                         _hint = _info.get("hint")
                         if _hint:
                             print(f"  Hint: {_hint}")

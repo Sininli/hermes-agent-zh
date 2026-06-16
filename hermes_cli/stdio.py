@@ -4,7 +4,7 @@ On Windows, Python's ``sys.stdout``/``sys.stderr`` default to the console's
 active code page (often ``cp1252``, sometimes ``cp437``, occasionally ``cp932``
 on Japanese locales, etc.).  Hermes's banners, tool output feed, and slash
 command listings all contain Unicode: box-drawing characters (``─┌┐└┘├┤``),
-mathematical and geometric symbols (``◆ ◇ ◎ ▣ ⚔ ⚖ →``), and user-supplied
+mathematical and geometric symbols (``   ▣ ⚔ ⚖ →``), and user-supplied
 text in any language.  Printing those to a cp1252 console raises
 ``UnicodeEncodeError: 'charmap' codec can't encode character…`` and kills the
 whole CLI before the REPL even opens.

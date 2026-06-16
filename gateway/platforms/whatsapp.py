@@ -289,7 +289,7 @@ class WhatsAppAdapter(WhatsAppBehaviorMixin, BasePlatformAdapter):
         # shutdown-time exit (returncode -15 / -2 / 0) from a real crash.
         # Without this, every graceful gateway shutdown/restart would log
         # "Fatal whatsapp adapter error" plus dispatch a fatal-error
-        # notification before the normal "✓ whatsapp disconnected" fires.
+        # notification before the normal " whatsapp disconnected" fires.
         self._shutting_down: bool = False
 
         # Text debounce batching (mirrors Telegram adapter pattern).
@@ -582,7 +582,7 @@ class WhatsAppAdapter(WhatsAppBehaviorMixin, BasePlatformAdapter):
                 else:
                     # Still not connected — warn but proceed (bridge may
                     # auto-reconnect later, e.g. after a code 515 restart).
-                    print(f"[{self.name}] ⚠ WhatsApp not connected after 30s")
+                    print(f"[{self.name}]  WhatsApp not connected after 30s")
                     print(f"[{self.name}]   Bridge log: {self._bridge_log}")
                     print(f"[{self.name}]   If session expired, re-pair: hermes whatsapp")
             

@@ -2075,7 +2075,7 @@ class BasePlatformAdapter(ABC):
             return None
 
         from agent.display import get_tool_emoji
-        emoji = get_tool_emoji(event.tool_name, default="⚙️")
+        emoji = get_tool_emoji(event.tool_name, default="️")
 
         if mode == "verbose":
             if event.args:
@@ -2800,7 +2800,7 @@ class BasePlatformAdapter(ABC):
         Override in subclasses to send videos as inline playable media.
         Default falls back to sending the file path as text.
         """
-        text = f"🎬 Video: {video_path}"
+        text = f" Video: {video_path}"
         if caption:
             text = f"{caption}\n{text}"
         return await self.send(chat_id=chat_id, content=text, reply_to=reply_to, metadata=metadata)
@@ -2821,7 +2821,7 @@ class BasePlatformAdapter(ABC):
         Override in subclasses to send files as downloadable attachments.
         Default falls back to sending the file path as text.
         """
-        text = f"📎 File: {file_path}"
+        text = f" File: {file_path}"
         if caption:
             text = f"{caption}\n{text}"
         return await self.send(chat_id=chat_id, content=text, reply_to=reply_to, metadata=metadata)
@@ -3353,7 +3353,7 @@ class BasePlatformAdapter(ABC):
 
     # ── Processing lifecycle hooks ──────────────────────────────────────────
     # Subclasses override these to react to message processing events
-    # (e.g. Discord adds 👀/✅/❌ reactions).
+    # (e.g. Discord adds // reactions).
 
     async def on_processing_start(self, event: MessageEvent) -> None:
         """Hook called when background processing begins."""
@@ -4186,7 +4186,7 @@ class BasePlatformAdapter(ABC):
 
             # Slash-command handlers may return an EphemeralReply sentinel to
             # request that their reply message auto-delete after a TTL (used
-            # for system notices like "✨ New session started!" that the user
+            # for system notices like " New session started!" that the user
             # doesn't need to keep in the thread).  Unwrap here so all the
             # downstream extract_media / text-processing logic sees a plain
             # string, and remember the TTL + platform capability so the

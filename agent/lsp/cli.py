@@ -157,7 +157,7 @@ def _cmd_status(emit_json: bool) -> int:
         pkg = _recipe_pkg_for(s.server_id)
         status = detect_status(pkg)
         marker = {
-            "installed": "✓",
+            "installed": "",
             "missing": "·",
             "manual-only": "?",
         }.get(status, " ")

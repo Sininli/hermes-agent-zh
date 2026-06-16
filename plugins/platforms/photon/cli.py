@@ -122,7 +122,7 @@ def _run_device_login(args: argparse.Namespace) -> int:
     # Don't print any portion of the token — even a prefix can help a
     # shoulder-surfer or accidentally leak into a screen recording.
     _ = token
-    print(f"✓ logged in — token saved to {photon_auth._auth_json_path()}")
+    print(f" logged in — token saved to {photon_auth._auth_json_path()}")
     return 0
 
 
@@ -156,7 +156,7 @@ def _cmd_setup(args: argparse.Namespace) -> int:
                 print(f"[2/5] Creating Photon project '{name}'...")
                 created = photon_auth.create_project(token, name=name)
                 dashboard_id = created.get("id")
-                print("  ✓ project created")
+                print("   project created")
     except Exception as e:
         print(f"project setup failed: {e}", file=sys.stderr)
         return 1
@@ -182,7 +182,7 @@ def _cmd_setup(args: argparse.Namespace) -> int:
             name=name,
         )
         # spectrum_id is an opaque non-secret id; safe to show.
-        print(f"  ✓ Spectrum enabled (project id {spectrum_id}) — secret saved")
+        print(f"   Spectrum enabled (project id {spectrum_id}) — secret saved")
     except Exception as e:
         print(f"spectrum provisioning failed: {e}", file=sys.stderr)
         return 1
@@ -218,7 +218,7 @@ def _cmd_setup(args: argparse.Namespace) -> int:
         except Exception as e:
             print(f"      user registration failed: {e}", file=sys.stderr)
             return 1
-        print("  ✓ phone registered" if created else "  ✓ phone already registered")
+        print("   phone registered" if created else "   phone already registered")
         registered_phone = phone
         registered_user_id = user.get("id")
         # The number to text the agent is the user's assigned iMessage line
@@ -245,7 +245,7 @@ def _cmd_setup(args: argparse.Namespace) -> int:
         print()
         print(color("┌─ Your agent's iMessage number ───────────────────────────────", Colors.GREEN))
         print(
-            color("│  📱 ", Colors.GREEN)
+            color("│   ", Colors.GREEN)
             + color(str(agent_number), Colors.GREEN, Colors.BOLD)
         )
         print(color("│  Text this number from your phone to talk to your agent.", Colors.GREEN))
@@ -273,7 +273,7 @@ def _cmd_setup(args: argparse.Namespace) -> int:
             return rc
 
     print()
-    print("✓ Photon setup complete.")
+    print(" Photon setup complete.")
     print("  Start the gateway:  hermes gateway start")
     return 0
 
@@ -300,7 +300,7 @@ def _autoconfigure_access(phone: str) -> None:
                 print(f"      {key} already set — leaving it as-is.")
                 continue
             save_env_value(key, phone)
-            print(f"  ✓ {label} ({key})")
+            print(f"   {label} ({key})")
         except Exception as e:
             print(f"      could not set {key}: {e}", file=sys.stderr)
 
@@ -313,8 +313,8 @@ def _cmd_status(_args: argparse.Namespace) -> int:
     photon_auth.print_credential_summary(print)
     node_bin = os.getenv("PHOTON_NODE_BIN") or shutil.which("node")
     sidecar_installed = (_SIDECAR_DIR / "node_modules").exists()
-    print(f"  node binary         : {node_bin or '✗ missing (install Node 18+)'}")
-    print(f"  sidecar deps        : {'✓ installed' if sidecar_installed else '✗ run `hermes photon install-sidecar`'}")
+    print(f"  node binary         : {node_bin or ' missing (install Node 18+)'}")
+    print(f"  sidecar deps        : {' installed' if sidecar_installed else ' run `hermes photon install-sidecar`'}")
     print(f"  telemetry           : {'on' if _telemetry_enabled() else 'off'} (`hermes photon telemetry on|off`)")
     return 0
 
@@ -362,7 +362,7 @@ def _cmd_telemetry(args: argparse.Namespace) -> int:
     except Exception as e:
         print(f"could not save PHOTON_TELEMETRY: {e}", file=sys.stderr)
         return 1
-    print(f"✓ Spectrum telemetry turned {state} (PHOTON_TELEMETRY in ~/.hermes/.env)")
+    print(f" Spectrum telemetry turned {state} (PHOTON_TELEMETRY in ~/.hermes/.env)")
     print("  Restart the gateway for the sidecar to pick it up:  hermes gateway restart")
     return 0
 

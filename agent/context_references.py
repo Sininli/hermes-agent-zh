@@ -226,7 +226,7 @@ async def _expand_reference(
             content = await _fetch_url_content(ref.target, url_fetcher=url_fetcher)
             if not content:
                 return f"{ref.raw}: no content extracted", None
-            return None, f"🌐 {ref.raw} ({estimate_tokens_rough(content)} tokens)\n{content}"
+            return None, f" {ref.raw} ({estimate_tokens_rough(content)} tokens)\n{content}"
     except Exception as exc:
         return f"{ref.raw}: {exc}", None
 
@@ -264,7 +264,7 @@ def _expand_file_reference(
 
     lang = _code_fence_language(path)
     label = ref.raw
-    return None, f"📄 {label} ({estimate_tokens_rough(text)} tokens)\n```{lang}\n{text}\n```"
+    return None, f" {label} ({estimate_tokens_rough(text)} tokens)\n```{lang}\n{text}\n```"
 
 
 def _expand_folder_reference(
@@ -281,7 +281,7 @@ def _expand_folder_reference(
         return f"{ref.raw}: path is not a folder", None
 
     listing = _build_folder_listing(path, cwd)
-    return None, f"📁 {ref.raw} ({estimate_tokens_rough(listing)} tokens)\n{listing}"
+    return None, f" {ref.raw} ({estimate_tokens_rough(listing)} tokens)\n{listing}"
 
 
 def _expand_git_reference(
@@ -517,7 +517,7 @@ def _binary_reference_block(ref: ContextReference, path: Path) -> str:
     except OSError:
         size = "unknown size"
     return (
-        f"📎 {ref.raw} ({mime}, {size}) — binary file, not inlined as text. "
+        f" {ref.raw} ({mime}, {size}) — binary file, not inlined as text. "
         f"It is available on disk at `{path}`. Use your tools to work with it "
         f"(read or convert it, extract its text, or view/render it as needed); "
         f"do not tell the user the file type is unsupported."

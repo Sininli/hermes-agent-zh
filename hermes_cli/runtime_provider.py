@@ -138,9 +138,9 @@ def _host_derived_api_key(base_url: str) -> str:
         return ""
     # Take the *registrable* label (second-to-last). For typical provider
     # hosts this is what users intuitively call "the vendor":
-    #   deepseek.com               → labels[-2] = "deepseek"  ✓
-    #   api.groq.com → groq.com    → labels[-2] = "groq"      ✓
-    #   api.mistral.ai             → labels[-2] = "mistral"   ✓
+    #   deepseek.com               → labels[-2] = "deepseek"  
+    #   api.groq.com → groq.com    → labels[-2] = "groq"      
+    #   api.mistral.ai             → labels[-2] = "mistral"   
     # Crucially, lookalike hosts pick the ATTACKER's label, not the spoofed
     # vendor:
     #   api.deepseek.com.attacker.test → labels[-2] = "attacker"

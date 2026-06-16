@@ -930,19 +930,19 @@ def _wait_for_systemd_service_restart(
                 runtime_state = _gateway_runtime_status_for_pid(new_pid)
                 gateway_state = (runtime_state or {}).get("gateway_state")
                 if gateway_state == "running":
-                    print(f"✓ {scope_label} service restarted (PID {new_pid})")
+                    print(f" {scope_label} service restarted (PID {new_pid})")
                     return True
                 if gateway_state == "startup_failed":
                     reason = (runtime_state or {}).get(
                         "exit_reason"
                     ) or "startup failed"
                     print(
-                        f"⚠ {scope_label} service process restarted (PID {new_pid}), but gateway startup failed: {reason}"
+                        f" {scope_label} service process restarted (PID {new_pid}), but gateway startup failed: {reason}"
                     )
                     return False
                 if not printed_runtime_wait:
                     print(
-                        f"⏳ {scope_label} service process started (PID {new_pid}); waiting for gateway runtime..."
+                        f" {scope_label} service process started (PID {new_pid}); waiting for gateway runtime..."
                     )
                     printed_runtime_wait = True
 
@@ -957,7 +957,7 @@ def _wait_for_systemd_service_restart(
         time.sleep(2)
 
     print(
-        f"⚠ {scope_label} service did not become active within {int(timeout)}s.\n"
+        f" {scope_label} service did not become active within {int(timeout)}s.\n"
         f"  Check status: {'sudo ' if system else ''}hermes gateway status\n"
         f"  Check logs:   journalctl {'--user ' if not system else ''}-u {svc} -l --since '2 min ago'"
     )
@@ -997,7 +997,7 @@ def _print_systemd_start_limit_wait(system: bool = False) -> None:
     scope_flag = " --system" if system else ""
     systemctl_prefix = "systemctl " if system else "systemctl --user "
     journal_prefix = "journalctl " if system else "journalctl --user "
-    print(f"⏳ {scope_label} service is temporarily rate-limited by systemd.")
+    print(f" {scope_label} service is temporarily rate-limited by systemd.")
     print("  systemd is refusing another immediate start after repeated exits.")
     print(
         f"  Wait for the start-limit window to expire, then run: {'sudo ' if system else ''}hermes gateway restart{scope_flag}"
@@ -1029,7 +1029,7 @@ def _recover_pending_systemd_restart(
     result = props.get("Result", "")
 
     if active_state == "activating" and sub_state == "auto-restart":
-        print("⏳ Service restart already pending — waiting for systemd relaunch...")
+        print(" Service restart already pending — waiting for systemd relaunch...")
         return _wait_for_systemd_service_restart(
             system=system,
             previous_pid=previous_pid,
@@ -1042,7 +1042,7 @@ def _recover_pending_systemd_restart(
         svc = get_service_name()
         scope_label = _service_scope_label(system).capitalize()
         print(
-            f"↻ Clearing failed state for pending {scope_label.lower()} service restart..."
+            f" Clearing failed state for pending {scope_label.lower()} service restart..."
         )
         _run_systemctl(
             ["reset-failed", svc],
@@ -1171,7 +1171,7 @@ def _print_gateway_process_mismatch(snapshot: GatewayRuntimeSnapshot) -> None:
         return
     print()
     print(
-        "⚠ Gateway process is running for this profile, but the service is not active"
+        " Gateway process is running for this profile, but the service is not active"
     )
     print(f"  PID(s): {_format_gateway_pids(snapshot.gateway_pids, limit=None)}")
     print("  This is usually a manual foreground/tmux/nohup run, so `hermes gateway`")
@@ -1198,7 +1198,7 @@ def _print_other_profiles_gateway_status() -> None:
         print()
         print("Other profiles:")
         for proc in other_processes:
-            print(f"  ✓ {proc.profile:<16s} — PID {proc.pid}")
+            print(f"   {proc.profile:<16s} — PID {proc.pid}")
     except Exception:
         pass
 
@@ -1225,7 +1225,7 @@ def _gateway_list() -> None:
 
     print("Gateways:")
     for prof in profiles:
-        marker = "✓" if prof.gateway_running else "✗"
+        marker = "" if prof.gateway_running else ""
         label = prof.name
         if prof.name == current:
             label += " (current)"
@@ -1267,7 +1267,7 @@ def kill_gateway_processes(
             # Process already gone
             pass
         except PermissionError:
-            print(f"⚠ Permission denied to kill PID {pid}")
+            print(f" Permission denied to kill PID {pid}")
 
         except OSError as exc:
             print(f"Failed to kill PID {pid}: {exc}")
@@ -1302,7 +1302,7 @@ def stop_profile_gateway() -> bool:
     except ProcessLookupError:
         pass  # Already gone
     except PermissionError:
-        print(f"⚠ Permission denied to kill PID {pid}")
+        print(f" Permission denied to kill PID {pid}")
         return False
 
     # Wait briefly for it to exit. On Windows, os.kill(pid, 0) is NOT
@@ -1665,7 +1665,7 @@ def _preflight_user_systemd(*, auto_enable_linger: bool = True) -> None:
         else:
             if result.returncode == 0:
                 if _wait_for_user_dbus_socket(timeout=5.0):
-                    print(f"✓ Enabled linger for {username} — user D-Bus now available")
+                    print(f" Enabled linger for {username} — user D-Bus now available")
                     return
                 # enable-linger succeeded but the socket never appeared.
                 _raise_user_systemd_unavailable(
@@ -1902,10 +1902,10 @@ def remove_legacy_hermes_units(
             _run_systemctl(["stop", name], system=False, check=False, timeout=90)
             _run_systemctl(["disable", name], system=False, check=False, timeout=30)
             path.unlink(missing_ok=True)
-            print(f"  ✓ Removed {path}")
+            print(f"   Removed {path}")
             removed += 1
         except (OSError, RuntimeError) as e:
-            print(f"  ⚠ Could not remove {path}: {e}")
+            print(f"   Could not remove {path}: {e}")
             remaining.append(path)
 
     if user_units:
@@ -1930,10 +1930,10 @@ def remove_legacy_hermes_units(
                         ["disable", name], system=True, check=False, timeout=30
                     )
                     path.unlink(missing_ok=True)
-                    print(f"  ✓ Removed {path}")
+                    print(f"   Removed {path}")
                     removed += 1
                 except (OSError, RuntimeError) as e:
-                    print(f"  ⚠ Could not remove {path}: {e}")
+                    print(f"   Could not remove {path}: {e}")
                     remaining.append(path)
 
             try:
@@ -2137,12 +2137,12 @@ def print_systemd_linger_guidance() -> None:
     """Print the current linger status and the fix when it is disabled."""
     linger_enabled, linger_detail = get_systemd_linger_status()
     if linger_enabled is True:
-        print("✓ Systemd linger is enabled (service survives logout)")
+        print(" Systemd linger is enabled (service survives logout)")
     elif linger_enabled is False:
-        print("⚠ Systemd linger is disabled (gateway may stop when you log out)")
+        print(" Systemd linger is disabled (gateway may stop when you log out)")
         print("  Run: sudo loginctl enable-linger $USER")
     else:
-        print(f"⚠ Could not verify systemd linger ({linger_detail})")
+        print(f" Could not verify systemd linger ({linger_detail})")
         print("  If you want the gateway user service to survive logout, run:")
         print("  sudo loginctl enable-linger $USER")
 
@@ -2613,7 +2613,7 @@ def _refuse_temp_home_service_write(definition: str, kind: str) -> bool:
     if temp_home is None:
         return False
     print(
-        f"✗ Refusing to write the gateway {kind}: HERMES_HOME resolves to a "
+        f" Refusing to write the gateway {kind}: HERMES_HOME resolves to a "
         f"temporary directory ({temp_home})."
     )
     print(
@@ -2662,14 +2662,14 @@ def refresh_systemd_unit_if_needed(system: bool = False) -> bool:
     unit_path.write_text(new_unit, encoding="utf-8")
     _run_systemctl(["daemon-reload"], system=system, check=True, timeout=30)
     print(
-        f"↻ Updated gateway {_service_scope_label(system)} service definition to match the current Hermes install"
+        f" Updated gateway {_service_scope_label(system)} service definition to match the current Hermes install"
     )
     return True
 
 
 def _print_linger_enable_warning(username: str, detail: str | None = None) -> None:
     print()
-    print("⚠ Linger not enabled — gateway may stop when you close this terminal.")
+    print(" Linger not enabled — gateway may stop when you close this terminal.")
     if detail:
         print(f"  Auto-enable failed: {detail}")
     print()
@@ -2691,12 +2691,12 @@ def _ensure_linger_enabled() -> None:
     username = getpass.getuser()
     linger_file = Path(f"/var/lib/systemd/linger/{username}")
     if linger_file.exists():
-        print("✓ Systemd linger is enabled (service survives logout)")
+        print(" Systemd linger is enabled (service survives logout)")
         return
 
     linger_enabled, linger_detail = get_systemd_linger_status()
     if linger_enabled is True:
-        print("✓ Systemd linger is enabled (service survives logout)")
+        print(" Systemd linger is enabled (service survives logout)")
         return
 
     if not shutil.which("loginctl"):
@@ -2717,7 +2717,7 @@ def _ensure_linger_enabled() -> None:
         return
 
     if result.returncode == 0:
-        print("✓ Linger enabled — gateway will persist after logout")
+        print(" Linger enabled — gateway will persist after logout")
         return
 
     detail = (result.stderr or result.stdout or f"exit {result.returncode}").strip()
@@ -2815,12 +2815,12 @@ def systemd_install(
     if unit_path.exists() and not force:
         if not systemd_unit_is_current(system=system):
             print(
-                f"↻ Repairing outdated {_service_scope_label(system)} systemd service at: {unit_path}"
+                f" Repairing outdated {_service_scope_label(system)} systemd service at: {unit_path}"
             )
             refresh_systemd_unit_if_needed(system=system)
             if enable_on_startup:
                 _run_systemctl(["enable", get_service_name()], system=system, check=True, timeout=30)
-            print(f"✓ {_service_scope_label(system).capitalize()} service definition updated")
+            print(f" {_service_scope_label(system).capitalize()} service definition updated")
             return
         print(f"Service already installed at: {unit_path}")
         print("Use --force to reinstall")
@@ -2839,7 +2839,7 @@ def systemd_install(
 
     print()
     enable_label = "installed and enabled" if enable_on_startup else "installed"
-    print(f"✓ {_service_scope_label(system).capitalize()} service {enable_label}!")
+    print(f" {_service_scope_label(system).capitalize()} service {enable_label}!")
     print()
     print("Next steps:")
     print(
@@ -2877,17 +2877,17 @@ def systemd_uninstall(system: bool = False):
     unit_path = get_systemd_unit_path(system=system)
     if unit_path.exists():
         unit_path.unlink()
-        print(f"✓ Removed {unit_path}")
+        print(f" Removed {unit_path}")
 
     _run_systemctl(["daemon-reload"], system=system, check=True, timeout=30)
-    print(f"✓ {_service_scope_label(system).capitalize()} service uninstalled")
+    print(f" {_service_scope_label(system).capitalize()} service uninstalled")
 
 
 def _require_service_installed(action: str, system: bool = False) -> None:
     unit_path = get_systemd_unit_path(system=system)
     if not unit_path.exists():
         scope_flag = " --system" if system else ""
-        print(f"✗ Gateway service is not installed")
+        print(f" Gateway service is not installed")
         print(f"  Run: {'sudo ' if system else ''}hermes gateway install{scope_flag}")
         sys.exit(1)
 
@@ -2904,7 +2904,7 @@ def systemd_start(system: bool = False):
     _require_service_installed("start", system=system)
     refresh_systemd_unit_if_needed(system=system)
     _run_systemctl(["start", get_service_name()], system=system, check=True, timeout=30)
-    print(f"✓ {_service_scope_label(system).capitalize()} service started")
+    print(f" {_service_scope_label(system).capitalize()} service started")
 
 
 def systemd_stop(system: bool = False):
@@ -2932,7 +2932,7 @@ def systemd_stop(system: bool = False):
             "check `hermes gateway status` or logs for final shutdown state."
         )
         return
-    print(f"✓ {_service_scope_label(system).capitalize()} service stopped")
+    print(f" {_service_scope_label(system).capitalize()} service stopped")
 
 
 def systemd_restart(system: bool = False):
@@ -2952,7 +2952,7 @@ def systemd_restart(system: bool = False):
         svc = get_service_name()
         drain_timeout = _get_restart_drain_timeout()
 
-        print(f"⏳ {scope_label} service restarting gracefully (PID {pid})...")
+        print(f" {scope_label} service restarting gracefully (PID {pid})...")
         if _graceful_restart_via_sigusr1(pid, drain_timeout + 5):
             # The gateway exits with code 75 for a planned service restart.
             # RestartSec can otherwise delay the relaunch even though the
@@ -2976,7 +2976,7 @@ def systemd_restart(system: bool = False):
                 return
 
         print(
-            f"⚠ Graceful restart did not complete within {int(drain_timeout + 5)}s; "
+            f" Graceful restart did not complete within {int(drain_timeout + 5)}s; "
             "forcing a service restart..."
         )
         _run_systemctl(
@@ -3040,7 +3040,7 @@ def systemd_status(deep: bool = False, system: bool = False, full: bool = False)
     scope_flag = " --system" if system else ""
 
     if not unit_path.exists():
-        print("✗ Gateway service is not installed")
+        print(" Gateway service is not installed")
         print(f"  Run: {'sudo ' if system else ''}hermes gateway install{scope_flag}")
         return
 
@@ -3055,7 +3055,7 @@ def systemd_status(deep: bool = False, system: bool = False, full: bool = False)
         print()
 
     if not systemd_unit_is_current(system=system):
-        print("⚠ Installed gateway service definition is outdated")
+        print(" Installed gateway service definition is outdated")
         print(
             f"  Run: {'sudo ' if system else ''}hermes gateway restart{scope_flag}  # auto-refreshes the unit"
         )
@@ -3084,11 +3084,11 @@ def systemd_status(deep: bool = False, system: bool = False, full: bool = False)
 
     if status == "active":
         print(
-            f"✓ {_service_scope_label(system).capitalize()} gateway service is running"
+            f" {_service_scope_label(system).capitalize()} gateway service is running"
         )
     else:
         print(
-            f"✗ {_service_scope_label(system).capitalize()} gateway service is stopped"
+            f" {_service_scope_label(system).capitalize()} gateway service is stopped"
         )
         print(f"  Run: {'sudo ' if system else ''}hermes gateway start{scope_flag}")
 
@@ -3109,9 +3109,9 @@ def systemd_status(deep: bool = False, system: bool = False, full: bool = False)
     exec_main_status = unit_props.get("ExecMainStatus", "")
     result_code = unit_props.get("Result", "")
     if active_state == "activating" and sub_state == "auto-restart":
-        print("  ⏳ Restart pending: systemd is waiting to relaunch the gateway")
+        print("   Restart pending: systemd is waiting to relaunch the gateway")
     elif _systemd_unit_is_start_limited(unit_props):
-        print("  ⏳ Restart pending: systemd is temporarily rate-limiting starts")
+        print("   Restart pending: systemd is temporarily rate-limiting starts")
         print(
             f"  Run after the start-limit window expires: {'sudo ' if system else ''}hermes gateway restart{scope_flag}"
         )
@@ -3121,23 +3121,23 @@ def systemd_status(deep: bool = False, system: bool = False, full: bool = False)
     elif active_state == "failed" and exec_main_status == str(
         GATEWAY_SERVICE_RESTART_EXIT_CODE
     ):
-        print("  ⚠ Planned restart is stuck in systemd failed state (exit 75)")
+        print("   Planned restart is stuck in systemd failed state (exit 75)")
         print(
             f"  Run: systemctl {'--user ' if not system else ''}reset-failed {get_service_name()} && {'sudo ' if system else ''}hermes gateway start{scope_flag}"
         )
     elif active_state == "failed" and result_code:
-        print(f"  ⚠ Systemd unit result: {result_code}")
+        print(f"   Systemd unit result: {result_code}")
 
     if system:
-        print("✓ System service starts at boot without requiring systemd linger")
+        print(" System service starts at boot without requiring systemd linger")
     elif deep:
         print_systemd_linger_guidance()
     else:
         linger_enabled, _ = get_systemd_linger_status()
         if linger_enabled is True:
-            print("✓ Systemd linger is enabled (service survives logout)")
+            print(" Systemd linger is enabled (service survives logout)")
         elif linger_enabled is False:
-            print("⚠ Systemd linger is disabled (gateway may stop when you log out)")
+            print(" Systemd linger is disabled (gateway may stop when you log out)")
             print("  Run: sudo loginctl enable-linger $USER")
 
     if deep:
@@ -3323,9 +3323,9 @@ def _launchd_fallback_to_detached(reason: str, *, exit_on_failure: bool = True) 
     """
     from hermes_constants import display_hermes_home as _dhh
 
-    print(f"⚠ launchd cannot manage the gateway on this macOS version ({reason}).")
+    print(f" launchd cannot manage the gateway on this macOS version ({reason}).")
     if _spawn_detached_gateway():
-        print("✓ Started gateway as a background process instead")
+        print(" Started gateway as a background process instead")
         print("  It will NOT auto-start at login or auto-restart on crash.")
         print(f"  Logs: {_dhh()}/logs/gateway.log")
         print("  Stop it with: hermes gateway stop")
@@ -3479,7 +3479,7 @@ def refresh_launchd_plist_if_needed() -> bool:
         timeout=30,
     )
     print(
-        "↻ Updated gateway launchd service definition to match the current Hermes install"
+        " Updated gateway launchd service definition to match the current Hermes install"
     )
     return True
 
@@ -3489,9 +3489,9 @@ def launchd_install(force: bool = False):
 
     if plist_path.exists() and not force:
         if not launchd_plist_is_current():
-            print(f"↻ Repairing outdated launchd service at: {plist_path}")
+            print(f" Repairing outdated launchd service at: {plist_path}")
             refresh_launchd_plist_if_needed()
-            print("✓ Service definition updated")
+            print(" Service definition updated")
             return
         print(f"Service already installed at: {plist_path}")
         print("Use --force to reinstall")
@@ -3517,7 +3517,7 @@ def launchd_install(force: bool = False):
         return
 
     print()
-    print("✓ Service installed and loaded!")
+    print(" Service installed and loaded!")
     print()
     print("Next steps:")
     print("  hermes gateway status             # Check status")
@@ -3537,9 +3537,9 @@ def launchd_uninstall():
 
     if plist_path.exists():
         plist_path.unlink()
-        print(f"✓ Removed {plist_path}")
+        print(f" Removed {plist_path}")
 
-    print("✓ Service uninstalled")
+    print(" Service uninstalled")
 
 
 def launchd_start():
@@ -3551,7 +3551,7 @@ def launchd_start():
         new_plist = generate_launchd_plist()
         if _refuse_temp_home_service_write(new_plist, "launchd plist"):
             sys.exit(1)
-        print("↻ launchd plist missing; regenerating service definition")
+        print(" launchd plist missing; regenerating service definition")
         plist_path.parent.mkdir(parents=True, exist_ok=True)
         plist_path.write_text(new_plist, encoding="utf-8")
         try:
@@ -3570,7 +3570,7 @@ def launchd_start():
                 raise
             _launchd_fallback_to_detached(f"launchctl exit {e.returncode}")
             return
-        print("✓ Service started")
+        print(" Service started")
         return
 
     refresh_launchd_plist_if_needed()
@@ -3584,7 +3584,7 @@ def launchd_start():
         if not _launchd_error_indicates_unloaded(e):
             raise
         # Job not loaded in this domain — re-bootstrap the plist and retry.
-        print("↻ launchd job was unloaded; reloading service definition")
+        print(" launchd job was unloaded; reloading service definition")
         try:
             subprocess.run(
                 ["launchctl", "bootstrap", _launchd_domain(), str(plist_path)],
@@ -3603,7 +3603,7 @@ def launchd_start():
                 raise
             _launchd_fallback_to_detached(f"launchctl exit {e2.returncode}")
             return
-    print("✓ Service started")
+    print(" Service started")
 
 
 def launchd_stop():
@@ -3634,7 +3634,7 @@ def launchd_stop():
         else:
             raise
     _wait_for_gateway_exit(timeout=10.0, force_after=5.0)
-    print("✓ Service stopped")
+    print(" Service stopped")
 
 
 def _wait_for_gateway_exit(
@@ -3672,7 +3672,7 @@ def _wait_for_gateway_exit(
             # Grace period expired — force-kill the specific PID.
             try:
                 terminate_pid(pid, force=True)
-                print(f"⚠ Gateway PID {pid} did not exit gracefully; sent SIGKILL")
+                print(f" Gateway PID {pid} did not exit gracefully; sent SIGKILL")
             except (ProcessLookupError, PermissionError, OSError):
                 return True  # Already gone or we can't touch it.
             force_sent = True
@@ -3683,7 +3683,7 @@ def _wait_for_gateway_exit(
     remaining_pid = get_running_pid()
     if remaining_pid is not None:
         print(
-            f"⚠ Gateway PID {remaining_pid} still running after {timeout}s — restart may fail"
+            f" Gateway PID {remaining_pid} still running after {timeout}s — restart may fail"
         )
         return False
     return True
@@ -3698,7 +3698,7 @@ def launchd_restart():
     try:
         pid = get_running_pid()
         if pid is not None and _request_gateway_self_restart(pid):
-            print("✓ Service restart requested")
+            print(" Service restart requested")
             return
         if pid is not None:
             try:
@@ -3709,10 +3709,10 @@ def launchd_restart():
                 exited = _wait_for_gateway_exit(timeout=drain_timeout, force_after=None)
                 if not exited:
                     print(
-                        f"⚠ Gateway drain timed out after {drain_timeout:.0f}s — forcing launchd restart"
+                        f" Gateway drain timed out after {drain_timeout:.0f}s — forcing launchd restart"
                     )
         subprocess.run(["launchctl", "kickstart", "-k", target], check=True, timeout=90)
-        print("✓ Service restarted")
+        print(" Service restarted")
     except subprocess.CalledProcessError as e:
         if not _launchd_error_indicates_unloaded(e):
             # Not a "job unloaded" code. If the domain is fundamentally
@@ -3723,7 +3723,7 @@ def launchd_restart():
                 return
             raise
         # Job not loaded — bootstrap and start fresh
-        print("↻ launchd job was unloaded; reloading")
+        print(" launchd job was unloaded; reloading")
         plist_path = get_launchd_plist_path()
         try:
             subprocess.run(
@@ -3737,7 +3737,7 @@ def launchd_restart():
                 raise
             _launchd_fallback_to_detached(f"launchctl exit {e2.returncode}")
             return
-        print("✓ Service restarted")
+        print(" Service restarted")
 
 
 def launchd_status(deep: bool = False):
@@ -3758,16 +3758,16 @@ def launchd_status(deep: bool = False):
 
     print(f"Launchd plist: {plist_path}")
     if launchd_plist_is_current():
-        print("✓ Service definition matches the current Hermes install")
+        print(" Service definition matches the current Hermes install")
     else:
-        print("⚠ Service definition is stale relative to the current Hermes install")
+        print(" Service definition is stale relative to the current Hermes install")
         print("  Run: hermes gateway start")
 
     if loaded:
-        print("✓ Gateway service is loaded")
+        print(" Gateway service is loaded")
         print(loaded_output)
     else:
-        print("✗ Gateway service is not loaded")
+        print(" Gateway service is not loaded")
         print("  Service definition exists locally but launchd has not loaded it.")
         print("  Run: hermes gateway start")
 
@@ -3991,7 +3991,7 @@ def run_gateway(verbose: int = 0, quiet: bool = False, replace: bool = False, fo
     from gateway.run import start_gateway
 
     print("┌─────────────────────────────────────────────────────────┐")
-    print("│           ⚕ Hermes Gateway Starting...                 │")
+    print("│            Hermes Gateway Starting...                 │")
     print("├─────────────────────────────────────────────────────────┤")
     print("│  Messaging platforms + cron scheduler                    │")
     print("│  Press Ctrl+C to stop                                   │")
@@ -4099,7 +4099,7 @@ _PLATFORMS = [
     {
         "key": "telegram",
         "label": "Telegram",
-        "emoji": "📱",
+        "emoji": "",
         "token_var": "TELEGRAM_BOT_TOKEN",
         "setup_instructions": [
             "1. Open Telegram and message @BotFather",
@@ -4135,7 +4135,7 @@ _PLATFORMS = [
     {
         "key": "slack",
         "label": "Slack",
-        "emoji": "💼",
+        "emoji": "",
         "token_var": "SLACK_BOT_TOKEN",
         "setup_instructions": [
             "1. Go to https://api.slack.com/apps → Create New App → From Scratch",
@@ -4147,7 +4147,7 @@ _PLATFORMS = [
             "4. Subscribe to Events: Features → Event Subscriptions → Enable",
             "   Required events: message.im, message.channels, app_mention",
             "   Optional: message.groups (for private channels)",
-            "   ⚠ Without message.channels the bot will ONLY work in DMs!",
+            "    Without message.channels the bot will ONLY work in DMs!",
             "5. Install to Workspace: Settings → Install App → copy xoxb-... token",
             "6. Reinstall the app after any scope or event changes",
             "7. Find your user ID: click your profile → three dots → Copy member ID",
@@ -4178,7 +4178,7 @@ _PLATFORMS = [
     {
         "key": "matrix",
         "label": "Matrix",
-        "emoji": "🔐",
+        "emoji": "",
         "token_var": "MATRIX_ACCESS_TOKEN",
         "setup_instructions": [
             "1. Works with any Matrix homeserver (self-hosted Synapse/Conduit/Dendrite or matrix.org)",
@@ -4227,7 +4227,7 @@ _PLATFORMS = [
     {
         "key": "mattermost",
         "label": "Mattermost",
-        "emoji": "💬",
+        "emoji": "",
         "token_var": "MATTERMOST_TOKEN",
         "setup_instructions": [
             "1. In Mattermost: Integrations → Bot Accounts → Add Bot Account",
@@ -4236,7 +4236,7 @@ _PLATFORMS = [
             "3. Works with any self-hosted Mattermost instance — enter your server URL",
             "4. To find your user ID: click your avatar (top-left) → Profile",
             "   Your user ID is displayed there — click it to copy.",
-            "   ⚠ This is NOT your username — it's a 26-character alphanumeric ID.",
+            "    This is NOT your username — it's a 26-character alphanumeric ID.",
             "5. To get a channel ID: click the channel name → View Info → copy the ID",
         ],
         "vars": [
@@ -4276,19 +4276,19 @@ _PLATFORMS = [
     {
         "key": "whatsapp",
         "label": "WhatsApp",
-        "emoji": "📲",
+        "emoji": "",
         "token_var": "WHATSAPP_ENABLED",
     },
     {
         "key": "signal",
         "label": "Signal",
-        "emoji": "📡",
+        "emoji": "",
         "token_var": "SIGNAL_HTTP_URL",
     },
     {
         "key": "email",
         "label": "Email",
-        "emoji": "📧",
+        "emoji": "",
         "token_var": "EMAIL_ADDRESS",
         "setup_instructions": [
             "1. Use a dedicated email account for your Hermes agent",
@@ -4334,7 +4334,7 @@ _PLATFORMS = [
     {
         "key": "sms",
         "label": "SMS (Twilio)",
-        "emoji": "📱",
+        "emoji": "",
         "token_var": "TWILIO_ACCOUNT_SID",
         "setup_instructions": [
             "1. Create a Twilio account at https://www.twilio.com/",
@@ -4381,7 +4381,7 @@ _PLATFORMS = [
     {
         "key": "dingtalk",
         "label": "DingTalk",
-        "emoji": "💬",
+        "emoji": "",
         "token_var": "DINGTALK_CLIENT_ID",
         "setup_instructions": [
             "1. Go to https://open-dev.dingtalk.com → Create Application",
@@ -4460,7 +4460,7 @@ _PLATFORMS = [
     {
         "key": "wecom",
         "label": "WeCom (Enterprise WeChat)",
-        "emoji": "💬",
+        "emoji": "",
         "token_var": "WECOM_BOT_ID",
         "setup_instructions": [
             "1. Go to WeCom Admin Console → Applications → Create AI Bot",
@@ -4500,7 +4500,7 @@ _PLATFORMS = [
     {
         "key": "wecom_callback",
         "label": "WeCom Callback (Self-Built App)",
-        "emoji": "💬",
+        "emoji": "",
         "token_var": "WECOM_CALLBACK_CORP_ID",
         "setup_instructions": [
             "1. Go to WeCom Admin Console → Applications → Create Self-Built App",
@@ -4559,13 +4559,13 @@ _PLATFORMS = [
     {
         "key": "weixin",
         "label": "Weixin / WeChat",
-        "emoji": "💬",
+        "emoji": "",
         "token_var": "WEIXIN_ACCOUNT_ID",
     },
     {
         "key": "bluebubbles",
         "label": "BlueBubbles (iMessage)",
-        "emoji": "💬",
+        "emoji": "",
         "token_var": "BLUEBUBBLES_SERVER_URL",
         "setup_instructions": [
             "1. Install BlueBubbles on a Mac that will act as your iMessage server:",
@@ -4835,16 +4835,16 @@ def _runtime_health_lines() -> list[str]:
     for platform, pdata in platforms.items():
         if pdata.get("state") == "fatal":
             message = pdata.get("error_message") or "unknown error"
-            lines.append(f"⚠ {platform}: {message}")
+            lines.append(f" {platform}: {message}")
 
     if gateway_state == "startup_failed" and exit_reason:
-        lines.append(f"⚠ Last startup issue: {exit_reason}")
+        lines.append(f" Last startup issue: {exit_reason}")
     elif gateway_state == "draining":
         action = "restart" if restart_requested else "shutdown"
         count = int(active_agents or 0)
-        lines.append(f"⏳ Gateway draining for {action} ({count} active agent(s))")
+        lines.append(f" Gateway draining for {action} ({count} active agent(s))")
     elif gateway_state == "stopped" and exit_reason:
-        lines.append(f"⚠ Last shutdown reason: {exit_reason}")
+        lines.append(f" Last shutdown reason: {exit_reason}")
 
     return lines
 
@@ -5079,7 +5079,7 @@ def _setup_dingtalk():
 def _setup_wecom():
     """Interactive setup for WeCom — scan QR code or manual credential input."""
     print()
-    print(color("  ─── 💬 WeCom (Enterprise WeChat) Setup ───", Colors.CYAN))
+    print(color("  ───  WeCom (Enterprise WeChat) Setup ───", Colors.CYAN))
 
     existing_bot_id = get_env_value("WECOM_BOT_ID")
     existing_secret = get_env_value("WECOM_SECRET")
@@ -5198,7 +5198,7 @@ def _setup_wecom():
         print_success(f"  Home channel set to {home}")
 
     print()
-    print_success("💬 WeCom configured!")
+    print_success(" WeCom configured!")
 
 
 def _is_service_installed() -> bool:
@@ -5277,7 +5277,7 @@ def _is_service_running() -> bool:
 def _setup_weixin():
     """Interactive setup for Weixin / WeChat personal accounts."""
     print()
-    print(color("  ─── 💬 Weixin / WeChat Setup ───", Colors.CYAN))
+    print(color("  ───  Weixin / WeChat Setup ───", Colors.CYAN))
     print()
     print_info("  1. Hermes will open Tencent iLink QR login in this terminal.")
     print_info("  2. Use WeChat to scan and confirm the QR code.")
@@ -5765,7 +5765,7 @@ def _setup_signal():
     import shutil
 
     print()
-    print(color("  ─── 📡 Signal Setup ───", Colors.CYAN))
+    print(color("  ───  Signal Setup ───", Colors.CYAN))
 
     existing_url = get_env_value("SIGNAL_HTTP_URL")
     existing_account = get_env_value("SIGNAL_ACCOUNT")
@@ -5980,7 +5980,7 @@ def gateway_setup():
     )
     print(
         color(
-            "│             ⚕ Gateway Setup                            │", Colors.MAGENTA
+            "│              Gateway Setup                            │", Colors.MAGENTA
         )
     )
     print(
@@ -6271,10 +6271,10 @@ def _dispatch_via_service_manager_if_s6(
         else:
             return False
     except GatewayNotRegisteredError as exc:
-        print(f"✗ {exc}")
+        print(f" {exc}")
         sys.exit(1)
     except S6CommandError as exc:
-        print(f"✗ {exc}")
+        print(f" {exc}")
         sys.exit(1)
     return True
 
@@ -6311,7 +6311,7 @@ def _dispatch_all_via_service_manager_if_s6(action: str) -> bool:
     mgr = get_service_manager()
     profiles = mgr.list_profile_gateways()
     if not profiles:
-        print("✗ No profile gateways registered under s6")
+        print(" No profile gateways registered under s6")
         return True
     fn = mgr.stop if action == "stop" else mgr.restart
     errors: list[tuple[str, Exception]] = []
@@ -6324,9 +6324,9 @@ def _dispatch_all_via_service_manager_if_s6(action: str) -> bool:
     succeeded = len(profiles) - len(errors)
     verb = "stopped" if action == "stop" else "restarted"
     if succeeded:
-        print(f"✓ {verb.capitalize()} {succeeded} profile gateway(s) under s6")
+        print(f" {verb.capitalize()} {succeeded} profile gateway(s) under s6")
     for profile, exc in errors:
-        print(f"✗ Could not {action} gateway-{profile}: {exc}")
+        print(f" Could not {action} gateway-{profile}: {exc}")
     return True
 
 
@@ -6634,7 +6634,7 @@ def _gateway_command_inner(args):
             killed = kill_gateway_processes(all_profiles=True)
             if killed:
                 print(
-                    f"✓ Killed {killed} stale gateway process(es) across all profiles"
+                    f" Killed {killed} stale gateway process(es) across all profiles"
                 )
                 _wait_for_gateway_exit(timeout=10.0, force_after=5.0)
 
@@ -6741,9 +6741,9 @@ def _gateway_command_inner(args):
             killed = kill_gateway_processes(all_profiles=True)
             total = killed + (1 if service_available else 0)
             if total:
-                print(f"✓ Stopped {total} gateway process(es) across all profiles")
+                print(f" Stopped {total} gateway process(es) across all profiles")
             else:
-                print("✗ No gateway processes found")
+                print(" No gateway processes found")
         else:
             # Default: stop only the current profile's gateway
             service_available = False
@@ -6775,11 +6775,11 @@ def _gateway_command_inner(args):
             if not service_available:
                 # No systemd/launchd/schtasks service — use profile-scoped PID file
                 if stop_profile_gateway():
-                    print("✓ Stopped gateway for this profile")
+                    print(" Stopped gateway for this profile")
                 else:
-                    print("✗ No gateway running for this profile")
+                    print(" No gateway running for this profile")
             else:
-                print(f"✓ Stopped {get_service_name()} service")
+                print(f" Stopped {get_service_name()} service")
 
     elif subcmd == "restart":
         # Defense: refuse self-targeting gateway restart from inside the gateway.
@@ -6838,7 +6838,7 @@ def _gateway_command_inner(args):
             killed = kill_gateway_processes(all_profiles=True)
             total = killed + (1 if service_stopped else 0)
             if total:
-                print(f"✓ Stopped {total} gateway process(es) across all profiles")
+                print(f" Stopped {total} gateway process(es) across all profiles")
             _wait_for_gateway_exit(timeout=10.0, force_after=5.0)
 
             # Start the current profile's service fresh
@@ -6908,7 +6908,7 @@ def _gateway_command_inner(args):
                     _username = getpass.getuser()
                     print()
                     print(
-                        "⚠ Cannot restart gateway as a service — linger is not enabled."
+                        " Cannot restart gateway as a service — linger is not enabled."
                     )
                     print(
                         "  The gateway user service requires linger to function on headless servers."
@@ -6922,7 +6922,7 @@ def _gateway_command_inner(args):
 
             if service_configured:
                 print()
-                print("✗ Gateway service restart failed.")
+                print(" Gateway service restart failed.")
                 print(
                     "  The service definition exists, but the service manager did not recover it."
                 )
@@ -6931,7 +6931,7 @@ def _gateway_command_inner(args):
 
             # Manual restart: stop only this profile's gateway
             if stop_profile_gateway():
-                print("✓ Stopped gateway for this profile")
+                print(" Stopped gateway for this profile")
 
             _wait_for_gateway_exit(timeout=10.0, force_after=5.0)
 
@@ -6969,7 +6969,7 @@ def _gateway_command_inner(args):
             # Check for manually running processes
             pids = list(snapshot.gateway_pids)
             if pids:
-                print(f"✓ Gateway is running (PID: {', '.join(map(str, pids))})")
+                print(f" Gateway is running (PID: {', '.join(map(str, pids))})")
                 print("  (Running manually, not as a system service)")
                 runtime_lines = _runtime_health_lines()
                 if runtime_lines:
@@ -6999,7 +6999,7 @@ def _gateway_command_inner(args):
                     print("  hermes gateway install")
                     print("  sudo hermes gateway install --system")
             else:
-                print("✗ Gateway is not running")
+                print(" Gateway is not running")
                 runtime_lines = _runtime_health_lines()
                 if runtime_lines:
                     print()

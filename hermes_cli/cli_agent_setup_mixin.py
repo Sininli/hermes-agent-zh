@@ -62,7 +62,7 @@ class CLIAgentSetupMixin:
                             "Primary provider auth failed (%s). Falling through to fallback: %s/%s",
                             _primary_exc, _fb_provider, _fb_model,
                         )
-                        _cprint(f"⚠️  Primary auth failed — switching to fallback: {_fb_provider} / {_fb_model}")
+                        _cprint(f"️  Primary auth failed — switching to fallback: {_fb_provider} / {_fb_model}")
                         self.requested_provider = _fb_provider
                         self.model = _fb_model
                         _primary_exc = None
@@ -103,11 +103,11 @@ class CLIAgentSetupMixin:
                     base_url, _source,
                 )
             else:
-                print("\n⚠️  Provider resolver returned an empty API key. "
+                print("\n️  Provider resolver returned an empty API key. "
                       "Set OPENROUTER_API_KEY or run: hermes setup")
                 return False
         if not isinstance(base_url, str) or not base_url:
-            print("\n⚠️  Provider resolver returned an empty base URL. "
+            print("\n️  Provider resolver returned an empty base URL. "
                   "Check your provider config or run: hermes setup")
             return False
 
@@ -296,14 +296,14 @@ class CLIAgentSetupMixin:
                     title_part = f" \"{session_meta['title']}\""
                 if _quiet_mode:
                     print(
-                        f"↻ Resumed session {self.session_id}{title_part} "
+                        f" Resumed session {self.session_id}{title_part} "
                         f"({msg_count} user message{'s' if msg_count != 1 else ''}, "
                         f"{len(restored)} total messages)",
                         file=sys.stderr,
                     )
                 else:
                     ChatConsole().print(
-                        f"[bold {_accent_hex()}]↻ Resumed session[/] "
+                        f"[bold {_accent_hex()}] Resumed session[/] "
                         f"[bold]{_escape(self.session_id)}[/]"
                         f"[bold {_accent_hex()}]{_escape(title_part)}[/] "
                         f"({msg_count} user message{'s' if msg_count != 1 else ''}, {len(restored)} total messages)"
@@ -485,7 +485,7 @@ class CLIAgentSetupMixin:
                 title_part = f' "{session_meta["title"]}"'
             accent_color = _accent_hex()
             self._console_print(
-                f"[{accent_color}]↻ Resumed session [bold]{self.session_id}[/bold]"
+                f"[{accent_color}] Resumed session [bold]{self.session_id}[/bold]"
                 f"{title_part} "
                 f"({msg_count} user message{'s' if msg_count != 1 else ''}, "
                 f"{len(restored)} total messages)[/]"
@@ -647,7 +647,7 @@ class CLIAgentSetupMixin:
 
         for i, (role, text) in enumerate(entries):
             if role == "user":
-                lines.append("  ● You: ", style=f"dim bold {_session_label_c}")
+                lines.append("   You: ", style=f"dim bold {_session_label_c}")
                 # Show first line inline, indent rest
                 msg_lines = text.splitlines()
                 lines.append(msg_lines[0] + "\n", style="dim")
@@ -655,13 +655,13 @@ class CLIAgentSetupMixin:
                     lines.append(f"         {ml}\n", style="dim")
             elif role == "assistant_last":
                 # Last assistant response shown in full, non-dim
-                lines.append("  ◆ Hermes: ", style=f"bold {_assistant_label_c}")
+                lines.append("   Hermes: ", style=f"bold {_assistant_label_c}")
                 msg_lines = text.splitlines()
                 lines.append(msg_lines[0] + "\n", style="")
                 for ml in msg_lines[1:]:
                     lines.append(f"            {ml}\n", style="")
             else:
-                lines.append("  ◆ Hermes: ", style=f"dim bold {_assistant_label_c}")
+                lines.append("   Hermes: ", style=f"dim bold {_assistant_label_c}")
                 msg_lines = text.splitlines()
                 lines.append(msg_lines[0] + "\n", style="dim")
                 for ml in msg_lines[1:]:

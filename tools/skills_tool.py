@@ -1496,7 +1496,7 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # Test listing skills
-    print("\n📋 Listing all skills:")
+    print("\n Listing all skills:")
     result = json.loads(skills_list())
     if result["success"]:
         print(
@@ -1506,12 +1506,12 @@ if __name__ == "__main__":
         print("\nFirst 10 skills:")
         for skill in result["skills"][:10]:
             cat = f"[{skill['category']}] " if skill.get("category") else ""
-            print(f"  • {cat}{skill['name']}: {skill['description'][:60]}...")
+            print(f"   {cat}{skill['name']}: {skill['description'][:60]}...")
     else:
         print(f"Error: {result['error']}")
 
     # Test viewing a skill
-    print("\n📖 Viewing skill 'axolotl':")
+    print("\n Viewing skill 'axolotl':")
     result = json.loads(skill_view("axolotl"))
     if result["success"]:
         print(f"Name: {result['name']}")
@@ -1523,7 +1523,7 @@ if __name__ == "__main__":
         print(f"Error: {result['error']}")
 
     # Test viewing a reference file
-    print("\n📄 Viewing reference file 'axolotl/references/dataset-formats.md':")
+    print("\n Viewing reference file 'axolotl/references/dataset-formats.md':")
     result = json.loads(skill_view("axolotl", "references/dataset-formats.md"))
     if result["success"]:
         print(f"File: {result['file']}")
@@ -1579,7 +1579,7 @@ registry.register(
         category=args.get("category"), task_id=kw.get("task_id")
     ),
     check_fn=check_skills_requirements,
-    emoji="📚",
+    emoji="",
 )
 def _skill_view_with_bump(args, **kw):
     """Invoke skill_view, then bump view_count on success. Best-effort: a
@@ -1612,5 +1612,5 @@ registry.register(
     schema=SKILL_VIEW_SCHEMA,
     handler=_skill_view_with_bump,
     check_fn=check_skills_requirements,
-    emoji="📚",
+    emoji="",
 )

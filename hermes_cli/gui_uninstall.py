@@ -50,11 +50,11 @@ def log_info(msg: str):
 
 
 def log_success(msg: str):
-    print(f"{color('✓', Colors.GREEN)} {msg}")
+    print(f"{color('', Colors.GREEN)} {msg}")
 
 
 def log_warn(msg: str):
-    print(f"{color('⚠', Colors.YELLOW)} {msg}")
+    print(f"{color('', Colors.YELLOW)} {msg}")
 
 
 # ---------------------------------------------------------------------------

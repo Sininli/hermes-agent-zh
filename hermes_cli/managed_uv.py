@@ -106,7 +106,7 @@ def _ensure_uv_path() -> Optional[str]:
         _install_uv(target)
     except Exception as exc:
         logger.warning("Managed uv install failed: %s", exc)
-        print(f"  ✗ Failed to install managed uv: {exc}")
+        print(f"   Failed to install managed uv: {exc}")
         return None
 
     # Verify
@@ -118,9 +118,9 @@ def _ensure_uv_path() -> Optional[str]:
             text=True,
             check=False,
         ).stdout.strip()
-        print(f"  ✓ Managed uv installed ({version})")
+        print(f"   Managed uv installed ({version})")
     else:
-        print("  ✗ Managed uv install appeared to succeed but binary not found")
+        print("   Managed uv install appeared to succeed but binary not found")
     return result
 
 
@@ -180,7 +180,7 @@ def update_managed_uv() -> Optional[str]:
             text=True,
             check=False,
         ).stdout.strip()
-        print(f"  ✓ Managed uv updated ({version})")
+        print(f"   Managed uv updated ({version})")
     else:
         # Non-fatal — old uv still works fine.
         logger.debug("uv self update failed (rc=%d): %s", result.returncode, result.stderr)

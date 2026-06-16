@@ -203,7 +203,7 @@ class SignalAdapter(BasePlatformAdapter):
         # DM allowlist — mirrors SIGNAL_ALLOWED_USERS checked by run.py.
         # Stored here so the reaction hooks can skip unauthorized senders
         # (reactions fire before run.py's auth gate, so without this check
-        # every inbound DM from any contact gets a 👀 reaction).
+        # every inbound DM from any contact gets a  reaction).
         # "*" means all users allowed (open mode); empty means no restriction
         # recorded at adapter level (run.py still enforces auth separately).
         dm_allowed_str = os.getenv("SIGNAL_ALLOWED_USERS", "*")
@@ -1410,7 +1410,7 @@ class SignalAdapter(BasePlatformAdapter):
 
         Args:
             chat_id: The chat (phone number or "group:<id>")
-            emoji: Reaction emoji string (e.g. "👀", "✅")
+            emoji: Reaction emoji string (e.g. "", "")
             target_author: Phone number / UUID of the message author
             target_timestamp: Signal timestamp (ms) of the message to react to
         """
@@ -1481,7 +1481,7 @@ class SignalAdapter(BasePlatformAdapter):
         1. SIGNAL_REACTIONS env var — set to false/0/no to disable globally.
         2. DM allowlist — if SIGNAL_ALLOWED_USERS is set, only react to
            messages from senders in that list.  This prevents unauthorized
-           contacts from seeing the 👀 reaction (which fires before run.py's
+           contacts from seeing the  reaction (which fires before run.py's
            auth gate and would otherwise reveal that a bot is listening).
         """
         if os.getenv("SIGNAL_REACTIONS", "true").lower() in {"false", "0", "no"}:
@@ -1493,17 +1493,17 @@ class SignalAdapter(BasePlatformAdapter):
         return True
 
     async def on_processing_start(self, event: MessageEvent) -> None:
-        """React with 👀 when processing begins."""
+        """React with  when processing begins."""
         if not self._reactions_enabled(event):
             return
         target = self._extract_reaction_target(event)
         if target:
-            await self.send_reaction(event.source.chat_id, "👀", *target)
+            await self.send_reaction(event.source.chat_id, "", *target)
 
     async def on_processing_complete(self, event: MessageEvent, outcome: "ProcessingOutcome") -> None:
-        """Swap the 👀 reaction for ✅ (success) or ❌ (failure).
+        """Swap the  reaction for  (success) or  (failure).
 
-        On CANCELLED we leave the 👀 in place — no terminal outcome means
+        On CANCELLED we leave the  in place — no terminal outcome means
         the reaction should keep reflecting "in progress" (matches Telegram).
         """
         if not self._reactions_enabled(event):
@@ -1517,9 +1517,9 @@ class SignalAdapter(BasePlatformAdapter):
         # Remove the in-progress reaction, then add the final one
         await self.remove_reaction(chat_id, *target)
         if outcome == ProcessingOutcome.SUCCESS:
-            await self.send_reaction(chat_id, "✅", *target)
+            await self.send_reaction(chat_id, "", *target)
         elif outcome == ProcessingOutcome.FAILURE:
-            await self.send_reaction(chat_id, "❌", *target)
+            await self.send_reaction(chat_id, "", *target)
 
     # ------------------------------------------------------------------
     # Chat Info

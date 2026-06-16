@@ -2057,7 +2057,7 @@ class OwnerCommandMiddleware(InboundMiddleware):
                 adapter.name, ctx.chat_id, ctx.from_account, matched_cmd,
             )
             adapter._track_task(asyncio.create_task(
-                adapter.send(ctx.chat_id, f"⚠️ {matched_cmd} is only available to the creator in private chat mode"),
+                adapter.send(ctx.chat_id, f"️ {matched_cmd} is only available to the creator in private chat mode"),
                 name=f"yuanbao-owner-cmd-denial-{matched_cmd}",
             ))
             return  # Stop pipeline

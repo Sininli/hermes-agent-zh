@@ -578,7 +578,7 @@ def register(ctx) -> None:
         allowed_users_env="NTFY_ALLOWED_USERS",
         allow_all_env="NTFY_ALLOW_ALL_USERS",
         max_message_length=MAX_MESSAGE_LENGTH,
-        emoji="🔔",
+        emoji="",
         # ntfy publishers have no persistent identity — topic names are
         # the only identifier, no phone numbers / emails to redact.
         pii_safe=True,

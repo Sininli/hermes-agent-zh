@@ -144,5 +144,5 @@ registry.register(
         task_id=kw.get("task_id"),
     ),
     check_fn=_browser_dialog_check,
-    emoji="💬",
+    emoji="",
 )

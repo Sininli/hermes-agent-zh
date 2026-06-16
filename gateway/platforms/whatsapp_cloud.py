@@ -726,7 +726,7 @@ class WhatsAppCloudAdapter(WhatsAppBehaviorMixin, BasePlatformAdapter):
                 })
             rows.append({
                 "id": f"cl:{clarify_id}:other",
-                "title": "✏️ Other",
+                "title": "️ Other",
                 "description": "Type your own answer",
             })
             interactive = {
@@ -766,7 +766,7 @@ class WhatsAppCloudAdapter(WhatsAppBehaviorMixin, BasePlatformAdapter):
         cmd = command or ""
         cmd_preview = cmd if len(cmd) <= 800 else cmd[:800] + "..."
         body_text = self._truncate_body(
-            f"⚠️ *Command Approval Required*\n\n"
+            f"️ *Command Approval Required*\n\n"
             f"```\n{cmd_preview}\n```\n\n"
             f"Reason: {description}"
         )
@@ -781,11 +781,11 @@ class WhatsAppCloudAdapter(WhatsAppBehaviorMixin, BasePlatformAdapter):
                 "buttons": [
                     {
                         "type": "reply",
-                        "reply": {"id": f"appr:{approval_id}:approve", "title": "✅ Approve"},
+                        "reply": {"id": f"appr:{approval_id}:approve", "title": " Approve"},
                     },
                     {
                         "type": "reply",
-                        "reply": {"id": f"appr:{approval_id}:deny", "title": "❌ Deny"},
+                        "reply": {"id": f"appr:{approval_id}:deny", "title": " Deny"},
                     },
                 ],
             },
@@ -825,15 +825,15 @@ class WhatsAppCloudAdapter(WhatsAppBehaviorMixin, BasePlatformAdapter):
                 "buttons": [
                     {
                         "type": "reply",
-                        "reply": {"id": f"sc:once:{confirm_id}", "title": "✅ Approve Once"},
+                        "reply": {"id": f"sc:once:{confirm_id}", "title": " Approve Once"},
                     },
                     {
                         "type": "reply",
-                        "reply": {"id": f"sc:always:{confirm_id}", "title": "🔒 Always"},
+                        "reply": {"id": f"sc:always:{confirm_id}", "title": " Always"},
                     },
                     {
                         "type": "reply",
-                        "reply": {"id": f"sc:cancel:{confirm_id}", "title": "❌ Cancel"},
+                        "reply": {"id": f"sc:cancel:{confirm_id}", "title": " Cancel"},
                     },
                 ],
             },
@@ -1637,7 +1637,7 @@ class WhatsAppCloudAdapter(WhatsAppBehaviorMixin, BasePlatformAdapter):
                 try:
                     await self.send(
                         str(raw_message.get("from") or ""),
-                        "✏️ Type your answer:",
+                        "️ Type your answer:",
                     )
                 except Exception:
                     logger.exception("[whatsapp_cloud] clarify other-prompt failed")
@@ -1704,7 +1704,7 @@ class WhatsAppCloudAdapter(WhatsAppBehaviorMixin, BasePlatformAdapter):
             # Send confirmation message — paralleling Telegram's UX.
             try:
                 confirm_text = (
-                    "✅ Approved." if choice == "approve" else "❌ Denied."
+                    " Approved." if choice == "approve" else " Denied."
                 )
                 await self.send(str(raw_message.get("from") or ""), confirm_text)
             except Exception:

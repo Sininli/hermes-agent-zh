@@ -188,19 +188,19 @@ def _best_effort_sweep_expired_pastes() -> None:
 # ---------------------------------------------------------------------------
 
 _PRIVACY_NOTICE = """\
-⚠️  This will upload the following to a public paste service:
-  • System info (OS, Python version, Hermes version, provider, which API keys
+️  This will upload the following to a public paste service:
+   System info (OS, Python version, Hermes version, provider, which API keys
     are configured — NOT the actual keys)
-  • Recent log lines (agent.log, errors.log, gateway.log, desktop.log — may
+   Recent log lines (agent.log, errors.log, gateway.log, desktop.log — may
     contain conversation fragments and file paths)
-  • Full agent.log, gateway.log, and desktop.log (up to 512 KB each — likely
+   Full agent.log, gateway.log, and desktop.log (up to 512 KB each — likely
     contains conversation content, tool outputs, and file paths)
 
 Pastes auto-delete after 6 hours.
 """
 
 _GATEWAY_PRIVACY_NOTICE = (
-    "⚠️ **Privacy notice:** This uploads system info + recent log tails "
+    "️ **Privacy notice:** This uploads system info + recent log tails "
     "(may contain conversation fragments) to a public paste service. "
     "Full logs are NOT included from the gateway — use `hermes debug share` "
     "from the CLI for full log uploads.\n"
@@ -765,7 +765,7 @@ def run_debug_share(args):
         print(f"\n  (failed to upload: {', '.join(result.failures)})")
 
     hours = result.auto_delete_seconds // 3600
-    print(f"\n⏱  Pastes will auto-delete in {hours} hours.")
+    print(f"\n  Pastes will auto-delete in {hours} hours.")
 
     # Manual delete fallback
     print(f"To delete now:  hermes debug delete <url>")
@@ -785,13 +785,13 @@ def run_debug_delete(args):
         try:
             ok = delete_paste(url)
             if ok:
-                print(f"  ✓ Deleted: {url}")
+                print(f"   Deleted: {url}")
             else:
-                print(f"  ✗ Failed to delete: {url} (unexpected response)")
+                print(f"   Failed to delete: {url} (unexpected response)")
         except ValueError as exc:
-            print(f"  ✗ {exc}")
+            print(f"   {exc}")
         except Exception as exc:
-            print(f"  ✗ Could not delete {url}: {exc}")
+            print(f"   Could not delete {url}: {exc}")
 
 
 def run_debug(args):

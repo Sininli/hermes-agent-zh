@@ -440,7 +440,7 @@ def _prompt_env_vars(specs: List[EnvVarSpec]) -> Dict[str, str]:
     for spec in specs:
         existing = get_env_value(spec.name)
         if existing:
-            print(color(f"  ✓ {spec.name} already set in .env", Colors.GREEN))
+            print(color(f"   {spec.name} already set in .env", Colors.GREEN))
             collected[spec.name] = existing
             continue
         value = _prompt_input(
@@ -652,7 +652,7 @@ def _apply_tool_selection(
         # tool to switch back to include-mode.
         _write_tools_include(entry.name, None)
         print(color(
-            f"  ✓ All {len(probed)} tools enabled (no filter — new tools "
+            f"   All {len(probed)} tools enabled (no filter — new tools "
             "the server adds later will be auto-enabled).",
             Colors.GREEN,
         ))
@@ -661,7 +661,7 @@ def _apply_tool_selection(
     chosen_names = [tool_names[i] for i in sorted(chosen_indices)]
     _write_tools_include(entry.name, chosen_names)
     print(color(
-        f"  ✓ {len(chosen_names)}/{len(probed)} tools enabled.",
+        f"   {len(chosen_names)}/{len(probed)} tools enabled.",
         Colors.GREEN,
     ))
 
@@ -742,7 +742,7 @@ def install_entry(entry: CatalogEntry, *, enable: bool = True) -> None:
 
     print()
     print(color(
-        f"  ✓ Installed '{entry.name}' "
+        f"   Installed '{entry.name}' "
         f"({'enabled' if enable else 'disabled'}). "
         f"Start a new Hermes session to load its tools.",
         Colors.GREEN,

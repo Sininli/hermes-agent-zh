@@ -25,7 +25,7 @@ _WARNED_KEYS: set[str] = set()
 # that were injected by an external secret source during load_hermes_dotenv().
 # Used by setup / `hermes model` flows to label detected credentials so
 # users understand WHERE a key came from when their .env doesn't contain it
-# directly (otherwise the "credentials detected ✓" line looks identical to
+# directly (otherwise the "credentials detected " line looks identical to
 # the .env case and they don't know Bitwarden is wired up).
 _SECRET_SOURCES: dict[str, str] = {}
 
@@ -301,7 +301,7 @@ def _apply_external_secret_sources(home_path: Path) -> None:
         _sanitize_loaded_credentials()
         # Remember where these came from so the setup / `hermes model`
         # flows can label detected credentials with "(from Bitwarden)" —
-        # otherwise users see "credentials ✓" with no hint that the value
+        # otherwise users see "credentials " with no hint that the value
         # came from BSM rather than .env.
         for name in result.applied:
             _SECRET_SOURCES[name] = "bitwarden"

@@ -55,14 +55,14 @@ class CLICommandsMixin:
         from tools.checkpoint_manager import format_checkpoint_list
 
         if not hasattr(self, 'agent') or not self.agent:
-            print("  No active agent session.")
+            print("  没有活动的智能体会话。")
             return
 
         mgr = self.agent._checkpoint_mgr
         if not mgr.enabled:
-            print("  Checkpoints are not enabled.")
-            print("  Enable with: hermes --checkpoints")
-            print("  Or in config.yaml: checkpoints: { enabled: true }")
+            print("  检查点未启用。")
+            print("  启用方式: hermes --checkpoints")
+            print("  或在 config.yaml 中: checkpoints: { enabled: true }")
             return
 
         cwd = os.getenv("TERMINAL_CWD", os.getcwd())
@@ -105,7 +105,7 @@ class CLICommandsMixin:
                         else:
                             print(f"\n{diff}")
             else:
-                print(f"  ❌ {result['error']}")
+                print(f"   {result['error']}")
             return
 
         # Resolve checkpoint reference (number or hash)
@@ -124,9 +124,9 @@ class CLICommandsMixin:
         result = mgr.restore(cwd, target_hash, file_path=file_path)
         if result["success"]:
             if file_path:
-                print(f"  ✅ Restored {file_path} from checkpoint {result['restored_to']}: {result['reason']}")
+                print(f"   Restored {file_path} from checkpoint {result['restored_to']}: {result['reason']}")
             else:
-                print(f"  ✅ Restored to checkpoint {result['restored_to']}: {result['reason']}")
+                print(f"   Restored to checkpoint {result['restored_to']}: {result['reason']}")
             print("  A pre-rollback snapshot was saved automatically.")
 
             # Also undo the last conversation turn so the agent's context
@@ -135,7 +135,7 @@ class CLICommandsMixin:
                 self.undo_last(prefill=False)
                 print("  Chat turn undone to match restored file state.")
         else:
-            print(f"  ❌ {result['error']}")
+            print(f"   {result['error']}")
 
     def _handle_snapshot_command(self, command: str):
         """Handle /snapshot — lightweight state snapshots for Hermes config/state.
@@ -241,7 +241,7 @@ class CLICommandsMixin:
 
         print(f"  Stopping {len(running)} background process(es)...")
         killed = process_registry.kill_all()
-        print(f"  ✅ Stopped {killed} process(es).")
+        print(f"   Stopped {killed} process(es).")
 
     def _handle_agents_command(self):
         """Handle /agents — show background processes and agent status."""
@@ -284,7 +284,7 @@ class CLICommandsMixin:
         if has_clipboard_image():
             if self._try_attach_clipboard_image():
                 n = len(self._attached_images)
-                _cprint(f"  📎 Image #{n} attached from clipboard")
+                _cprint(f"   Image #{n} attached from clipboard")
             else:
                 _cprint(f"  {_DIM}(>_<) Clipboard has an image but extraction failed{_RST}")
         else:
@@ -348,7 +348,7 @@ class CLICommandsMixin:
             return
 
         self._attached_images.append(image_path)
-        _cprint(f"  📎 Attached image: {image_path.name}")
+        _cprint(f"   Attached image: {image_path.name}")
         if _remainder:
             _cprint(f"  {_DIM}Now type your prompt (or use --image in single-query mode): {_remainder}{_RST}")
         elif _is_termux_environment():
@@ -576,7 +576,7 @@ class CLICommandsMixin:
                 last_state = current
             if current == "completed":
                 _cprint("")
-                _cprint(f"  ↻ Handoff complete. The session is now active on {platform_name}.")
+                _cprint(f"   Handoff complete. The session is now active on {platform_name}.")
                 _cprint(f"  Resume it on this CLI later with: /resume {session_title}")
                 _cprint("")
                 # End the CLI cleanly — same exit semantics as /quit.
@@ -740,13 +740,13 @@ class CLICommandsMixin:
         msg_count = len([m for m in self.conversation_history if m.get("role") == "user"])
         if self.conversation_history:
             _cprint(
-                f"  ↻ Resumed session {target_id}{title_part}"
+                f"   Resumed session {target_id}{title_part}"
                 f" ({msg_count} user message{'s' if msg_count != 1 else ''},"
                 f" {len(self.conversation_history)} total)"
             )
             self._display_resumed_history()
         else:
-            _cprint(f"  ↻ Resumed session {target_id}{title_part} — no messages, starting fresh.")
+            _cprint(f"   Resumed session {target_id}{title_part} — no messages, starting fresh.")
 
     def _handle_sessions_command(self, cmd_original: str) -> None:
         """Handle /sessions [list|<id_or_title>] — browse or resume previous sessions.
@@ -1488,18 +1488,18 @@ class CLICommandsMixin:
                     time.sleep(0.05)  # brief pause for refresh
                 print()
                 ChatConsole().print(f"[{_accent_hex()}]{'─' * 40}[/]")
-                _cprint(f"  ✅ Background task #{task_num} complete")
+                _cprint(f"   Background task #{task_num} complete")
                 _cprint(f"  Prompt: \"{prompt[:60]}{'...' if len(prompt) > 60 else ''}\"")
                 ChatConsole().print(f"[{_accent_hex()}]{'─' * 40}[/]")
                 if response:
                     try:
                         from hermes_cli.skin_engine import get_active_skin
                         _skin = get_active_skin()
-                        label = _skin.get_branding("response_label", "⚕ Hermes")
+                        label = _skin.get_branding("response_label", " Hermes")
                         _resp_color = _maybe_remap_for_light_mode(_skin.get_color("response_border", "#CD7F32"))
                         _resp_text = _maybe_remap_for_light_mode(_skin.get_color("banner_text", "#FFF8DC"))
                     except Exception:
-                        label = "⚕ Hermes"
+                        label = " Hermes"
                         _resp_color = "#CD7F32"
                         _resp_text = "#FFF8DC"
 
@@ -1528,7 +1528,7 @@ class CLICommandsMixin:
                     self._app.invalidate()
                     time.sleep(0.05)
                 print()
-                _cprint(f"  ❌ Background task #{task_num} failed: {e}")
+                _cprint(f"   Background task #{task_num} failed: {e}")
             finally:
                 try:
                     set_sudo_password_callback(None)
@@ -1604,7 +1604,7 @@ class CLICommandsMixin:
             if parsed_cdp.scheme not in {"http", "https", "ws", "wss"}:
                 print()
                 print(
-                    f"   ⚠ Unsupported browser url scheme: {parsed_cdp.scheme or '(missing)'} "
+                    f"    Unsupported browser url scheme: {parsed_cdp.scheme or '(missing)'} "
                     "(expected one of: http, https, ws, wss)"
                 )
                 print()
@@ -1613,12 +1613,12 @@ class CLICommandsMixin:
                 _port = parsed_cdp.port or (443 if parsed_cdp.scheme in {"https", "wss"} else 80)
             except ValueError:
                 print()
-                print(f"   ⚠ Invalid port in browser url: {cdp_url}")
+                print(f"    Invalid port in browser url: {cdp_url}")
                 print()
                 return
             if not parsed_cdp.hostname:
                 print()
-                print(f"   ⚠ Missing host in browser url: {cdp_url}")
+                print(f"    Missing host in browser url: {cdp_url}")
                 print()
                 return
             _host = parsed_cdp.hostname
@@ -1645,7 +1645,7 @@ class CLICommandsMixin:
             _already_open = is_browser_debug_ready(cdp_url, timeout=1.0)
 
             if _already_open:
-                print(f"   ✓ Chromium-family browser is already listening on port {_port}")
+                print(f"    Chromium-family browser is already listening on port {_port}")
             elif cdp_url == _DEFAULT_CDP:
                 # Try to auto-launch a Chromium-family browser with remote debugging
                 print("   Chromium-family browser isn't running with remote debugging — attempting to launch...")
@@ -1658,12 +1658,12 @@ class CLICommandsMixin:
                             break
                         time.sleep(0.5)
                     if _already_open:
-                        print(f"   ✓ Chromium-family browser launched and listening on port {_port}")
+                        print(f"    Chromium-family browser launched and listening on port {_port}")
                     else:
-                        print(f"   ⚠ Browser launched but port {_port} isn't responding yet")
+                        print(f"    Browser launched but port {_port} isn't responding yet")
                         print("     Try again in a few seconds — the debug instance may still be starting")
                 else:
-                    print("   ⚠ Could not auto-launch a Chromium-family browser")
+                    print("    Could not auto-launch a Chromium-family browser")
                     sys_name = _plat.system()
                     chrome_cmd = manual_chrome_debug_command(_port, sys_name)
                     if chrome_cmd:
@@ -1672,7 +1672,7 @@ class CLICommandsMixin:
                     else:
                         print("     No supported Chromium-family browser executable found in this environment")
             else:
-                print(f"   ⚠ Port {_port} is not reachable at {cdp_url}")
+                print(f"    Port {_port} is not reachable at {cdp_url}")
 
             if not _already_open:
                 print()
@@ -1689,7 +1689,7 @@ class CLICommandsMixin:
             except Exception:
                 pass
             print()
-            print("🌐 Browser connected to live Chromium-family browser via CDP")
+            print(" Browser connected to live Chromium-family browser via CDP")
             print(f"   Endpoint: {cdp_url}")
             print()
 
@@ -1718,7 +1718,7 @@ class CLICommandsMixin:
                 except Exception:
                     pass
                 print()
-                print("🌐 Browser disconnected from live Chromium-family browser")
+                print(" Browser disconnected from live Chromium-family browser")
                 print("   Browser tools reverted to default mode (local headless or cloud provider)")
                 print()
 
@@ -1735,7 +1735,7 @@ class CLICommandsMixin:
         elif sub == "status":
             print()
             if current:
-                print("🌐 Browser: connected to live Chromium-family browser via CDP")
+                print(" Browser: connected to live Chromium-family browser via CDP")
                 print(f"   Endpoint: {current}")
 
                 _port = 9222
@@ -1749,9 +1749,9 @@ class CLICommandsMixin:
                     s.settimeout(1)
                     s.connect(("127.0.0.1", _port))
                     s.close()
-                    print("   Status: ✓ reachable")
+                    print("   Status:  reachable")
                 except (OSError, Exception):
-                    print("   Status: ⚠ not reachable (browser may not be running)")
+                    print("   Status:  not reachable (browser may not be running)")
             else:
                 try:
                     from tools.browser_tool import _get_cloud_provider
@@ -1760,7 +1760,7 @@ class CLICommandsMixin:
                     provider = None
 
                 if provider is not None:
-                    print(f"🌐 Browser: {provider.provider_name()} (cloud)")
+                    print(f" Browser: {provider.provider_name()} (cloud)")
                 else:
                     # Show engine info for local mode
                     try:
@@ -1769,13 +1769,13 @@ class CLICommandsMixin:
                     except Exception:
                         engine = "auto"
                     if engine == "lightpanda":
-                        print("🌐 Browser: local Lightpanda (agent-browser --engine lightpanda)")
-                        print("   ⚡ Lightpanda: faster navigation, no screenshot support")
+                        print(" Browser: local Lightpanda (agent-browser --engine lightpanda)")
+                        print("    Lightpanda: faster navigation, no screenshot support")
                         print("   Automatic Chromium fallback for screenshots and failed commands")
                     elif engine == "chrome":
-                        print("🌐 Browser: local headless Chromium (agent-browser --engine chrome)")
+                        print(" Browser: local headless Chromium (agent-browser --engine chrome)")
                     else:
-                        print("🌐 Browser: local headless Chromium (agent-browser)")
+                        print(" Browser: local headless Chromium (agent-browser)")
             print()
             print("   /browser connect      — connect to your live Chromium-family browser")
             print("   /browser disconnect   — revert to default")
@@ -1813,7 +1813,7 @@ class CLICommandsMixin:
             if state is None:
                 _cprint(f"  {_DIM}No goal set.{_RST}")
             else:
-                _cprint(f"  ⏸ Goal paused: {state.goal}")
+                _cprint(f"   Goal paused: {state.goal}")
             return
 
         if lower == "resume":
@@ -1821,7 +1821,7 @@ class CLICommandsMixin:
             if state is None:
                 _cprint(f"  {_DIM}No goal to resume.{_RST}")
             else:
-                _cprint(f"  ▶ Goal resumed: {state.goal}")
+                _cprint(f"   Goal resumed: {state.goal}")
                 _cprint(
                     f"  {_DIM}Send any message (or press Enter on an empty prompt "
                     f"is a no-op; type 'continue' to kick it off).{_RST}"
@@ -1832,7 +1832,7 @@ class CLICommandsMixin:
             had = mgr.has_goal()
             mgr.clear()
             if had:
-                _cprint("  ✓ Goal cleared.")
+                _cprint("   Goal cleared.")
             else:
                 _cprint(f"  {_DIM}No active goal.{_RST}")
             return
@@ -1909,7 +1909,7 @@ class CLICommandsMixin:
             except (IndexError, RuntimeError) as exc:
                 _cprint(f"  /subgoal remove: {exc}")
                 return
-            _cprint(f"  ✓ Removed subgoal {idx}: {removed}")
+            _cprint(f"   Removed subgoal {idx}: {removed}")
             return
 
         if verb == "clear":
@@ -1919,7 +1919,7 @@ class CLICommandsMixin:
                 _cprint(f"  /subgoal clear: {exc}")
                 return
             if prev:
-                _cprint(f"  ✓ Cleared {prev} subgoal{'s' if prev != 1 else ''}.")
+                _cprint(f"   Cleared {prev} subgoal{'s' if prev != 1 else ''}.")
             else:
                 _cprint(f"  {_DIM}No subgoals to clear.{_RST}")
             return
@@ -1931,7 +1931,7 @@ class CLICommandsMixin:
             _cprint(f"  /subgoal: {exc}")
             return
         idx = len(mgr.state.subgoals) if mgr.state else 0
-        _cprint(f"  ✓ Added subgoal {idx}: {text}")
+        _cprint(f"   Added subgoal {idx}: {text}")
 
     def _handle_skin_command(self, cmd: str):
         """Handle /skin [name] — show or change the display skin."""
@@ -1950,7 +1950,7 @@ class CLICommandsMixin:
             print(f"\n  Current skin: {current}")
             print("  Available skins:")
             for s in skins:
-                marker = " ●" if s["name"] == current else "  "
+                marker = " " if s["name"] == current else "  "
                 source = f" ({s['source']})" if s["source"] == "user" else ""
                 print(f"   {marker} {s['name']}{source} — {s['description']}")
             print("\n  Usage: /skin <name>")
@@ -2050,7 +2050,7 @@ class CLICommandsMixin:
                 level = "none (disabled)"
             else:
                 level = rc.get("effort", "medium")
-            display_state = "on ✓" if self.show_reasoning else "off"
+            display_state = "on " if self.show_reasoning else "off"
             _cprint(f"  {_ACCENT}Reasoning effort:  {level}{_RST}")
             _cprint(f"  {_ACCENT}Reasoning display: {display_state}{_RST}")
             _cprint(f"  {_DIM}Usage: /reasoning <none|minimal|low|medium|high|xhigh|show|hide>{_RST}")
@@ -2064,7 +2064,7 @@ class CLICommandsMixin:
             if self.agent:
                 self.agent.reasoning_callback = self._current_reasoning_callback()
             save_config_value("display.show_reasoning", True)
-            _cprint(f"  {_ACCENT}✓ Reasoning display: ON (saved){_RST}")
+            _cprint(f"  {_ACCENT} Reasoning display: ON (saved){_RST}")
             _cprint(f"  {_DIM}  Model thinking will be shown during and after each response.{_RST}")
             return
         if arg in {"hide", "off"}:
@@ -2072,7 +2072,7 @@ class CLICommandsMixin:
             if self.agent:
                 self.agent.reasoning_callback = self._current_reasoning_callback()
             save_config_value("display.show_reasoning", False)
-            _cprint(f"  {_ACCENT}✓ Reasoning display: OFF (saved){_RST}")
+            _cprint(f"  {_ACCENT} Reasoning display: OFF (saved){_RST}")
             return
 
         # Effort level change
@@ -2087,9 +2087,9 @@ class CLICommandsMixin:
         self.agent = None  # Force agent re-init with new reasoning config
 
         if save_config_value("agent.reasoning_effort", arg):
-            _cprint(f"  {_ACCENT}✓ Reasoning effort set to '{arg}' (saved to config){_RST}")
+            _cprint(f"  {_ACCENT} Reasoning effort set to '{arg}' (saved to config){_RST}")
         else:
-            _cprint(f"  {_ACCENT}✓ Reasoning effort set to '{arg}' (session only){_RST}")
+            _cprint(f"  {_ACCENT} Reasoning effort set to '{arg}' (session only){_RST}")
 
     def _handle_busy_command(self, cmd: str):
         """Handle /busy — control what Enter does while Hermes is working.
@@ -2129,10 +2129,10 @@ class CLICommandsMixin:
                 behavior = "Enter will steer your message into the current run (after the next tool call)."
             else:
                 behavior = "Enter will interrupt the current run while Hermes is busy."
-            _cprint(f"  {_ACCENT}✓ Busy input mode set to '{arg}' (saved to config){_RST}")
+            _cprint(f"  {_ACCENT} Busy input mode set to '{arg}' (saved to config){_RST}")
             _cprint(f"  {_DIM}{behavior}{_RST}")
         else:
-            _cprint(f"  {_ACCENT}✓ Busy input mode set to '{arg}' (session only){_RST}")
+            _cprint(f"  {_ACCENT} Busy input mode set to '{arg}' (session only){_RST}")
 
     def _handle_fast_command(self, cmd: str):
         """Handle /fast — toggle fast mode (OpenAI Priority Processing / Anthropic Fast Mode)."""
@@ -2174,9 +2174,9 @@ class CLICommandsMixin:
 
         self.agent = None  # Force agent re-init with new service-tier config
         if save_config_value("agent.service_tier", saved_value):
-            _cprint(f"  {_ACCENT}✓ {feature_name} set to {label} (saved to config){_RST}")
+            _cprint(f"  {_ACCENT} {feature_name} set to {label} (saved to config){_RST}")
         else:
-            _cprint(f"  {_ACCENT}✓ {feature_name} set to {label} (session only){_RST}")
+            _cprint(f"  {_ACCENT} {feature_name} set to {label} (session only){_RST}")
 
     def _handle_debug_command(self):
         """Handle /debug — upload debug report + logs and print paste URLs."""
@@ -2201,7 +2201,7 @@ class CLICommandsMixin:
         from hermes_cli.config import is_managed, format_managed_message
 
         if is_managed():
-            print(f"  ✗ {format_managed_message('update Hermes Agent')}")
+            print(f"   {format_managed_message('update Hermes Agent')}")
             return False
 
         # Use the prompt_toolkit-native modal so the confirmation panel
@@ -2213,7 +2213,7 @@ class CLICommandsMixin:
             ("cancel", "Cancel", "keep the current session"),
         ]
         raw = self._prompt_text_input_modal(
-            title="⚕  Update Hermes Agent",
+            title="  Update Hermes Agent",
             detail="This will exit the current session and run `hermes update`.",
             choices=choices,
         )
@@ -2226,7 +2226,7 @@ class CLICommandsMixin:
             return False
 
         print()
-        print("  ⚕ Launching update...")
+        print("   Launching update...")
         print()
 
         # Store the relaunch args so run() can exec them from the main thread

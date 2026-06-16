@@ -724,7 +724,7 @@ class GatewaySlashCommandsMixin:
                     return f"{platform.value} is already paused."
                 self._pause_failed_platform(platform, reason="paused via /platform pause")
                 return (
-                    f"✓ {platform.value} paused. "
+                    f" {platform.value} paused. "
                     f"Resume with `/platform resume {platform.value}` or "
                     f"`hermes gateway restart` to reset."
                 )
@@ -740,7 +740,7 @@ class GatewaySlashCommandsMixin:
                     f"no resume needed."
                 )
             self._resume_paused_platform(platform)
-            return f"✓ {platform.value} resumed — retrying on next watcher tick."
+            return f" {platform.value} resumed — retrying on next watcher tick."
 
         return (
             "Usage: /platform <list|pause|resume> [name]\n"
@@ -1391,7 +1391,7 @@ class GatewaySlashCommandsMixin:
                 command="model",
                 title="Expensive Model Warning",
                 message=(
-                    f"⚠️ **Expensive Model Warning**\n\n{_cost_warning.message}\n\n"
+                    f"️ **Expensive Model Warning**\n\n{_cost_warning.message}\n\n"
                     f"_Text fallback: reply `{_p}approve` to switch or `{_p}cancel` to keep "
                     "the current model._"
                 ),
@@ -1417,13 +1417,13 @@ class GatewaySlashCommandsMixin:
         raw_args = event.get_command_args().strip() if event else ""
         new_value, errors = crs.parse_args(raw_args)
         if errors:
-            return "❌ " + "\n❌ ".join(errors)
+            return " " + "\n".join(errors)
 
         # Load + persist via the same helpers used for /model and /yolo
         try:
             from hermes_cli.config import load_config, save_config
         except Exception as exc:
-            return f"❌ Could not load config: {exc}"
+            return f" Could not load config: {exc}"
         cfg = load_config()
 
         result = crs.apply(
@@ -1442,7 +1442,7 @@ class GatewaySlashCommandsMixin:
                 logger.debug("could not evict cached agent after codex-runtime change",
                              exc_info=True)
 
-        prefix = "✓" if result.success else "✗"
+        prefix = "" if result.success else ""
         return f"{prefix} {result.message}"
 
     async def _handle_personality_command(self, event: MessageEvent) -> str:
@@ -1661,7 +1661,7 @@ class GatewaySlashCommandsMixin:
                 removed = mgr.remove_subgoal(idx)
             except (IndexError, RuntimeError) as exc:
                 return f"/subgoal remove: {exc}"
-            return f"✓ Removed subgoal {idx}: {removed}"
+            return f" Removed subgoal {idx}: {removed}"
 
         if verb == "clear":
             try:
@@ -1669,7 +1669,7 @@ class GatewaySlashCommandsMixin:
             except RuntimeError as exc:
                 return f"/subgoal clear: {exc}"
             if prev:
-                return f"✓ Cleared {prev} subgoal{'s' if prev != 1 else ''}."
+                return f" Cleared {prev} subgoal{'s' if prev != 1 else ''}."
             return "No subgoals to clear."
 
         try:
@@ -1677,7 +1677,7 @@ class GatewaySlashCommandsMixin:
         except (ValueError, RuntimeError) as exc:
             return f"/subgoal: {exc}"
         idx = len(mgr.state.subgoals) if mgr.state else 0
-        return f"✓ Added subgoal {idx}: {text}"
+        return f" Added subgoal {idx}: {text}"
 
     async def _handle_undo_command(self, event: MessageEvent) -> str:
         """Handle /undo [N] — back up N user turns (default 1), soft-deleting
@@ -2962,9 +2962,9 @@ class GatewaySlashCommandsMixin:
         if view is None or not view.logged_in:
             return t("gateway.credits.not_logged_in")
 
-        lines: list[str] = ["💳 **Nous credits**"]
+        lines: list[str] = [" **Nous credits**"]
         for line in view.balance_lines:
-            if line.lstrip().startswith("📈"):
+            if line.lstrip().startswith(""):
                 continue  # drop the helper's header; we print our own
             lines.append(line)
         if view.identity_line:
@@ -3381,7 +3381,7 @@ class GatewaySlashCommandsMixin:
             skill_count = len(info.get("skills", []))
             desc = info.get("description") or f"Load {skill_count} skills"
             lines.append(
-                f"• `/{info['slug']}` — {desc} _({skill_count} skills)_"
+                f" `/{info['slug']}` — {desc} _({skill_count} skills)_"
             )
             for s in info.get("skills", []):
                 lines.append(f"    · {s}")
@@ -3558,7 +3558,7 @@ class GatewaySlashCommandsMixin:
                 return t("gateway.update.platform_not_messaging")
 
         if is_managed():
-            return f"✗ {format_managed_message('update Hermes Agent')}"
+            return f" {format_managed_message('update Hermes Agent')}"
 
         project_root = Path(__file__).parent.parent.resolve()
         git_dir = project_root / '.git'

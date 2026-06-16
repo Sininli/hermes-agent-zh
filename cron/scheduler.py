@@ -1224,7 +1224,7 @@ def _build_job_prompt(job: dict, prerun_script: Optional[tuple] = None) -> str:
             f"[IMPORTANT: The following skill(s) were listed for this job but could not be found "
             f"and were skipped: {', '.join(skipped)}. "
             f"Start your response with a brief notice so the user is aware, e.g.: "
-            f"'⚠️ Skill(s) not found and skipped: {', '.join(skipped)}']"
+            f"'️ Skill(s) not found and skipped: {', '.join(skipped)}']"
         )
         parts.insert(0, notice)
 
@@ -1366,7 +1366,7 @@ def run_job(job: dict) -> tuple[bool, str, str, Optional[str]]:
             # error so the user knows the watchdog itself broke — silent
             # failure for an alerting job is the worst-case outcome.
             alert = (
-                f"⚠ Cron watchdog '{job_name}' script failed\n\n"
+                f" Cron watchdog '{job_name}' script failed\n\n"
                 f"{output}\n\n"
                 f"Time: {now_iso}"
             )
@@ -2056,7 +2056,7 @@ def tick(verbose: bool = True, adapters=None, loop=None, sync: bool = True) -> i
                 # Deliver the final response to the origin/target chat.
                 # If the agent responded with [SILENT], skip delivery (but
                 # output is already saved above).  Failed jobs always deliver.
-                deliver_content = final_response if success else f"⚠️ Cron job '{job.get('name', job['id'])}' failed:\n{error}"
+                deliver_content = final_response if success else f"️ Cron job '{job.get('name', job['id'])}' failed:\n{error}"
                 # Treat whitespace-only final responses the same as empty
                 # responses: do not deliver a blank message, and let the
                 # empty-response guard below mark the run as a soft failure.

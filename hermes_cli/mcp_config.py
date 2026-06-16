@@ -47,13 +47,13 @@ def _info(text: str):
     print(color(f"  {text}", Colors.DIM))
 
 def _success(text: str):
-    print(color(f"  ✓ {text}", Colors.GREEN))
+    print(color(f"   {text}", Colors.GREEN))
 
 def _warning(text: str):
-    print(color(f"  ⚠ {text}", Colors.YELLOW))
+    print(color(f"   {text}", Colors.YELLOW))
 
 def _error(text: str):
-    print(color(f"  ✗ {text}", Colors.RED))
+    print(color(f"   {text}", Colors.RED))
 
 
 def _confirm(question: str, default: bool = True) -> bool:
@@ -592,7 +592,7 @@ def cmd_mcp_list(args=None):
         enabled = cfg.get("enabled", True)
         if isinstance(enabled, str):
             enabled = enabled.lower() in {"true", "1", "yes"}
-        status = color("✓ enabled", Colors.GREEN) if enabled else color("✗ disabled", Colors.DIM)
+        status = color(" enabled", Colors.GREEN) if enabled else color(" disabled", Colors.DIM)
 
         print(f"  {name:<16} {transport:<30} {tools_str:<12} {status}")
 

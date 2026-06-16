@@ -1173,7 +1173,7 @@ def check_dangerous_command(command: str, env_type: str,
             "command": command,
             "description": description,
             "message": (
-                f"⚠️ This command is potentially dangerous ({description}). "
+                f"️ This command is potentially dangerous ({description}). "
                 f"Asking the user for approval.\n\n**Command:**\n```\n{command}\n```"
             ),
         }
@@ -1567,7 +1567,7 @@ def check_all_command_guards(command: str, env_type: str,
             "command": command,
             "description": combined_desc,
             "message": (
-                f"⚠️ {combined_desc}. Asking the user for approval.\n\n**Command:**\n```\n{command}\n```"
+                f"️ {combined_desc}. Asking the user for approval.\n\n**Command:**\n```\n{command}\n```"
             ),
         }
 
@@ -1750,7 +1750,7 @@ def check_execute_code_guard(code: str, env_type: str) -> dict:
             "command": command,
             "description": description,
             "message": (
-                f"⚠️ {description}. Asking the user for approval.\n\n"
+                f"️ {description}. Asking the user for approval.\n\n"
                 f"**Code:**\n```python\n{code}\n```"
             ),
         }

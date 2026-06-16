@@ -238,7 +238,7 @@ def cmd_dashboard_register(args) -> None:
     # mistake — and save_env_value refuses to write anyway.
     if is_managed():
         print(
-            "✗ `hermes dashboard register` is not available in a managed/hosted "
+            " `hermes dashboard register` is not available in a managed/hosted "
             "install.\n"
             "  The dashboard OAuth client is provisioned by the hosting platform."
         )
@@ -250,13 +250,13 @@ def cmd_dashboard_register(args) -> None:
         access_token = resolve_nous_access_token()
     except AuthError as exc:
         if getattr(exc, "relogin_required", False):
-            print("✗ You're not logged into Nous Portal.")
+            print(" You're not logged into Nous Portal.")
             print("  Run `hermes setup` (or `hermes auth login nous`) first, then retry.")
         else:
-            print(f"✗ Could not resolve a Nous Portal access token: {exc}")
+            print(f" Could not resolve a Nous Portal access token: {exc}")
         sys.exit(1)
     except Exception as exc:
-        print(f"✗ Could not resolve a Nous Portal access token: {exc}")
+        print(f" Could not resolve a Nous Portal access token: {exc}")
         sys.exit(1)
 
     # Portal override: explicit --portal-url flag wins, else the
@@ -315,7 +315,7 @@ def cmd_dashboard_register(args) -> None:
             existing_client_id=existing_client_id,
         )
     except RuntimeError as exc:
-        print(f"✗ Registration failed: {exc}")
+        print(f" Registration failed: {exc}")
         sys.exit(1)
 
     client_id = str(result["client_id"])
@@ -327,15 +327,15 @@ def cmd_dashboard_register(args) -> None:
         existing_client_id and client_id == existing_client_id
     )
     if updated_existing:
-        print(f'✓ Updated dashboard "{registered_name}"')
+        print(f' Updated dashboard "{registered_name}"')
     else:
-        print(f'✓ Registered dashboard "{registered_name}"')
+        print(f' Registered dashboard "{registered_name}"')
 
     # 3. Write env vars idempotently. Always set the client_id.
     try:
         save_env_value("HERMES_DASHBOARD_OAUTH_CLIENT_ID", client_id)
     except Exception as exc:
-        print(f"✗ Failed to write HERMES_DASHBOARD_OAUTH_CLIENT_ID to .env: {exc}")
+        print(f" Failed to write HERMES_DASHBOARD_OAUTH_CLIENT_ID to .env: {exc}")
         print(f"  Set it manually:  HERMES_DASHBOARD_OAUTH_CLIENT_ID={client_id}")
         sys.exit(1)
 

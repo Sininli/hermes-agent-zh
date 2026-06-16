@@ -244,7 +244,7 @@ def _format_roster(roster: list[dict]) -> str:
         return "  (no profiles installed — decomposer cannot route work)"
     lines = []
     for entry in roster:
-        tag = "" if entry["has_description"] else " ⚠ undescribed"
+        tag = "" if entry["has_description"] else "  undescribed"
         lines.append(f"  - {entry['name']}{tag}: {entry['description']}")
     return "\n".join(lines)
 

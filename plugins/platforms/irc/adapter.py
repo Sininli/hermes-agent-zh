@@ -602,7 +602,7 @@ def interactive_setup() -> None:
     save_env_value("IRC_CHANNEL", channel.strip())
 
     print()
-    print_info("🔑 Optional authentication")
+    print_info(" Optional authentication")
     print_info("   Leave blank to skip.")
     if prompt_yes_no("Configure a server password (PASS command)?", False):
         server_password = prompt("Server password", password=True)
@@ -615,7 +615,7 @@ def interactive_setup() -> None:
             save_env_value("IRC_NICKSERV_PASSWORD", nickserv)
 
     print()
-    print_info("🔒 Access control: restrict who can message the bot")
+    print_info(" Access control: restrict who can message the bot")
     print_info("   IRC nicks are not authenticated — anyone can claim any nick.")
     print_info("   For public channels, pair with NickServ-only mode on your network")
     print_info("   if you want stronger identity guarantees.")
@@ -623,7 +623,7 @@ def interactive_setup() -> None:
     if allow_all:
         save_env_value("IRC_ALLOW_ALL_USERS", "true")
         save_env_value("IRC_ALLOWED_USERS", "")
-        print_warning("⚠️  Open access — any nick in the channel can command the bot.")
+        print_warning("️  Open access — any nick in the channel can command the bot.")
     else:
         save_env_value("IRC_ALLOW_ALL_USERS", "false")
         allowed = prompt(
@@ -956,7 +956,7 @@ def register(ctx):
         # IRC line limit after protocol overhead
         max_message_length=450,
         # Display
-        emoji="💬",
+        emoji="",
         # IRC doesn't have phone numbers to redact
         pii_safe=False,
         allow_update_command=True,

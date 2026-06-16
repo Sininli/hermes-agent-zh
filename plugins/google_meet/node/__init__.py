@@ -7,7 +7,7 @@ RPC protocol to the remote node; the node wraps the existing
 
 Topology
 --------
-    gateway (Linux)  ── ws://mac.local:18789 ──▶  node server (Mac)
+    gateway (Linux)  ── ws://mac.local:18789 ──  node server (Mac)
                                                   └─ process_manager
                                                      └─ meet_bot (Playwright)
 

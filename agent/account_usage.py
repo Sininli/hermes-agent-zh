@@ -95,7 +95,7 @@ def _format_reset(dt: Optional[datetime]) -> str:
 def render_account_usage_lines(snapshot: Optional[AccountUsageSnapshot], *, markdown: bool = False) -> list[str]:
     if not snapshot:
         return []
-    header = f"📈 {'**' if markdown else ''}{snapshot.title}{'**' if markdown else ''}"
+    header = f" {'**' if markdown else ''}{snapshot.title}{'**' if markdown else ''}"
     lines = [header]
     if snapshot.plan:
         lines.append(f"Provider: {snapshot.provider} ({snapshot.plan})")
@@ -109,9 +109,9 @@ def render_account_usage_lines(snapshot: Optional[AccountUsageSnapshot], *, mark
             used = max(0, round(float(window.used_percent)))
             base = f"{window.label}: {remaining}% remaining ({used}% used)"
         if window.reset_at:
-            base += f" • resets {_format_reset(window.reset_at)}"
+            base += f"  resets {_format_reset(window.reset_at)}"
         elif window.detail:
-            base += f" • {window.detail}"
+            base += f"  {window.detail}"
         lines.append(base)
     for detail in snapshot.details:
         lines.append(detail)
@@ -276,7 +276,7 @@ def nous_credits_lines(*, markdown: bool = False, timeout: float = 10.0) -> list
     except Exception:
         # Fail-open (caller shows nothing), but leave a breadcrumb so a dead
         # /usage credits block is diagnosable in agent.log without a dev flag.
-        logger.debug("credits ▸ /usage portal fetch/render failed (fail-open)", exc_info=True)
+        logger.debug("credits  /usage portal fetch/render failed (fail-open)", exc_info=True)
         return []
 
 
@@ -386,7 +386,7 @@ def build_credits_view(*, markdown: bool = False, timeout: float = 10.0) -> Cred
                 timeout=timeout
             )
     except Exception:
-        logger.debug("credits ▸ /credits portal fetch failed (fail-open)", exc_info=True)
+        logger.debug("credits  /credits portal fetch failed (fail-open)", exc_info=True)
         return not_logged_in
 
     if account is None or not getattr(account, "logged_in", False):
@@ -595,7 +595,7 @@ def _fetch_openrouter_account_usage(base_url: Optional[str], api_key: Optional[s
             AccountUsageWindow(
                 label="API key quota",
                 used_percent=used_percent,
-                detail=" • ".join(detail_parts),
+                detail="  ".join(detail_parts),
             )
         )
     if isinstance(usage, (int, float)):
@@ -607,7 +607,7 @@ def _fetch_openrouter_account_usage(base_url: Optional[str], api_key: Optional[s
         ):
             if isinstance(value, (int, float)) and float(value) > 0:
                 usage_parts.append(f"${float(value):.2f} {label}")
-        details.append(" • ".join(usage_parts))
+        details.append("  ".join(usage_parts))
     return AccountUsageSnapshot(
         provider="openrouter",
         source="credits_api",

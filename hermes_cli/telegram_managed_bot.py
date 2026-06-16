@@ -290,11 +290,11 @@ def auto_setup_telegram_bot_result(
     sys.stdout.flush()
     pairing = create_pairing(resolved_api_url)
     if not pairing:
-        print("  ✗ Could not reach the Hermes Telegram onboarding service.")
+        print("   Could not reach the Hermes Telegram onboarding service.")
         print("    Try the manual setup instead, or check your network.")
         return None
 
-    print("  ✓ Pairing created")
+    print("   Pairing created")
     print("  Rendering QR code...")
     sys.stdout.flush()
     print()
@@ -327,7 +327,7 @@ def auto_setup_telegram_bot_result(
             result = poll_pairing_result_once(resolved_api_url, pairing)
             if result:
                 sys.stdout.write(
-                    "\r  ✓ Bot created successfully!                              \n"
+                    "\r   Bot created successfully!                              \n"
                 )
                 sys.stdout.flush()
                 return result
@@ -335,7 +335,7 @@ def auto_setup_telegram_bot_result(
             pass
         time.sleep(POLL_INTERVAL)
 
-    sys.stdout.write("\r  ✗ Timed out waiting for bot creation.                    \n")
+    sys.stdout.write("\r   Timed out waiting for bot creation.                    \n")
     sys.stdout.flush()
     print("    The bot may still be created — check Telegram.")
     print("    You can paste the token manually below, or re-run setup.")

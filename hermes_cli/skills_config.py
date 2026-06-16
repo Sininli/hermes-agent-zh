@@ -165,7 +165,7 @@ def skills_command(args=None):
             f"{s['name']}  ({s['category'] or 'uncategorized'})  —  {s['description'][:55]}"
             for s in skills
         ]
-        # "selected" = enabled (not disabled) — matches the [✓] convention
+        # "selected" = enabled (not disabled) — matches the [] convention
         pre_selected = {i for i, s in enumerate(skills) if s["name"] not in disabled}
         chosen = curses_checklist(
             f"Skills for {platform_label}",
@@ -180,4 +180,4 @@ def skills_command(args=None):
 
     save_disabled_skills(config, new_disabled, platform)
     enabled_count = len(skills) - len(new_disabled)
-    print(color(f"✓ Saved: {enabled_count} enabled, {len(new_disabled)} disabled ({platform_label}).", Colors.GREEN))
+    print(color(f" Saved: {enabled_count} enabled, {len(new_disabled)} disabled ({platform_label}).", Colors.GREEN))

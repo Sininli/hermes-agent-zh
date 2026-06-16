@@ -466,8 +466,8 @@ def _submit_fal_request(model: str, arguments: Dict[str, Any]):
                 f"Nous Subscription gateway rejected model '{model}' "
                 f"(HTTP {status}). This model may not yet be enabled on "
                 f"the Nous Portal's FAL proxy. Either:\n"
-                f"  • Set FAL_KEY in your environment to use FAL.ai directly, or\n"
-                f"  • Pick a different model via `hermes tools` → Image Generation."
+                f"   Set FAL_KEY in your environment to use FAL.ai directly, or\n"
+                f"   Pick a different model via `hermes tools` → Image Generation."
                 f"{gateway_message}"
             ) from exc
         raise
@@ -963,25 +963,25 @@ def check_image_generation_requirements() -> bool:
 # Demo / CLI entry point
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    print("🎨 Image Generation Tools — FAL.ai multi-model support")
+    print(" Image Generation Tools — FAL.ai multi-model support")
     print("=" * 60)
 
     if not check_fal_api_key():
-        print("❌ FAL_KEY environment variable not set")
+        print(" FAL_KEY environment variable not set")
         print("   Set it via: export FAL_KEY='your-key-here'")
         print("   Get a key: https://fal.ai/")
         raise SystemExit(1)
-    print("✅ FAL.ai API key found")
+    print(" FAL.ai API key found")
 
     try:
         import fal_client  # noqa: F401
-        print("✅ fal_client library available")
+        print(" fal_client library available")
     except ImportError:
-        print("❌ fal_client library not found — pip install fal-client")
+        print(" fal_client library not found — pip install fal-client")
         raise SystemExit(1)
 
     model_id, meta = _resolve_fal_model()
-    print(f"🤖 Active model: {meta.get('display', model_id)} ({model_id})")
+    print(f" Active model: {meta.get('display', model_id)} ({model_id})")
     print(f"   Speed: {meta.get('speed', '?')}  ·  Price: {meta.get('price', '?')}")
     print(f"   Upscaler: {'on' if meta.get('upscale') else 'off'}")
 
@@ -991,7 +991,7 @@ if __name__ == "__main__":
         print(f"  {mid:<32}  {m.get('speed', '?'):<6}  {m.get('price', '?')}{marker}")
 
     if _debug.active:
-        print(f"\n🐛 Debug mode enabled — session {_debug.session_id}")
+        print(f"\n Debug mode enabled — session {_debug.session_id}")
 
 
 # ---------------------------------------------------------------------------
@@ -1176,5 +1176,5 @@ registry.register(
     check_fn=check_image_generation_requirements,
     requires_env=[],
     is_async=False,   # sync fal_client API to avoid "Event loop is closed" in gateway
-    emoji="🎨",
+    emoji="",
 )

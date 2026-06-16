@@ -321,12 +321,12 @@ CURATOR_DRY_RUN_BANNER = (
     "\n"
     "This is a PREVIEW pass. Follow every instruction below EXCEPT:\n"
     "\n"
-    "  • DO NOT call skill_manage with action=patch, create, delete, "
+    "   DO NOT call skill_manage with action=patch, create, delete, "
     "write_file, or remove_file.\n"
-    "  • DO NOT call terminal to mv skill directories into .archive/.\n"
-    "  • DO NOT call terminal to mv, cp, rm, or rewrite any file under "
+    "   DO NOT call terminal to mv skill directories into .archive/.\n"
+    "   DO NOT call terminal to mv, cp, rm, or rewrite any file under "
     "~/.hermes/skills/.\n"
-    "  • skills_list and skill_view are FINE — read as much as you need.\n"
+    "   skills_list and skill_view are FINE — read as much as you need.\n"
     "\n"
     "Your output IS the deliverable. Produce the exact same "
     "human-readable summary and structured YAML block you would "
@@ -400,12 +400,12 @@ CURATOR_REVIEW_PROMPT = (
     "   c. DEMOTE TO REFERENCES/TEMPLATES/SCRIPTS — a sibling has "
     "narrow-but-valuable session-specific content. Move it into the "
     "umbrella's appropriate support directory:\n"
-    "      • `references/<topic>.md` for session-specific detail OR "
+    "       `references/<topic>.md` for session-specific detail OR "
     "condensed knowledge banks (quoted research, API docs excerpts, "
     "domain notes, provider quirks, reproduction recipes)\n"
-    "      • `templates/<name>.<ext>` for starter files meant to be "
+    "       `templates/<name>.<ext>` for starter files meant to be "
     "copied and modified\n"
-    "      • `scripts/<name>.<ext>` for statically re-runnable actions "
+    "       `scripts/<name>.<ext>` for statically re-runnable actions "
     "(verification scripts, fixture generators, probes)\n"
     "      Then archive the old sibling. Use `terminal` with `mkdir -p "
     "~/.hermes/skills/<umbrella>/references/ && mv ... <umbrella>/"
@@ -421,12 +421,12 @@ CURATOR_REVIEW_PROMPT = (
     "links such as `references/...`, `templates/...`, `scripts/...`, or "
     "`assets/...`, DO NOT flatten only SKILL.md into "
     "`<umbrella>/references/<old>.md`. Choose one safe path instead:\n"
-    "   • keep it as a standalone skill, OR\n"
-    "   • fully merge it by re-homing every needed support file into the "
+    "    keep it as a standalone skill, OR\n"
+    "    fully merge it by re-homing every needed support file into the "
     "umbrella's canonical `references/`, `templates/`, `scripts/`, or "
     "`assets/` directories AND rewrite the destination instructions to "
     "the new paths, OR\n"
-    "   • archive the entire original skill package unchanged.\n"
+    "    archive the entire original skill package unchanged.\n"
     "Never leave archived/demoted instructions pointing at files that were "
     "left behind under the old skill directory.\n"
     "4. Also flag skills whose NAME is too narrow (contains a PR number, "
@@ -932,10 +932,10 @@ def _build_rename_summary(
     Format::
 
         archived 4 skill(s):
-          • pdf-extraction → document-tools
-          • docx-extraction → document-tools
-          • flaky-thing — pruned (stale)
-          • old-utility → spreadsheet-ops
+           pdf-extraction → document-tools
+           docx-extraction → document-tools
+           flaky-thing — pruned (stale)
+           old-utility → spreadsheet-ops
         full report: hermes curator status
         keep an umbrella stable: hermes curator pin document-tools
 
@@ -980,13 +980,13 @@ def _build_rename_summary(
             break
         name = entry.get("name", "?")
         into = entry.get("into", "?")
-        lines.append(f"  • {name} → {into}")
+        lines.append(f"   {name} → {into}")
         shown += 1
     for entry in pruned:
         if shown >= SHOW:
             break
         name = entry.get("name", "?") if isinstance(entry, dict) else str(entry)
-        lines.append(f"  • {name} — pruned (stale)")
+        lines.append(f"   {name} — pruned (stale)")
         shown += 1
     if total > SHOW:
         lines.append(f"  … and {total - SHOW} more")
@@ -1217,7 +1217,7 @@ def _render_report_markdown(p: Dict[str, Any]) -> str:
 
     error = p.get("llm_error")
     if error:
-        lines.append(f"> ⚠ LLM pass error: `{error}`\n")
+        lines.append(f">  LLM pass error: `{error}`\n")
 
     # Auto-transitions (pure, no LLM)
     auto = p.get("auto_transitions") or {}
@@ -1270,7 +1270,7 @@ def _render_report_markdown(p: Dict[str, Any]) -> str:
             lines.append(line)
             if entry.get("model_claimed_into"):
                 lines.append(
-                    f"  ⚠ The curator's summary named `{entry['model_claimed_into']}` "
+                    f"   The curator's summary named `{entry['model_claimed_into']}` "
                     "as the umbrella but that skill doesn't exist post-run; "
                     "showing the tool-call audit's finding instead."
                 )

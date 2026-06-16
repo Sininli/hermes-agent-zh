@@ -109,7 +109,7 @@ _CRON_INVISIBLE_CHARS = {
 }
 
 # U+200D Zero-Width Joiner is also a legitimate, required part of many
-# Unicode emoji sequences (for example 👨‍👩‍👧, 🏳️‍🌈, ❤️‍🩹, 🧑‍💻).
+# Unicode emoji sequences (for example 👨‍👩‍👧, 🏳️‍🌈, ❤️‍🩹, 🧑‍).
 # We should still block ZWJ when it is hiding between plain text characters,
 # but not when it is clearly part of an emoji grapheme cluster.
 _EMOJI_NEIGHBOUR_CP_RANGES = (

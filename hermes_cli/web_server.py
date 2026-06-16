@@ -11798,7 +11798,7 @@ def start_server(
 
                 if _nous_plugin.LAST_SKIP_REASON:
                     skip_reasons.append(
-                        f"  • nous: {_nous_plugin.LAST_SKIP_REASON}"
+                        f"   nous: {_nous_plugin.LAST_SKIP_REASON}"
                     )
             except Exception:
                 pass

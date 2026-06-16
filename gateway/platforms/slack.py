@@ -169,7 +169,7 @@ def _extract_text_from_slack_blocks(blocks: list) -> str:
             elif elem_type == "rich_text_list":
                 list_style = elem.get("style")
                 for idx, item in enumerate(elem.get("elements", [])):
-                    item_bullet = "• " if list_style == "bullet" else f"{idx + 1}. "
+                    item_bullet = " " if list_style == "bullet" else f"{idx + 1}. "
                     _walk_elements([item], quote_depth=quote_depth, bullet=item_bullet)
             elif elem_type == "rich_text_preformatted":
                 code_lines: list[str] = []
@@ -1956,7 +1956,7 @@ class SlackAdapter(BasePlatformAdapter):
                 e,
                 exc_info=True,
             )
-            text = f"🎬 Video: {video_path}"
+            text = f" Video: {video_path}"
             if caption:
                 text = f"{caption}\n{text}"
             return await self.send(chat_id, text, reply_to=reply_to, metadata=metadata)
@@ -2015,7 +2015,7 @@ class SlackAdapter(BasePlatformAdapter):
                 e,
                 exc_info=True,
             )
-            text = f"📎 File: {file_path}"
+            text = f" File: {file_path}"
             if caption:
                 text = f"{caption}\n{text}"
             return await self.send(chat_id, text, reply_to=reply_to, metadata=metadata)
@@ -2359,11 +2359,11 @@ class SlackAdapter(BasePlatformAdapter):
 
                 # Build a readable representation.
                 if att_title and att_url:
-                    header = f"📎 [{att_title}]({att_url})"
+                    header = f" [{att_title}]({att_url})"
                 elif att_title:
-                    header = f"📎 {att_title}"
+                    header = f" {att_title}"
                 elif att_url:
-                    header = f"📎 {att_url}"
+                    header = f" {att_url}"
                 else:
                     header = None
 
@@ -2379,7 +2379,7 @@ class SlackAdapter(BasePlatformAdapter):
                 elif header:
                     section = header
                 elif body:
-                    section = f"📎 {body}"
+                    section = f" {body}"
                 else:
                     continue
 
@@ -2931,7 +2931,7 @@ class SlackAdapter(BasePlatformAdapter):
 
             kwargs: Dict[str, Any] = {
                 "channel": chat_id,
-                "text": f"⚠️ Command approval required: {cmd_preview[:100]}",
+                "text": f"️ Command approval required: {cmd_preview[:100]}",
                 "blocks": blocks,
             }
             if thread_ts:
@@ -3120,9 +3120,9 @@ class SlackAdapter(BasePlatformAdapter):
         choice = choice_map.get(action_id, "cancel")
 
         label_map = {
-            "once": f"✅ Approved once by {user_name}",
-            "always": f"🔒 Always approved by {user_name}",
-            "cancel": f"❌ Cancelled by {user_name}",
+            "once": f" Approved once by {user_name}",
+            "always": f" Always approved by {user_name}",
+            "cancel": f" Cancelled by {user_name}",
         }
         decision_text = label_map.get(choice, f"Resolved by {user_name}")
 
@@ -3242,10 +3242,10 @@ class SlackAdapter(BasePlatformAdapter):
 
         # Update the message to show the decision and remove buttons
         label_map = {
-            "once": f"✅ Approved once by {user_name}",
-            "session": f"✅ Approved for session by {user_name}",
-            "always": f"✅ Approved permanently by {user_name}",
-            "deny": f"❌ Denied by {user_name}",
+            "once": f" Approved once by {user_name}",
+            "session": f" Approved for session by {user_name}",
+            "always": f" Approved permanently by {user_name}",
+            "deny": f" Denied by {user_name}",
         }
         decision_text = label_map.get(choice, f"Resolved by {user_name}")
 

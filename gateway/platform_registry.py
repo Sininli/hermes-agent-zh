@@ -98,7 +98,7 @@ class PlatformEntry:
     pii_safe: bool = False
 
     # ── Display ──
-    # Emoji for CLI/gateway display (e.g. "💬")
+    # Emoji for CLI/gateway display (e.g. "")
     emoji: str = "🔌"
 
     # Whether this platform should appear in _UPDATE_ALLOWED_PLATFORMS

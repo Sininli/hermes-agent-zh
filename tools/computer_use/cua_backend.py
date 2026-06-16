@@ -513,7 +513,7 @@ class CuaDriverBackend(ComputerUseBackend):
             text = gws_out["data"] if isinstance(gws_out["data"], str) else ""
             summary, tree = _split_tree_text(text)
 
-            # Parse element count from summary e.g. "✅ AppName — 42 elements, turn 3..."
+            # Parse element count from summary e.g. " AppName — 42 elements, turn 3..."
             m = re.search(r'(\d+)\s+elements?', summary)
             if tree and not gws_out["images"]:
                 # ax mode — no screenshot

@@ -1018,7 +1018,7 @@ class AIAgent:
         detail = (detail or exc.__class__.__name__).strip()
         if len(detail) > 220:
             detail = detail[:217].rstrip() + "..."
-        self._emit_warning(f"⚠ Auxiliary {task} failed: {detail}")
+        self._emit_warning(f" Auxiliary {task} failed: {detail}")
 
     def _current_main_runtime(self) -> Dict[str, str]:
         """Return the live main runtime for session-scoped auxiliary routing."""
@@ -1330,7 +1330,7 @@ class AIAgent:
         if stripped.endswith('^'):
             return True
         last = stripped[-1]
-        if last in '.!?:)"\']}。！？：）】」』》^':
+        if last in '.!?:)"\']}。！？：）」』》^':
             return True
         # Emoji ranges (Misc Symbols, Dingbats, Emoticons, Supplemental, etc.)
         if ord(last) >= 0x1F300:
@@ -2375,7 +2375,7 @@ class AIAgent:
             except Exception as e:
                 logger.debug("Failed to propagate interrupt to child agent: %s", e)
         if not self.quiet_mode:
-            print("\n⚡ Interrupt requested" + (f": '{message[:40]}...'" if message and len(message) > 40 else f": '{message}'" if message else ""))
+            print("\n 中断请求" + (f": '{message[:40]}...'" if message and len(message) > 40 else f": '{message}'" if message else ""))
 
     def clear_interrupt(self) -> None:
         """Clear any pending interrupt request and the per-thread tool interrupt signal."""
@@ -2574,7 +2574,7 @@ class AIAgent:
         if not failed:
             return ""
         lines = [
-            "⚠️ File-mutation verifier: "
+            "️ File-mutation verifier: "
             f"{len(failed)} file(s) were NOT modified this turn despite any "
             "wording above that may suggest otherwise. Run `git status` or "
             "`read_file` to confirm."
@@ -2586,13 +2586,13 @@ class AIAgent:
             preview = (info.get("error_preview") or "").strip()
             tool = info.get("tool") or "patch"
             if preview:
-                lines.append(f"  • `{path}` — [{tool}] {preview}")
+                lines.append(f"   `{path}` — [{tool}] {preview}")
             else:
-                lines.append(f"  • `{path}` — [{tool}] failed")
+                lines.append(f"   `{path}` — [{tool}] failed")
             shown += 1
         remaining = len(failed) - shown
         if remaining > 0:
-            lines.append(f"  • … and {remaining} more")
+            lines.append(f"   … and {remaining} more")
         # Neutralize any path the preview text echoed (the bullet path is
         # already backticked above; the lookbehind keeps it from being
         # double-wrapped).
@@ -2649,7 +2649,7 @@ class AIAgent:
         if reason.startswith("text_response"):
             return ""
 
-        prefix = "⚠️ No reply: "
+        prefix = "️ No reply: "
         if reason == "empty_response_exhausted":
             return (
                 prefix
@@ -2792,7 +2792,7 @@ class AIAgent:
                 _latch["seen_below_90"] = True  # let warn90 fire without a real crossing
             _used = _fixture.used_fraction
             logger.info(
-                "credits ▸ [FIXTURE] remaining=%d (%s) · paid=%s · denom=%s · used=%s "
+                "credits  [FIXTURE] remaining=%d (%s) · paid=%s · denom=%s · used=%s "
                 "(real headers bypassed — `echo clear` / unset HERMES_DEV_CREDITS_FIXTURE to restore)",
                 _fixture.remaining_micros,
                 _fixture.remaining_usd or "?",
@@ -2818,7 +2818,7 @@ class AIAgent:
         if state is None:
             if _dev:
                 logger.info(
-                    "credits ▸ response had no valid x-nous-credits-* headers "
+                    "credits  response had no valid x-nous-credits-* headers "
                     "(miss — producer off / non-Nous path / >TTL stale)"
                 )
             return
@@ -2830,11 +2830,11 @@ class AIAgent:
             self._credits_session_start_micros = state.remaining_micros
         if _dev:
             # HERMES_DEV_CREDITS: stream each capture to agent.log — watch live with
-            # `hermes logs -f` (grep 'credits ▸'). Dev-only; silent for normal users.
+            # `hermes logs -f` (grep 'credits '). Dev-only; silent for normal users.
             spent = self.get_credits_spent_micros()
             used = state.used_fraction
             logger.info(
-                "credits ▸ remaining=%d (%s) · paid=%s · denom=%s · used=%s "
+                "credits  remaining=%d (%s) · paid=%s · denom=%s · used=%s "
                 "· Δspent=%s · age=%s%s",
                 state.remaining_micros,
                 state.remaining_usd or "?",
@@ -3215,7 +3215,7 @@ class AIAgent:
             # Replay the items into the store (replace mode)
             self._todo_store.write(last_todo_response, merge=False)
             if not self.quiet_mode:
-                self._vprint(f"{self.log_prefix}📋 Restored {len(last_todo_response)} todo item(s) from history")
+                self._vprint(f"{self.log_prefix} 已从历史记录恢复 {len(last_todo_response)} 个任务项")
         _set_interrupt(False)
 
     @property
@@ -5278,7 +5278,7 @@ def main(
     Toolset Examples:
         - "research": Web search, extract, crawl + vision tools
     """
-    print("🤖 AI Agent with Tool Calling")
+    print(" 带工具调用的 AI 代理")
     print("=" * 50)
     
     # Handle tool listing
@@ -5286,11 +5286,11 @@ def main(
         from model_tools import get_all_tool_names, get_available_toolsets
         from toolsets import get_all_toolsets, get_toolset_info
         
-        print("📋 Available Tools & Toolsets:")
+        print(" 可用工具与工具集:")
         print("-" * 50)
         
         # Show new toolsets system
-        print("\n🎯 Predefined Toolsets (New System):")
+        print("\n🎯 预定义工具集（新系统）:")
         print("-" * 40)
         all_toolsets = get_all_toolsets()
         
@@ -5311,56 +5311,56 @@ def main(
                     scenario_toolsets.append(entry)
         
         # Print basic toolsets
-        print("\n📌 Basic Toolsets:")
+        print("\n 基础工具集:")
         for name, info in basic_toolsets:
-            tools_str = ', '.join(info['resolved_tools']) if info['resolved_tools'] else 'none'
-            print(f"  • {name:15} - {info['description']}")
-            print(f"    Tools: {tools_str}")
+            tools_str = ', '.join(info['resolved_tools']) if info['resolved_tools'] else '无'
+            print(f"   {name:15} - {info['description']}")
+            print(f"    工具: {tools_str}")
         
         # Print composite toolsets
-        print("\n📂 Composite Toolsets (built from other toolsets):")
+        print("\n 复合工具集（由其他工具集构建）:")
         for name, info in composite_toolsets:
-            includes_str = ', '.join(info['includes']) if info['includes'] else 'none'
-            print(f"  • {name:15} - {info['description']}")
-            print(f"    Includes: {includes_str}")
-            print(f"    Total tools: {info['tool_count']}")
+            includes_str = ', '.join(info['includes']) if info['includes'] else '无'
+            print(f"   {name:15} - {info['description']}")
+            print(f"    包含: {includes_str}")
+            print(f"    工具总数: {info['tool_count']}")
         
         # Print scenario-specific toolsets
-        print("\n🎭 Scenario-Specific Toolsets:")
+        print("\n 场景特定工具集:")
         for name, info in scenario_toolsets:
-            print(f"  • {name:20} - {info['description']}")
-            print(f"    Total tools: {info['tool_count']}")
+            print(f"   {name:20} - {info['description']}")
+            print(f"    工具总数: {info['tool_count']}")
         
         
         # Show legacy toolset compatibility
-        print("\n📦 Legacy Toolsets (for backward compatibility):")
+        print("\n 旧版工具集（向后兼容）:")
         legacy_toolsets = get_available_toolsets()
         for name, info in legacy_toolsets.items():
-            status = "✅" if info["available"] else "❌"
+            status = "" if info["available"] else ""
             print(f"  {status} {name}: {info['description']}")
             if not info["available"]:
-                print(f"    Requirements: {', '.join(info['requirements'])}")
+                print(f"    要求: {', '.join(info['requirements'])}")
         
         # Show individual tools
         all_tools = get_all_tool_names()
-        print(f"\n🔧 Individual Tools ({len(all_tools)} available):")
+        print(f"\n 单个工具（共 {len(all_tools)} 个可用）:")
         for tool_name in sorted(all_tools):
             toolset = get_toolset_for_tool(tool_name)
-            print(f"  📌 {tool_name} (from {toolset})")
+            print(f"   {tool_name}（来自 {toolset}）")
         
-        print("\n💡 Usage Examples:")
-        print("  # Use predefined toolsets")
+        print("\n 使用示例:")
+        print("  # 使用预定义工具集")
         print("  python run_agent.py --enabled_toolsets=research --query='search for Python news'")
         print("  python run_agent.py --enabled_toolsets=development --query='debug this code'")
         print("  python run_agent.py --enabled_toolsets=safe --query='analyze without terminal'")
         print("  ")
-        print("  # Combine multiple toolsets")
+        print("  # 组合多个工具集")
         print("  python run_agent.py --enabled_toolsets=web,vision --query='analyze website'")
         print("  ")
-        print("  # Disable toolsets")
+        print("  # 禁用工具集")
         print("  python run_agent.py --disabled_toolsets=terminal --query='no command execution'")
         print("  ")
-        print("  # Run with trajectory saving enabled")
+        print("  # 启用轨迹保存运行")
         print("  python run_agent.py --save_trajectories --query='your question here'")
         return
     
@@ -5370,16 +5370,16 @@ def main(
     
     if enabled_toolsets:
         enabled_toolsets_list = [t.strip() for t in enabled_toolsets.split(",")]
-        print(f"🎯 Enabled toolsets: {enabled_toolsets_list}")
+        print(f"🎯 已启用的工具集: {enabled_toolsets_list}")
     
     if disabled_toolsets:
         disabled_toolsets_list = [t.strip() for t in disabled_toolsets.split(",")]
-        print(f"🚫 Disabled toolsets: {disabled_toolsets_list}")
+        print(f" 已禁用的工具集: {disabled_toolsets_list}")
     
     if save_trajectories:
-        print("💾 Trajectory saving: ENABLED")
-        print("   - Successful conversations → trajectory_samples.jsonl")
-        print("   - Failed conversations → failed_trajectories.jsonl")
+        print("💾 轨迹保存: 已启用")
+        print("   - 成功对话 → trajectory_samples.jsonl")
+        print("   - 失败对话 → failed_trajectories.jsonl")
     
     # Initialize agent with provided parameters
     try:
@@ -5395,33 +5395,33 @@ def main(
             log_prefix_chars=log_prefix_chars
         )
     except RuntimeError as e:
-        print(f"❌ Failed to initialize agent: {e}")
+        print(f" 无法初始化代理: {e}")
         return
     
     # Use provided query or default to Python 3.13 example
     if query is None:
         user_query = (
-            "Tell me about the latest developments in Python 3.13 and what new features "
-            "developers should know about. Please search for current information and try it out."
+            "请告诉我 Python 3.13 的最新进展以及开发者应该了解哪些新特性。"
+            "请搜索最新信息并实际尝试一下。"
         )
     else:
         user_query = query
     
-    print(f"\n📝 User Query: {user_query}")
+    print(f"\n 用户查询: {user_query}")
     print("\n" + "=" * 50)
     
     # Run conversation
     result = agent.run_conversation(user_query)
     
     print("\n" + "=" * 50)
-    print("📋 CONVERSATION SUMMARY")
+    print(" 对话摘要")
     print("=" * 50)
-    print(f"✅ Completed: {result['completed']}")
-    print(f"📞 API Calls: {result['api_calls']}")
-    print(f"💬 Messages: {len(result['messages'])}")
+    print(f" 完成: {result['completed']}")
+    print(f" API 调用次数: {result['api_calls']}")
+    print(f" 消息数: {len(result['messages'])}")
     
     if result['final_response']:
-        print("\n🎯 FINAL RESPONSE:")
+        print("\n🎯 最终回复:")
         print("-" * 30)
         print(result['final_response'])
     
@@ -5449,11 +5449,11 @@ def main(
             with open(sample_filename, "w", encoding="utf-8") as f:
                 # Pretty-print JSON with indent for readability
                 f.write(json.dumps(entry, ensure_ascii=False, indent=2))
-            print(f"\n💾 Sample trajectory saved to: {sample_filename}")
+            print(f"\n💾 样本轨迹已保存至: {sample_filename}")
         except Exception as e:
-            print(f"\n⚠️ Failed to save sample: {e}")
+            print(f"\n️ 保存样本失败: {e}")
     
-    print("\n👋 Agent execution completed!")
+    print("\n 代理执行完成！")
 
 
 if __name__ == "__main__":

@@ -605,7 +605,7 @@ class HermesACPAgent(acp.Agent):
                     ModelInfo(
                         model_id=choice_id,
                         name=rendered_model,
-                        description=" • ".join(part for part in desc_parts if part),
+                        description="  ".join(part for part in desc_parts if part),
                     )
                 )
                 seen_ids.add(choice_id)
@@ -617,7 +617,7 @@ class HermesACPAgent(acp.Agent):
                     ModelInfo(
                         model_id=current_model_id,
                         name=model,
-                        description=f"Provider: {provider_name} • current",
+                        description=f"Provider: {provider_name}  current",
                     ),
                 )
 
@@ -1965,7 +1965,7 @@ class HermesACPAgent(acp.Agent):
                     return f"⏩ Steer queued for the active turn: {preview}"
             except Exception as exc:
                 logger.warning("ACP steer failed for session %s: %s", state.session_id, exc)
-                return f"⚠️ Steer failed: {exc}"
+                return f"️ Steer failed: {exc}"
 
         with state.runtime_lock:
             state.queued_prompts.append(steer_text)

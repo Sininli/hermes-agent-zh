@@ -398,11 +398,11 @@ def _prompt_for_sudo_password(timeout_seconds: int = 45) -> str:
         
         print()
         print("┌" + "─" * 58 + "┐")
-        print("│  🔐 SUDO PASSWORD REQUIRED" + " " * 30 + "│")
+        print("│   SUDO PASSWORD REQUIRED" + " " * 30 + "│")
         print("├" + "─" * 58 + "┤")
         print("│  Enter password below (input is hidden), or:            │")
-        print("│    • Press Enter to skip (command fails gracefully)     │")
-        print(f"│    • Wait {timeout_seconds}s to auto-skip" + " " * 27 + "│")
+        print("│     Press Enter to skip (command fails gracefully)     │")
+        print(f"│     Wait {timeout_seconds}s to auto-skip" + " " * 27 + "│")
         print("└" + "─" * 58 + "┘")
         print()
         print("  Password (hidden): ", end="", flush=True)
@@ -415,14 +415,14 @@ def _prompt_for_sudo_password(timeout_seconds: int = 45) -> str:
             password = result["password"] or ""
             print()  # newline after hidden input
             if password:
-                print("  ✓ Password received (cached for this session)")
+                print("   Password received (cached for this session)")
             else:
                 print("  ⏭ Skipped - continuing without sudo")
             print()
             sys.stdout.flush()
             return password
         else:
-            print("\n  ⏱ Timeout - continuing without sudo")
+            print("\n   Timeout - continuing without sudo")
             print("    (Press Enter to dismiss)")
             print()
             sys.stdout.flush()
@@ -2590,10 +2590,10 @@ if __name__ == "__main__":
     print(f"  Lifetime: {config['lifetime_seconds']}s")
 
     if not check_terminal_requirements():
-        print("\n❌ Requirements not met. Please check the messages above.")
+        print("\n Requirements not met. Please check the messages above.")
         sys.exit(1)
 
-    print("\n✅ All requirements met!")
+    print("\n All requirements met!")
     print("\nAvailable Tool:")
     print("  - terminal_tool: Execute commands in sandboxed environments")
 
@@ -2691,6 +2691,6 @@ registry.register(
     schema=TERMINAL_SCHEMA,
     handler=_handle_terminal,
     check_fn=check_terminal_requirements,
-    emoji="💻",
+    emoji="",
     max_result_size_chars=100_000,
 )

@@ -1534,7 +1534,7 @@ class DiscordAdapter(BasePlatformAdapter):
             return
         message = event.raw_message
         if hasattr(message, "add_reaction"):
-            await self._add_reaction(message, "👀")
+            await self._add_reaction(message, "")
 
     async def on_processing_complete(self, event: MessageEvent, outcome: ProcessingOutcome) -> None:
         """Swap the in-progress reaction for a final success/failure reaction."""
@@ -1542,11 +1542,11 @@ class DiscordAdapter(BasePlatformAdapter):
             return
         message = event.raw_message
         if hasattr(message, "add_reaction"):
-            await self._remove_reaction(message, "👀")
+            await self._remove_reaction(message, "")
             if outcome == ProcessingOutcome.SUCCESS:
-                await self._add_reaction(message, "✅")
+                await self._add_reaction(message, "")
             elif outcome == ProcessingOutcome.FAILURE:
-                await self._add_reaction(message, "❌")
+                await self._add_reaction(message, "")
 
     async def send(
         self,
@@ -2886,7 +2886,7 @@ class DiscordAdapter(BasePlatformAdapter):
                 if not home or not getattr(home, "chat_id", None):
                     continue
                 msg = (
-                    "⚠️ Unauthorized Discord slash attempt\n"
+                    "️ Unauthorized Discord slash attempt\n"
                     f"User: {user_name} ({user_id})\n"
                     f"Channel: {chan_id} (guild {guild_id})\n"
                     f"Command: {command_text}\n"
@@ -4457,7 +4457,7 @@ class DiscordAdapter(BasePlatformAdapter):
             max_desc = 4088
             cmd_display = command if len(command) <= max_desc else command[: max_desc - 3] + "..."
             embed = discord.Embed(
-                title="⚠️ Command Approval Required",
+                title="️ Command Approval Required",
                 description=f"```\n{cmd_display}\n```",
                 color=discord.Color.orange(),
             )
@@ -4527,7 +4527,7 @@ class DiscordAdapter(BasePlatformAdapter):
         """Render a clarify prompt with one Discord button per choice.
 
         Multi-choice mode (``choices`` non-empty): renders a button per option
-        plus a final "✏️ Other (type answer)" button. Picking "Other" flips
+        plus a final "️ Other (type answer)" button. Picking "Other" flips
         the clarify entry into text-capture mode so the next user message in
         the session becomes the response. Numeric clicks resolve immediately
         via ``resolve_gateway_clarify(clarify_id, choice_text)``.
@@ -4555,7 +4555,7 @@ class DiscordAdapter(BasePlatformAdapter):
                 body = body[: max_desc - 3] + "..."
 
             embed = discord.Embed(
-                title="❓ Hermes needs your input",
+                title=" Hermes needs your input",
                 description=body,
                 color=discord.Color.orange(),
             )
@@ -4570,7 +4570,7 @@ class DiscordAdapter(BasePlatformAdapter):
             if clean_choices:
                 embed.add_field(
                     name="Choices",
-                    value="Pick one below, or click ✏️ Other to type a custom answer.",
+                    value="Pick one below, or click ️ Other to type a custom answer.",
                     inline=False,
                 )
                 view = ClarifyChoiceView(
@@ -4615,7 +4615,7 @@ class DiscordAdapter(BasePlatformAdapter):
 
             default_hint = f" (default: {default})" if default else ""
             embed = discord.Embed(
-                title="⚕ Update Needs Your Input",
+                title=" Update Needs Your Input",
                 description=f"{prompt}{default_hint}",
                 color=discord.Color.gold(),
             )
@@ -4665,7 +4665,7 @@ class DiscordAdapter(BasePlatformAdapter):
                 provider_label = current_provider
 
             embed = discord.Embed(
-                title="⚙ Model Configuration",
+                title=" Model Configuration",
                 description=(
                     f"Current model: `{current_model or 'unknown'}`\n"
                     f"Provider: {provider_label}\n\n"
@@ -5531,7 +5531,7 @@ def _define_discord_view_classes() -> None:
                     embed = msg.embeds[0] if msg.embeds else None
                     if embed:
                         embed.color = discord.Color.greyple()
-                        embed.set_footer(text="⏱ Prompt expired — no action taken")
+                        embed.set_footer(text=" Prompt expired — no action taken")
                     await msg.edit(embed=embed, view=self)
                 except Exception:
                     pass  # message deleted or too old to edit
@@ -5646,7 +5646,7 @@ def _define_discord_view_classes() -> None:
                     embed = msg.embeds[0] if msg.embeds else None
                     if embed:
                         embed.color = discord.Color.greyple()
-                        embed.set_footer(text="⏱ Prompt expired — no action taken")
+                        embed.set_footer(text=" Prompt expired — no action taken")
                     await msg.edit(embed=embed, view=self)
                 except Exception:
                     pass
@@ -5719,13 +5719,13 @@ def _define_discord_view_classes() -> None:
             except Exception as exc:
                 logger.error("Failed to write update response: %s", exc)
 
-        @discord.ui.button(label="Yes", style=discord.ButtonStyle.green, emoji="✓")
+        @discord.ui.button(label="Yes", style=discord.ButtonStyle.green, emoji="")
         async def yes_btn(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
             await self._respond(interaction, "y", discord.Color.green(), "Yes")
 
-        @discord.ui.button(label="No", style=discord.ButtonStyle.red, emoji="✗")
+        @discord.ui.button(label="No", style=discord.ButtonStyle.red, emoji="")
         async def no_btn(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
@@ -5742,7 +5742,7 @@ def _define_discord_view_classes() -> None:
                     embed = msg.embeds[0] if msg.embeds else None
                     if embed:
                         embed.color = discord.Color.greyple()
-                        embed.set_footer(text="⏱ Prompt expired — no action taken")
+                        embed.set_footer(text=" Prompt expired — no action taken")
                     await msg.edit(embed=embed, view=self)
                 except Exception:
                     pass
@@ -5847,7 +5847,7 @@ def _define_discord_view_classes() -> None:
             self.add_item(select)
 
             back_btn = discord.ui.Button(
-                label="◀ Back", style=discord.ButtonStyle.grey, custom_id="model_back"
+                label=" Back", style=discord.ButtonStyle.grey, custom_id="model_back"
             )
             back_btn.callback = self._on_back
             self.add_item(back_btn)
@@ -5915,7 +5915,7 @@ def _define_discord_view_classes() -> None:
 
             await interaction.response.edit_message(
                 embed=discord.Embed(
-                    title="⚙ Model Configuration",
+                    title=" Model Configuration",
                     description=f"Provider: **{pname}**\nSelect a model:{extra}",
                     color=discord.Color.blue(),
                 ),
@@ -5942,7 +5942,7 @@ def _define_discord_view_classes() -> None:
             self.clear_items()
             await interaction.response.edit_message(
                 embed=discord.Embed(
-                    title="⚙ Switching Model",
+                    title=" Switching Model",
                     description=f"Switching to `{model_id}`...",
                     color=discord.Color.blue(),
                 ),
@@ -5960,7 +5960,7 @@ def _define_discord_view_classes() -> None:
 
             await interaction.edit_original_response(
                 embed=discord.Embed(
-                    title="⚙ Model Switched",
+                    title=" Model Switched",
                     description=result_text,
                     color=discord.Color.green(),
                 ),
@@ -5985,7 +5985,7 @@ def _define_discord_view_classes() -> None:
                 self._build_expensive_confirm(model_id)
                 await interaction.response.edit_message(
                     embed=discord.Embed(
-                        title="⚠ Expensive Model Warning",
+                        title=" Expensive Model Warning",
                         description=warning.message,
                         color=discord.Color.red(),
                     ),
@@ -6028,7 +6028,7 @@ def _define_discord_view_classes() -> None:
 
             await interaction.response.edit_message(
                 embed=discord.Embed(
-                    title="⚙ Model Configuration",
+                    title=" Model Configuration",
                     description=(
                         f"Current model: `{self.current_model or 'unknown'}`\n"
                         f"Provider: {provider_label}\n\n"
@@ -6044,7 +6044,7 @@ def _define_discord_view_classes() -> None:
             self.clear_items()
             await interaction.response.edit_message(
                 embed=discord.Embed(
-                    title="⚙ Model Configuration",
+                    title=" Model Configuration",
                     description="Model selection cancelled.",
                     color=discord.Color.greyple(),
                 ),
@@ -6059,8 +6059,8 @@ def _define_discord_view_classes() -> None:
             if msg:
                 try:
                     embed = discord.Embed(
-                        title="⚙ Model Configuration",
-                        description="⏱ Selection expired — no model change.",
+                        title=" Model Configuration",
+                        description=" Selection expired — no model change.",
                         color=discord.Color.greyple(),
                     )
                     await msg.edit(embed=embed, view=self)
@@ -6071,7 +6071,7 @@ def _define_discord_view_classes() -> None:
     class ClarifyChoiceView(discord.ui.View):
         """Interactive button view for the clarify tool's multiple-choice prompts.
 
-        Renders one button per choice (max 24) plus a final ``✏️ Other`` button.
+        Renders one button per choice (max 24) plus a final ``️ Other`` button.
         Picking a numeric choice resolves the gateway clarify entry immediately;
         picking ``Other`` flips the entry into text-capture mode so the next
         user message in the session becomes the response (the gateway's
@@ -6109,7 +6109,7 @@ def _define_discord_view_classes() -> None:
                 self.add_item(button)
 
             other_btn = discord.ui.Button(
-                label="✏️ Other (type answer)",
+                label="️ Other (type answer)",
                 style=discord.ButtonStyle.secondary,
                 custom_id=f"clarify:{clarify_id}:other",
             )
@@ -6258,7 +6258,7 @@ def _define_discord_view_classes() -> None:
                     embed = msg.embeds[0] if msg.embeds else None
                     if embed:
                         embed.color = discord.Color.greyple()
-                        embed.set_footer(text="⏱ Prompt expired — no action taken")
+                        embed.set_footer(text=" Prompt expired — no action taken")
                     await msg.edit(embed=embed, view=self)
                 except Exception:
                     pass
@@ -6561,7 +6561,7 @@ def interactive_setup() -> None:
         print_info("Discord: already configured")
         if not prompt_yes_no("Reconfigure Discord?", False):
             if not get_env_value("DISCORD_ALLOWED_USERS"):
-                print_info("⚠️  Discord has no user allowlist - anyone can use your bot!")
+                print_info("️  Discord has no user allowlist - anyone can use your bot!")
                 if prompt_yes_no("Add allowed users now?", True):
                     print_info("   To find Discord ID: Enable Developer Mode, right-click name → Copy ID")
                     allowed_users = prompt("Allowed user IDs (comma-separated)")
@@ -6579,7 +6579,7 @@ def interactive_setup() -> None:
     print_success("Discord token saved")
 
     print()
-    print_info("🔒 Security: Restrict who can use your bot")
+    print_info(" Security: Restrict who can use your bot")
     print_info("   To find your Discord user ID:")
     print_info("   1. Enable Developer Mode in Discord settings")
     print_info("   2. Right-click your name → Copy ID")
@@ -6594,10 +6594,10 @@ def interactive_setup() -> None:
         save_env_value("DISCORD_ALLOWED_USERS", ",".join(cleaned_ids))
         print_success("Discord allowlist configured")
     else:
-        print_info("⚠️  No allowlist set - anyone in servers with your bot can use it!")
+        print_info("️  No allowlist set - anyone in servers with your bot can use it!")
 
     print()
-    print_info("📬 Home Channel: where Hermes delivers cron job results,")
+    print_info(" Home Channel: where Hermes delivers cron job results,")
     print_info("   cross-platform messages, and notifications.")
     print_info("   To get a channel ID: right-click a channel → Copy Channel ID")
     print_info("   (requires Developer Mode in Discord settings)")
@@ -6765,6 +6765,6 @@ def register(ctx) -> None:
         # Discord hard limit per message
         max_message_length=2000,
         # Display
-        emoji="🎮",
+        emoji="",
         allow_update_command=True,
     )

@@ -4823,7 +4823,7 @@ def _(rid, params: dict) -> dict:
             {
                 "logged_in": bool(view.logged_in),
                 "balance_lines": [
-                    line for line in view.balance_lines if not line.lstrip().startswith("📈")
+                    line for line in view.balance_lines if not line.lstrip().startswith("")
                 ],
                 "identity_line": view.identity_line,
                 "topup_url": view.topup_url,
@@ -5949,7 +5949,7 @@ def _run_prompt_submit(rid, sid: str, session: dict, text: Any) -> None:
             # whether the goal is done and — if not and we're still under
             # budget — queue a continuation prompt to run after this
             # thread releases session["running"]. The verdict message
-            # ("✓ Goal achieved" / "⏸ budget exhausted") is surfaced as
+            # (" Goal achieved" / "⏸ budget exhausted") is surfaced as
             # a system line so the user sees progress regardless of
             # outcome. Mirrors gateway/run._post_turn_goal_continuation.
             if status == "complete" and isinstance(raw, str) and raw.strip():
@@ -7760,7 +7760,7 @@ def _(rid, params: dict) -> dict:
                     {
                         "status": "confirm_required",
                         "message": (
-                            "⚠️  /reload-mcp invalidates the prompt cache (next "
+                            "️  /reload-mcp invalidates the prompt cache (next "
                             "message re-sends full input tokens). Reply `/reload-mcp "
                             "now` to proceed, or `/reload-mcp always` to proceed and "
                             "silence this prompt permanently."
@@ -8178,7 +8178,7 @@ def _(rid, params: dict) -> dict:
                         rid,
                         {
                             "type": "exec",
-                            "output": f"⏩ Steer queued — arrives after the next tool call: {arg[:80]}{'...' if len(arg) > 80 else ''}",
+                            "output": f" Steer queued — arrives after the next tool call: {arg[:80]}{'...' if len(arg) > 80 else ''}",
                         },
                     )
             except Exception:
@@ -8210,7 +8210,7 @@ def _(rid, params: dict) -> dict:
             return _ok(rid, {"type": "exec", "output": mgr.status_line()})
         if lower == "pause":
             state = mgr.pause(reason="user-paused")
-            out = "No goal set." if state is None else f"⏸ Goal paused: {state.goal}"
+            out = "No goal set." if state is None else f" Goal paused: {state.goal}"
             return _ok(rid, {"type": "exec", "output": out})
         if lower == "resume":
             state = mgr.resume()
@@ -8221,7 +8221,7 @@ def _(rid, params: dict) -> dict:
                 {
                     "type": "exec",
                     "output": (
-                        f"▶ Goal resumed: {state.goal}\n"
+                        f" Goal resumed: {state.goal}\n"
                         "Send any message to continue, or wait — I'll take the next step on the next turn."
                     ),
                 },
@@ -8233,7 +8233,7 @@ def _(rid, params: dict) -> dict:
                 rid,
                 {
                     "type": "exec",
-                    "output": "✓ Goal cleared." if had else "No active goal.",
+                    "output": " Goal cleared." if had else "No active goal.",
                 },
             )
 

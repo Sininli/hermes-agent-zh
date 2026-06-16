@@ -125,7 +125,7 @@ DEFAULT_PENDING_REPLY_TEXT = (
     "🤔 Still thinking. Tap below to fetch the answer when it's ready."
 )
 DEFAULT_BUTTON_LABEL = "Get answer"
-DEFAULT_DELIVERED_TEXT = "Already replied ✅"
+DEFAULT_DELIVERED_TEXT = "Already replied "
 DEFAULT_INTERRUPTED_TEXT = "Run was interrupted before completion."
 
 # Media defaults
@@ -204,7 +204,7 @@ def strip_markdown_preserving_urls(text: str) -> str:
 
     # Headings (#, ##) and bullet markers — strip the prefix only.
     text = _MD_HEADING_RE.sub("", text)
-    text = _MD_BULLET_RE.sub("• ", text)
+    text = _MD_BULLET_RE.sub(" ", text)
 
     return text
 
@@ -601,8 +601,8 @@ def build_postback_button_message(
 # cache for these so they reach the user as visible bubbles instead of
 # being silently swallowed. From PR #18153.
 _SYSTEM_BYPASS_PREFIXES: Tuple[str, ...] = (
-    "⚡ Interrupting",
-    "⏳ Queued",
+    " Interrupting",
+    " Queued",
     "⏩ Steered",
     "💾",  # background-review summary
 )

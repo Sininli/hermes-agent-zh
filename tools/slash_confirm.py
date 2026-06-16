@@ -136,7 +136,7 @@ async def resolve(
             "Slash-confirm handler for /%s raised: %s",
             command, exc, exc_info=True,
         )
-        return f"❌ Error handling confirmation: {exc}"
+        return f" Error handling confirmation: {exc}"
     return result if isinstance(result, str) else None
 
 

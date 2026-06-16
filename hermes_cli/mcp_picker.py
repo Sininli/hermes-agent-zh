@@ -121,7 +121,7 @@ def _enable_disable(name: str, *, enable: bool) -> None:
     cfg["mcp_servers"] = servers
     save_config(cfg)
     print(color(
-        f"  ✓ '{name}' {'enabled' if enable else 'disabled'}. "
+        f"   '{name}' {'enabled' if enable else 'disabled'}. "
         "Start a new Hermes session for changes to take effect.",
         Colors.GREEN,
     ))
@@ -154,7 +154,7 @@ def _remove_custom(name: str) -> None:
     else:
         cfg["mcp_servers"] = servers
     save_config(cfg)
-    print(color(f"  ✓ Removed '{name}'", Colors.GREEN))
+    print(color(f"   Removed '{name}'", Colors.GREEN))
 
 
 def _handle_row(row: _Row) -> None:
@@ -164,7 +164,7 @@ def _handle_row(row: _Row) -> None:
         try:
             install_entry(row.entry, enable=True)
         except CatalogError as exc:
-            print(color(f"  ✗ install failed: {exc}", Colors.RED))
+            print(color(f"   install failed: {exc}", Colors.RED))
         return
 
     # === Catalog row, installed but disabled ===
@@ -211,7 +211,7 @@ def _handle_row(row: _Row) -> None:
         if prompt_yes_no(f"Uninstall '{row.name}'?", default=False):
             if uninstall_entry(row.name):
                 print(color(
-                    f"  ✓ Uninstalled '{row.name}'. "
+                    f"   Uninstalled '{row.name}'. "
                     "Credentials in .env preserved — delete manually if no longer needed.",
                     Colors.GREEN,
                 ))
@@ -222,7 +222,7 @@ def _handle_row(row: _Row) -> None:
             assert row.entry is not None
             install_entry(row.entry, enable=True)
         except CatalogError as exc:
-            print(color(f"  ✗ reinstall failed: {exc}", Colors.RED))
+            print(color(f"   reinstall failed: {exc}", Colors.RED))
 
 
 # ─── Output / entry points ────────────────────────────────────────────────────
@@ -258,7 +258,7 @@ def _print_rows_text(rows: List[_Row]) -> None:
         print()
         for name, _, msg in future:
             print(color(
-                f"  ⚠ '{name}' requires a newer Hermes — run `hermes update` "
+                f"   '{name}' requires a newer Hermes — run `hermes update` "
                 "to install this entry.",
                 Colors.YELLOW,
             ))
@@ -309,7 +309,7 @@ def install_by_name(identifier: str) -> int:
     entry = get_entry(identifier)
     if entry is None:
         print(color(
-            f"  ✗ '{identifier}' is not in the catalog. "
+            f"   '{identifier}' is not in the catalog. "
             "Run `hermes mcp catalog` to see available entries.",
             Colors.RED,
         ))
@@ -317,6 +317,6 @@ def install_by_name(identifier: str) -> int:
     try:
         install_entry(entry, enable=True)
     except CatalogError as exc:
-        print(color(f"  ✗ install failed: {exc}", Colors.RED))
+        print(color(f"   install failed: {exc}", Colors.RED))
         return 1
     return 0

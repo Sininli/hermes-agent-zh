@@ -822,7 +822,7 @@ def _looks_like_chatty_line_for_weixin(line: str) -> bool:
         return False
     if line.startswith((" ", "\t")):
         return False
-    if stripped.startswith((">", "-", "*", "【", "#", "|")):
+    if stripped.startswith((">", "-", "*", "", "#", "|")):
         return False
     if _TABLE_RULE_RE.match(stripped):
         return False

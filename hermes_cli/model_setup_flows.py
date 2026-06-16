@@ -365,7 +365,7 @@ def _model_flow_openai_codex(config, current_model=""):
 
     status = get_codex_auth_status()
     if status.get("logged_in"):
-        print("  OpenAI Codex credentials: ✓")
+        print("  OpenAI Codex credentials: ")
         print()
         choice = _prompt_auth_credentials_choice("OpenAI Codex credentials:")
 
@@ -454,7 +454,7 @@ def _model_flow_xai_oauth(_config, current_model="", *, args=None):
 
     status = get_xai_oauth_auth_status()
     if status.get("logged_in"):
-        print("  xAI Grok OAuth (SuperGrok / Premium+) credentials: ✓")
+        print("  xAI Grok OAuth (SuperGrok / Premium+) credentials: ")
         print()
         choice = _prompt_auth_credentials_choice(
             "xAI Grok OAuth (SuperGrok / Premium+) credentials:"
@@ -647,7 +647,7 @@ def _model_flow_google_gemini_cli(_config, current_model=""):
     from hermes_cli.models import _PROVIDER_MODELS
 
     print()
-    print("⚠  Google considers using the Gemini CLI OAuth client with third-party")
+    print("  Google considers using the Gemini CLI OAuth client with third-party")
     print("   software a policy violation. Some users have reported account")
     print("   restrictions. You can use your own API key via 'gemini' provider")
     print("   for the lowest-risk experience.")
@@ -1065,7 +1065,7 @@ def _model_flow_azure_foundry(config, current_model=""):
             )
         except ImportError as exc:
             print()
-            print(f"⚠ Could not import azure-identity adapter: {exc}")
+            print(f" Could not import azure-identity adapter: {exc}")
             print("  Falling back to API key auth.")
             use_entra = False
             auth_mode_label = "api_key"
@@ -1073,7 +1073,7 @@ def _model_flow_azure_foundry(config, current_model=""):
     if use_entra:
         print()
         if not has_azure_identity_installed():
-            print("◐ The 'azure-identity' package is not installed yet.")
+            print(" The 'azure-identity' package is not installed yet.")
             print(
                 "  Hermes will install it now (the preflight below "
                 "triggers the lazy-install). To skip lazy installs, "
@@ -1091,7 +1091,7 @@ def _model_flow_azure_foundry(config, current_model=""):
             entra_overrides["scope"] = _persisted_scope_override
 
         print()
-        print("◐ Probing Microsoft Entra ID credential chain (up to 10s)...")
+        print(" Probing Microsoft Entra ID credential chain (up to 10s)...")
         _config = EntraIdentityConfig(
             scope=entra_scope,
         )
@@ -1099,14 +1099,14 @@ def _model_flow_azure_foundry(config, current_model=""):
         if info.get("ok"):
             env_sources = info.get("env_sources") or []
             tag = ", ".join(env_sources) if env_sources else "default chain"
-            print(f"✓ Entra ID token acquired ({tag}, scope={entra_scope})")
+            print(f" Entra ID token acquired ({tag}, scope={entra_scope})")
         else:
             err = info.get("error") or "credential chain exhausted"
             hint = info.get("hint") or (
                 "Run `az login`, attach a managed identity to this VM, or "
                 "set AZURE_TENANT_ID/AZURE_CLIENT_ID/AZURE_CLIENT_SECRET."
             )
-            print(f"⚠ {err}")
+            print(f" {err}")
             print(f"  Hint: {hint}")
             try:
                 ans = input("Save Entra config anyway and validate later? [Y/n]: ").strip().lower()
@@ -1123,7 +1123,7 @@ def _model_flow_azure_foundry(config, current_model=""):
         try:
             token_provider = build_token_provider(config=_config)
         except Exception as exc:
-            print(f"⚠ Could not build token provider for probing: {exc}")
+            print(f" Could not build token provider for probing: {exc}")
             token_provider = None
     else:
         print()
@@ -1144,7 +1144,7 @@ def _model_flow_azure_foundry(config, current_model=""):
 
     # ── Step 4: auto-detect transport + models ───────────────────────
     print()
-    print("◐ Probing endpoint to auto-detect transport and models...")
+    print(" Probing endpoint to auto-detect transport and models...")
     detection = azure_detect.detect(
         effective_url,
         api_key=effective_key,
@@ -1158,15 +1158,15 @@ def _model_flow_azure_foundry(config, current_model=""):
         mode_label = (
             "OpenAI-style" if api_mode == "chat_completions" else "Anthropic-style"
         )
-        print(f"✓ Detected API transport: {mode_label}")
+        print(f" Detected API transport: {mode_label}")
         if detection.reason:
             print(f"    ({detection.reason})")
         if discovered_models:
             print(
-                f"✓ Found {len(discovered_models)} deployed model(s) on this endpoint"
+                f" Found {len(discovered_models)} deployed model(s) on this endpoint"
             )
     else:
-        print(f"⚠ Auto-detection incomplete: {detection.reason}")
+        print(f" Auto-detection incomplete: {detection.reason}")
         print()
         print("Select the API format your Azure Foundry endpoint uses:")
         print("  1. OpenAI-style  (POST /v1/chat/completions)")
@@ -1280,7 +1280,7 @@ def _model_flow_azure_foundry(config, current_model=""):
         "Microsoft Entra ID (keyless)" if use_entra else "API key"
     )
     print()
-    print("✓ Azure Foundry configured:")
+    print(" Azure Foundry configured:")
     print(f"    Endpoint:       {effective_url}")
     print(f"    API mode:       {mode_label}")
     print(f"    Auth:           {auth_label}")
@@ -1480,7 +1480,7 @@ def _model_flow_named_custom(config, provider_info):
         # Save model name to the custom_providers entry for next time
         _save_custom_provider(base_url, config_api_key, model_name, api_mode=api_mode)
 
-    print(f"\n✅ Model set to: {model_name}")
+    print(f"\n Model set to: {model_name}")
     print(f"   Provider: {name} ({base_url})")
 
 def _model_flow_copilot(config, current_model=""):
@@ -1519,7 +1519,7 @@ def _model_flow_copilot(config, current_model=""):
         )
         print("    → Fine-grained PAT (github_pat_*)  with Copilot Requests permission")
         print("    → GitHub App token (ghu_*)     via environment variable")
-        print("    ✗ Classic PAT (ghp_*)          NOT supported by Copilot API")
+        print("     Classic PAT (ghp_*)          NOT supported by Copilot API")
         print()
         print("  Options:")
         print("    1. Login with GitHub (OAuth device code flow)")
@@ -1564,7 +1564,7 @@ def _model_flow_copilot(config, current_model=""):
 
                 valid, msg = validate_copilot_token(new_key)
                 if not valid:
-                    print(f"  ✗ {msg}")
+                    print(f"   {msg}")
                     return
             except ImportError:
                 pass
@@ -1582,11 +1582,11 @@ def _model_flow_copilot(config, current_model=""):
         if source in {"GITHUB_TOKEN", "GH_TOKEN"}:
             from hermes_cli.env_loader import format_secret_source_suffix
             bw_suffix = format_secret_source_suffix(source)
-            print(f"  GitHub token: {api_key[:8]}... ✓ ({source}{bw_suffix})")
+            print(f"  GitHub token: {api_key[:8]}...  ({source}{bw_suffix})")
         elif source == "gh auth token":
-            print("  GitHub token: ✓ (from `gh auth token`)")
+            print("  GitHub token:  (from `gh auth token`)")
         else:
-            print("  GitHub token: ✓")
+            print("  GitHub token: ")
         print()
 
     effective_base = pconfig.inference_base_url
@@ -1612,7 +1612,7 @@ def _model_flow_copilot(config, current_model=""):
         model_list = _PROVIDER_MODELS.get(provider_id, [])
         if model_list:
             print(
-                "  ⚠ Could not auto-detect models from GitHub Copilot — showing defaults."
+                "   Could not auto-detect models from GitHub Copilot — showing defaults."
             )
             print('    Use "Enter custom model name" if you do not see your model.')
 
@@ -1720,7 +1720,7 @@ def _model_flow_copilot_acp(config, current_model=""):
     try:
         creds = resolve_external_process_provider_credentials(provider_id)
     except Exception as exc:
-        print(f"  ⚠ {exc}")
+        print(f"   {exc}")
         print(
             "  Set HERMES_COPILOT_ACP_COMMAND or COPILOT_CLI_PATH if Copilot CLI is installed elsewhere."
         )
@@ -1752,7 +1752,7 @@ def _model_flow_copilot_acp(config, current_model=""):
         model_list = _PROVIDER_MODELS.get("copilot", [])
         if model_list:
             print(
-                "  ⚠ Could not auto-detect models from GitHub Copilot — showing defaults."
+                "   Could not auto-detect models from GitHub Copilot — showing defaults."
             )
             print('    Use "Enter custom model name" if you do not see your model.')
 
@@ -2028,7 +2028,7 @@ def _model_flow_bedrock_api_key(config, region, current_model=""):
     if existing_key:
         from hermes_cli.env_loader import format_secret_source_suffix
         source_suffix = format_secret_source_suffix("AWS_BEARER_TOKEN_BEDROCK")
-        print(f"  Bedrock API Key: {existing_key[:12]}... ✓{source_suffix}")
+        print(f"  Bedrock API Key: {existing_key[:12]}... {source_suffix}")
     else:
         print(f"  Endpoint: {mantle_base_url}")
         print()
@@ -2044,7 +2044,7 @@ def _model_flow_bedrock_api_key(config, region, current_model=""):
             return
         save_env_value("AWS_BEARER_TOKEN_BEDROCK", api_key)
         existing_key = api_key
-        print("  ✓ API key saved.")
+        print("   API key saved.")
     print()
 
     # Model selection — use static list (mantle doesn't need boto3 for discovery)
@@ -2121,19 +2121,19 @@ def _model_flow_bedrock(config, current_model=""):
             discover_bedrock_models,
         )
     except ImportError:
-        print("  ✗ boto3 is not installed. Install it with:")
+        print("   boto3 is not installed. Install it with:")
         print("    pip install boto3")
         print()
         return
 
     if not has_aws_credentials():
-        print("  ⚠ No AWS credentials detected via environment variables.")
+        print("   No AWS credentials detected via environment variables.")
         print("  Bedrock will use boto3's default credential chain (IMDS, SSO, etc.)")
         print()
 
     auth_var = resolve_aws_auth_env_var()
     if auth_var:
-        print(f"  AWS credentials: {auth_var} ✓")
+        print(f"  AWS credentials: {auth_var} ")
     else:
         print("  AWS credentials: boto3 default chain (instance role / SSO)")
     print()
@@ -2343,7 +2343,7 @@ def _model_flow_api_key_provider(config, provider_id, current_model=""):
             if tier == "free":
                 print()
                 print(
-                    "❌ This Google API key is on the free tier "
+                    " This Google API key is on the free tier "
                     "(<= 250 requests/day for gemini-2.5-flash)."
                 )
                 print(
@@ -2373,7 +2373,7 @@ def _model_flow_api_key_provider(config, provider_id, current_model=""):
                 print("Not saving Gemini as the default provider.")
                 return
             if tier == "paid":
-                print("  Tier check: paid ✓")
+                print("  Tier check: paid ")
             else:
                 # "unknown" -- network issue, auth problem, unexpected response.
                 # Don't block; the runtime 429 handler will surface free-tier
@@ -2635,10 +2635,10 @@ def _model_flow_anthropic(config, current_model=""):
                     if source_suffix:
                         break
             print(
-                f"  Anthropic credentials: {existing_key[:12]}... ✓{source_suffix}"
+                f"  Anthropic credentials: {existing_key[:12]}... {source_suffix}"
             )
         elif cc_available:
-            print("  Claude Code credentials: ✓ (auto-detected)")
+            print("  Claude Code credentials:  (auto-detected)")
         print()
         choice = _prompt_auth_credentials_choice("Anthropic credentials:")
 
@@ -2682,7 +2682,7 @@ def _model_flow_anthropic(config, current_model=""):
                 print("  Cancelled.")
                 return
             save_anthropic_api_key(api_key, save_fn=save_env_value)
-            print("  ✓ API key saved.")
+            print("   API key saved.")
 
         else:
             print("  No change.")

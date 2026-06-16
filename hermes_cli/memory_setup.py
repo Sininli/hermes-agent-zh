@@ -105,11 +105,11 @@ def _install_dependencies(provider_name: str) -> None:
     else:
         pip_cmd = shutil.which("pip3") or shutil.which("pip")
         if not pip_cmd:
-            print(f"  ⚠ uv not found — cannot install dependencies")
+            print(f"   uv not found — cannot install dependencies")
             print(f"  Install uv: curl -LsSf https://astral.sh/uv/install.sh | sh")
             print(f"  Then re-run: hermes memory setup")
             return
-        print(f"  ⚠ uv not found. Falling back to standard pip...")
+        print(f"   uv not found. Falling back to standard pip...")
         install_cmd = [sys.executable, "-m", "pip", "install", "--quiet"] + missing
         manual_cmd = f"{sys.executable} -m pip install {' '.join(missing)}"
 
@@ -119,15 +119,15 @@ def _install_dependencies(provider_name: str) -> None:
             check=True, timeout=120,
             capture_output=True,
         )
-        print(f"  ✓ Installed {', '.join(missing)}")
+        print(f"   Installed {', '.join(missing)}")
     except subprocess.CalledProcessError as e:
-        print(f"  ⚠ Failed to install {', '.join(missing)}")
+        print(f"   Failed to install {', '.join(missing)}")
         stderr = (e.stderr or b"").decode()[:200]
         if stderr:
             print(f"    {stderr}")
         print(f"  Run manually: {manual_cmd}")
     except Exception as e:
-        print(f"  ⚠ Install failed: {e}")
+        print(f"   Install failed: {e}")
         print(f"  Run manually: {manual_cmd}")
 
     # Also show external dependencies (non-pip) if any
@@ -143,7 +143,7 @@ def _install_dependencies(provider_name: str) -> None:
                 )
             except Exception:
                 if install_cmd:
-                    print(f"\n  ⚠ '{dep_name}' not found. Install with:")
+                    print(f"\n   '{dep_name}' not found. Install with:")
                     print(f"    {install_cmd}")
 
 
@@ -251,7 +251,7 @@ def cmd_setup(args) -> None:
     if selected >= len(providers) or selected < 0:
         config["memory"]["provider"] = ""
         save_config(config)
-        print("\n  ✓ Memory provider: built-in only")
+        print("\n   Memory provider: built-in only")
         print("  Saved to config.yaml\n")
         return
 
@@ -417,13 +417,13 @@ def cmd_status(args) -> None:
         providers = _get_available_providers()
         found = any(name == provider_name for name, _, _ in providers)
         if found:
-            print(f"\n  Plugin:    installed ✓")
+            print(f"\n  Plugin:    installed ")
             for pname, _, p in providers:
                 if pname == provider_name:
                     if p.is_available():
-                        print(f"  Status:    available ✓")
+                        print(f"  Status:    available ")
                     else:
-                        print(f"  Status:    not available ✗")
+                        print(f"  Status:    not available ")
                         schema = p.get_config_schema() if hasattr(p, "get_config_schema") else []
                         # Check all fields that have env_var (both secret and non-secret)
                         required_fields = [f for f in schema if f.get("env_var")]
@@ -433,14 +433,14 @@ def cmd_status(args) -> None:
                                 env_var = f.get("env_var", "")
                                 url = f.get("url", "")
                                 is_set = bool(os.environ.get(env_var))
-                                mark = "✓" if is_set else "✗"
+                                mark = "" if is_set else ""
                                 line = f"    {mark} {env_var}"
                                 if url and not is_set:
                                     line += f"  → {url}"
                                 print(line)
                     break
         else:
-            print(f"\n  Plugin:    NOT installed ✗")
+            print(f"\n  Plugin:    NOT installed ")
             print(f"  Install the '{provider_name}' memory plugin to ~/.hermes/plugins/")
 
     providers = _get_available_providers()
@@ -448,7 +448,7 @@ def cmd_status(args) -> None:
         print(f"\n  Installed plugins:")
         for pname, desc, _ in providers:
             active = " ← active" if pname == provider_name else ""
-            print(f"    • {pname}  ({desc}){active}")
+            print(f"     {pname}  ({desc}){active}")
 
     print()
 

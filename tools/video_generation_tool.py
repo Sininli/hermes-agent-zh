@@ -557,6 +557,6 @@ registry.register(
     check_fn=check_video_generation_requirements,
     requires_env=[],
     is_async=False,
-    emoji="🎬",
+    emoji="",
     dynamic_schema_overrides=_build_dynamic_video_schema,
 )

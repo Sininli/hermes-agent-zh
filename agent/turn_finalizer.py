@@ -59,12 +59,12 @@ def finalize_turn(
         # user message and makes a single toolless request.
         _turn_exit_reason = f"max_iterations_reached({api_call_count}/{agent.max_iterations})"
         agent._emit_status(
-            f"⚠️ Iteration budget exhausted ({api_call_count}/{agent.max_iterations}) "
+            f"️ Iteration budget exhausted ({api_call_count}/{agent.max_iterations}) "
             "— asking model to summarise"
         )
         if not agent.quiet_mode:
             agent._safe_print(
-                f"\n⚠️  Iteration budget exhausted ({api_call_count}/{agent.max_iterations}) "
+                f"\n️  Iteration budget exhausted ({api_call_count}/{agent.max_iterations}) "
                 "— requesting summary..."
             )
         final_response = agent._handle_max_iterations(messages, api_call_count)

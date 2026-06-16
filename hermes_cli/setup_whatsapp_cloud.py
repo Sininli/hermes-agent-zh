@@ -213,7 +213,7 @@ def _prompt_validated(
         ok, reason = validator(value)
         if ok:
             return value.strip()
-        print(f"    ✗ {reason}")
+        print(f"     {reason}")
         if attempts >= 3:
             try:
                 cont = input("    Try again, or press Enter to skip: ").strip()
@@ -238,16 +238,16 @@ def run_whatsapp_cloud_setup() -> int:
     from hermes_cli.config import get_env_value, save_env_value
 
     print()
-    print("⚕ WhatsApp Business Cloud API Setup")
+    print(" WhatsApp Business Cloud API Setup")
     print("=" * 50)
     print()
     print("This wizard configures Hermes to talk to WhatsApp via Meta's")
     print("official Cloud API. It's the production-grade path:")
     print()
-    print("  • No QR codes, no Node.js bridge subprocess")
-    print("  • Stable connection — no account-ban risk")
-    print("  • Business account required (not personal WhatsApp)")
-    print("  • Public webhook URL required (Cloudflare Tunnel, ngrok,")
+    print("   No QR codes, no Node.js bridge subprocess")
+    print("   Stable connection — no account-ban risk")
+    print("   Business account required (not personal WhatsApp)")
+    print("   Public webhook URL required (Cloudflare Tunnel, ngrok,")
     print("    or your own reverse proxy with TLS)")
     print()
     print("If you don't have a Meta app set up yet, follow these steps")
@@ -286,13 +286,13 @@ def run_whatsapp_cloud_setup() -> int:
     if not phone_id:
         if current_phone_id:
             phone_id = current_phone_id
-            print(f"  ✓ Keeping existing: {phone_id}")
+            print(f"   Keeping existing: {phone_id}")
         else:
-            print("\n✗ Phone Number ID is required. Aborting.")
+            print("\n Phone Number ID is required. Aborting.")
             return 1
     else:
         save_env_value("WHATSAPP_CLOUD_PHONE_NUMBER_ID", phone_id)
-        print(f"  ✓ Saved: {phone_id}")
+        print(f"   Saved: {phone_id}")
     print()
 
     print("─" * 50)
@@ -313,11 +313,11 @@ def run_whatsapp_cloud_setup() -> int:
             "      tomorrow.\n\n"
             "  (b) PERMANENT (production) — System User token. One-time\n"
             "      setup, never expires:\n"
-            "      • business.facebook.com → Settings → System users →\n"
+            "       business.facebook.com → Settings → System users →\n"
             "        Add → Admin role\n"
-            "      • Assign Assets → your app (Manage app), your\n"
+            "       Assign Assets → your app (Manage app), your\n"
             "        WhatsApp account (Manage WABAs)\n"
-            "      • Generate token → expiration: Never → permissions:\n"
+            "       Generate token → expiration: Never → permissions:\n"
             "        business_management, whatsapp_business_messaging,\n"
             "        whatsapp_business_management\n\n"
             "Tokens start with 'EAA'."
@@ -327,13 +327,13 @@ def run_whatsapp_cloud_setup() -> int:
     if not token:
         if current_token:
             token = current_token
-            print("  ✓ Keeping existing token")
+            print("   Keeping existing token")
         else:
-            print("\n✗ Access Token is required. Aborting.")
+            print("\n Access Token is required. Aborting.")
             return 1
     else:
         save_env_value("WHATSAPP_CLOUD_ACCESS_TOKEN", token)
-        print("  ✓ Saved (token hidden)")
+        print("   Saved (token hidden)")
     print()
 
     print("─" * 50)
@@ -358,13 +358,13 @@ def run_whatsapp_cloud_setup() -> int:
     if not app_secret:
         if current_secret:
             app_secret = current_secret
-            print("  ✓ Keeping existing App Secret")
+            print("   Keeping existing App Secret")
         else:
-            print("\n⚠ Skipping App Secret — inbound webhooks will be refused")
+            print("\n Skipping App Secret — inbound webhooks will be refused")
             print("   until you set WHATSAPP_CLOUD_APP_SECRET manually.")
     else:
         save_env_value("WHATSAPP_CLOUD_APP_SECRET", app_secret)
-        print("  ✓ Saved (secret hidden)")
+        print("   Saved (secret hidden)")
     print()
 
     print("─" * 50)
@@ -383,9 +383,9 @@ def run_whatsapp_cloud_setup() -> int:
     )
     if app_id:
         save_env_value("WHATSAPP_CLOUD_APP_ID", app_id)
-        print(f"  ✓ Saved: {app_id}")
+        print(f"   Saved: {app_id}")
     elif current_app_id:
-        print(f"  ✓ Keeping existing: {current_app_id}")
+        print(f"   Keeping existing: {current_app_id}")
 
     current_waba_id = get_env_value("WHATSAPP_CLOUD_WABA_ID") or None
     waba_id = _prompt_validated(
@@ -401,9 +401,9 @@ def run_whatsapp_cloud_setup() -> int:
     )
     if waba_id:
         save_env_value("WHATSAPP_CLOUD_WABA_ID", waba_id)
-        print(f"  ✓ Saved: {waba_id}")
+        print(f"   Saved: {waba_id}")
     elif current_waba_id:
-        print(f"  ✓ Keeping existing: {current_waba_id}")
+        print(f"   Keeping existing: {current_waba_id}")
     print()
 
     print("─" * 50)
@@ -419,14 +419,14 @@ def run_whatsapp_cloud_setup() -> int:
         if regen in {"y", "yes"}:
             verify_token = secrets.token_urlsafe(32)
             save_env_value("WHATSAPP_CLOUD_VERIFY_TOKEN", verify_token)
-            print(f"  ✓ New verify token: {verify_token}")
+            print(f"   New verify token: {verify_token}")
         else:
             verify_token = current_verify
-            print("  ✓ Keeping existing verify token")
+            print("   Keeping existing verify token")
     else:
         verify_token = secrets.token_urlsafe(32)
         save_env_value("WHATSAPP_CLOUD_VERIFY_TOKEN", verify_token)
-        print(f"  ✓ Generated: {verify_token}")
+        print(f"   Generated: {verify_token}")
     print()
     print("  → COPY THIS TOKEN NOW. You'll paste it into Meta's webhook")
     print("    configuration dialog (next step).")
@@ -455,9 +455,9 @@ def run_whatsapp_cloud_setup() -> int:
             re.sub(r"[\s\-+]", "", part) for part in allowed.split(",") if part.strip()
         )
         save_env_value("WHATSAPP_CLOUD_ALLOWED_USERS", allowed)
-        print(f"  ✓ Saved: {allowed}")
+        print(f"   Saved: {allowed}")
     else:
-        print("  ⚠ No allowlist — every inbound message will be denied.")
+        print("   No allowlist — every inbound message will be denied.")
         print("    Re-run this wizard or set WHATSAPP_CLOUD_ALLOWED_USERS manually.")
     print()
 
@@ -519,19 +519,19 @@ def run_whatsapp_cloud_setup() -> int:
     print()
     effective_waba = waba_id or current_waba_id
     if effective_waba:
-        print("    • Display name + profile picture:")
+        print("     Display name + profile picture:")
         print("        https://business.facebook.com/wa/manage/phone-numbers/"
               f"?waba_id={effective_waba}")
     else:
-        print("    • Display name + profile picture:")
+        print("     Display name + profile picture:")
         print("        https://business.facebook.com/wa/manage/phone-numbers/")
         print("        (select your WhatsApp Business Account on that page)")
     print("        Display-name changes go through a ~24-48h Meta review.")
     print()
-    print("    • About, description, website, hours, business category:")
+    print("     About, description, website, hours, business category:")
     print("        Same page → click your phone number → 'Edit profile'.")
     print()
-    print("    • Verified badge (the green check):")
+    print("     Verified badge (the green check):")
     print("        Requires Meta's business verification process —")
     print("        Business Manager → Security Center → Start Verification.")
     print()

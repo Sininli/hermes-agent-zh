@@ -232,7 +232,7 @@ def _cmd_list(args):
         if route.get("deliver_only"):
             deliver = f"{deliver} (direct — no agent)"
         desc = route.get("description", "")
-        print(f"  ◆ {name}")
+        print(f"   {name}")
         if desc:
             print(f"    {desc}")
         print(f"    URL:     {base_url}/webhooks/{name}")

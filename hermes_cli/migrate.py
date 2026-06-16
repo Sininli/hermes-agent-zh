@@ -41,19 +41,19 @@ def cmd_migrate_xai(args: Any) -> int:
 
     print()
     print(color(
-        f"◆ xAI Model Retirement Migration ({RETIREMENT_DATE})",
+        f" xAI Model Retirement Migration ({RETIREMENT_DATE})",
         Colors.CYAN, Colors.BOLD,
     ))
     print()
 
     if not issues:
-        print(f"  {color('✓', Colors.GREEN)} No retired xAI models in config — nothing to migrate.")
+        print(f"  {color('', Colors.GREEN)} No retired xAI models in config — nothing to migrate.")
         return 0
 
     print(f"  Found {len(issues)} retired xAI model reference(s):")
     print()
     for issue in issues:
-        print(f"    {color('⚠', Colors.YELLOW)} {format_issue(issue)}")
+        print(f"    {color('', Colors.YELLOW)} {format_issue(issue)}")
     print()
     print(f"    {color('→', Colors.CYAN)} Migration guide: {MIGRATION_GUIDE_URL}")
     print()
@@ -71,7 +71,7 @@ def cmd_migrate_xai(args: Any) -> int:
 
     if not config_path or not config_path.exists():
         print(
-            f"  {color('✗', Colors.RED)} Could not locate config.yaml "
+            f"  {color('', Colors.RED)} Could not locate config.yaml "
             f"(looked at: {config_path})",
             file=sys.stderr,
         )
@@ -85,19 +85,19 @@ def cmd_migrate_xai(args: Any) -> int:
         )
     except Exception as exc:
         print(
-            f"  {color('✗', Colors.RED)} Migration failed: {exc}",
+            f"  {color('', Colors.RED)} Migration failed: {exc}",
             file=sys.stderr,
         )
         return 1
 
     if not result.config_changed:
-        print(f"  {color('⚠', Colors.YELLOW)} No changes written.")
+        print(f"  {color('', Colors.YELLOW)} No changes written.")
         return 0
 
     if result.backup_path is not None:
-        print(f"  {color('✓', Colors.GREEN)} Backup: {result.backup_path}")
+        print(f"  {color('', Colors.GREEN)} Backup: {result.backup_path}")
     print(
-        f"  {color('✓', Colors.GREEN)} Updated {len(result.issues_resolved)} "
+        f"  {color('', Colors.GREEN)} Updated {len(result.issues_resolved)} "
         f"slot(s) in {result.file_path}"
     )
     print()

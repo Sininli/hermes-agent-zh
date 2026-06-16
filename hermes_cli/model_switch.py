@@ -709,7 +709,7 @@ def switch_model(
                 if _cfg_issues:
                     _switch_err += "\n\nRun 'hermes doctor' — config issues detected:"
                     for _ci in _cfg_issues[:3]:
-                        _switch_err += f"\n  • {_ci.message}"
+                        _switch_err += f"\n   {_ci.message}"
             except Exception:
                 pass
             return ModelSwitchResult(

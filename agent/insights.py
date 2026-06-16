@@ -609,7 +609,7 @@ class InsightsEngine:
             hour_counts[dt.hour] += 1
             daily_counts[dt.strftime("%Y-%m-%d")] += 1
 
-        day_names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        day_names = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
         day_breakdown = [
             {"day": day_names[i], "count": day_counts.get(i, 0)}
             for i in range(7)
@@ -668,20 +668,20 @@ class InsightsEngine:
             )
             dur = longest["ended_at"] - longest["started_at"]
             top.append({
-                "label": "Longest session",
+                "label": "最长会话",
                 "session_id": longest["id"][:16],
                 "value": format_duration_compact(dur),
-                "date": datetime.fromtimestamp(longest["started_at"]).strftime("%b %d"),
+                "date": datetime.fromtimestamp(longest["started_at"]).strftime("%m月%d日"),
             })
 
         # Most messages
         most_msgs = max(sessions, key=lambda s: s.get("message_count") or 0)
         if (most_msgs.get("message_count") or 0) > 0:
             top.append({
-                "label": "Most messages",
+                "label": "消息最多",
                 "session_id": most_msgs["id"][:16],
-                "value": f"{most_msgs['message_count']} msgs",
-                "date": datetime.fromtimestamp(most_msgs["started_at"]).strftime("%b %d") if most_msgs.get("started_at") else "?",
+                "value": f"{most_msgs['message_count']} 条消息",
+                "date": datetime.fromtimestamp(most_msgs["started_at"]).strftime("%m月%d日") if most_msgs.get("started_at") else "?",
             })
 
         # Most tokens
@@ -692,20 +692,20 @@ class InsightsEngine:
         token_total = (most_tokens.get("input_tokens") or 0) + (most_tokens.get("output_tokens") or 0)
         if token_total > 0:
             top.append({
-                "label": "Most tokens",
+                "label": "令牌最多",
                 "session_id": most_tokens["id"][:16],
-                "value": f"{token_total:,} tokens",
-                "date": datetime.fromtimestamp(most_tokens["started_at"]).strftime("%b %d") if most_tokens.get("started_at") else "?",
+                "value": f"{token_total:,} 个令牌",
+                "date": datetime.fromtimestamp(most_tokens["started_at"]).strftime("%m月%d日") if most_tokens.get("started_at") else "?",
             })
 
         # Most tool calls
         most_tools = max(sessions, key=lambda s: s.get("tool_call_count") or 0)
         if (most_tools.get("tool_call_count") or 0) > 0:
             top.append({
-                "label": "Most tool calls",
+                "label": "工具调用最多",
                 "session_id": most_tools["id"][:16],
-                "value": f"{most_tools['tool_call_count']} calls",
-                "date": datetime.fromtimestamp(most_tools["started_at"]).strftime("%b %d") if most_tools.get("started_at") else "?",
+                "value": f"{most_tools['tool_call_count']} 次调用",
+                "date": datetime.fromtimestamp(most_tools["started_at"]).strftime("%m月%d日") if most_tools.get("started_at") else "?",
             })
 
         return top
@@ -718,8 +718,8 @@ class InsightsEngine:
         """Format the insights report for terminal display (CLI)."""
         if report.get("empty"):
             days = report.get("days", 30)
-            src = f" (source: {report['source_filter']})" if report.get("source_filter") else ""
-            return f"  No sessions found in the last {days} days{src}."
+            src = f" (来源: {report['source_filter']})" if report.get("source_filter") else ""
+            return f"  在过去 {days} 天中未找到任何会话{src}。"
 
         lines = []
         o = report["overview"]
@@ -729,8 +729,8 @@ class InsightsEngine:
         # Header
         lines.append("")
         lines.append("  ╔══════════════════════════════════════════════════════════╗")
-        lines.append("  ║                    📊 Hermes Insights                    ║")
-        period_label = f"Last {days} days"
+        lines.append("  ║                     Hermes 洞察报告                    ║")
+        period_label = f"最近 {days} 天"
         if src_filter:
             period_label += f" ({src_filter})"
         padding = 58 - len(period_label) - 2
@@ -742,28 +742,28 @@ class InsightsEngine:
 
         # Date range
         if o.get("date_range_start") and o.get("date_range_end"):
-            start_str = datetime.fromtimestamp(o["date_range_start"]).strftime("%b %d, %Y")
-            end_str = datetime.fromtimestamp(o["date_range_end"]).strftime("%b %d, %Y")
-            lines.append(f"  Period: {start_str} — {end_str}")
+            start_str = datetime.fromtimestamp(o["date_range_start"]).strftime("%m月%d日, %Y")
+            end_str = datetime.fromtimestamp(o["date_range_end"]).strftime("%m月%d日, %Y")
+            lines.append(f"  周期: {start_str} — {end_str}")
             lines.append("")
 
         # Overview
-        lines.append("  📋 Overview")
+        lines.append("   概览")
         lines.append("  " + "─" * 56)
-        lines.append(f"  Sessions:          {o['total_sessions']:<12}  Messages:        {o['total_messages']:,}")
-        lines.append(f"  Tool calls:        {o['total_tool_calls']:<12,}  User messages:   {o['user_messages']:,}")
-        lines.append(f"  Input tokens:      {o['total_input_tokens']:<12,}  Output tokens:   {o['total_output_tokens']:,}")
-        lines.append(f"  Total tokens:      {o['total_tokens']:,}")
+        lines.append(f"  会话数:          {o['total_sessions']:<12}  消息数:        {o['total_messages']:,}")
+        lines.append(f"  工具调用:        {o['total_tool_calls']:<12,}  用户消息:      {o['user_messages']:,}")
+        lines.append(f"  输入令牌:        {o['total_input_tokens']:<12,}  输出令牌:      {o['total_output_tokens']:,}")
+        lines.append(f"  令牌总数:        {o['total_tokens']:,}")
         if o["total_hours"] > 0:
-            lines.append(f"  Active time:       ~{format_duration_compact(o['total_hours'] * 3600):<11}  Avg session:     ~{format_duration_compact(o['avg_session_duration'])}")
-        lines.append(f"  Avg msgs/session:  {o['avg_messages_per_session']:.1f}")
+            lines.append(f"  活跃时间:       ~{format_duration_compact(o['total_hours'] * 3600):<11}  平均会话时长:  ~{format_duration_compact(o['avg_session_duration'])}")
+        lines.append(f"  平均消息/会话:  {o['avg_messages_per_session']:.1f}")
         lines.append("")
 
         # Model breakdown
         if report["models"]:
-            lines.append("  🤖 Models Used")
+            lines.append("   使用的模型")
             lines.append("  " + "─" * 56)
-            lines.append(f"  {'Model':<30} {'Sessions':>8} {'Tokens':>12}")
+            lines.append(f"  {'模型':<30} {'会话数':>8} {'令牌数':>12}")
             for m in report["models"]:
                 model_name = m["model"][:28]
                 lines.append(f"  {model_name:<30} {m['sessions']:>8} {m['total_tokens']:>12,}")
@@ -771,50 +771,50 @@ class InsightsEngine:
 
         # Platform breakdown
         if len(report["platforms"]) > 1 or (report["platforms"] and report["platforms"][0]["platform"] != "cli"):
-            lines.append("  📱 Platforms")
+            lines.append("   平台")
             lines.append("  " + "─" * 56)
-            lines.append(f"  {'Platform':<14} {'Sessions':>8} {'Messages':>10} {'Tokens':>14}")
+            lines.append(f"  {'平台':<14} {'会话数':>8} {'消息数':>10} {'令牌数':>14}")
             for p in report["platforms"]:
                 lines.append(f"  {p['platform']:<14} {p['sessions']:>8} {p['messages']:>10,} {p['total_tokens']:>14,}")
             lines.append("")
 
         # Tool usage
         if report["tools"]:
-            lines.append("  🔧 Top Tools")
+            lines.append("  常用工具")
             lines.append("  " + "─" * 56)
-            lines.append(f"  {'Tool':<28} {'Calls':>8} {'%':>8}")
+            lines.append(f"  {'工具':<28} {'调用次数':>8} {'占比':>8}")
             for t in report["tools"][:15]:  # Top 15
                 lines.append(f"  {t['tool']:<28} {t['count']:>8,} {t['percentage']:>7.1f}%")
             if len(report["tools"]) > 15:
-                lines.append(f"  ... and {len(report['tools']) - 15} more tools")
+                lines.append(f"  ... 以及 {len(report['tools']) - 15} 个其他工具")
             lines.append("")
 
         # Skill usage
         skills = report.get("skills", {})
         top_skills = skills.get("top_skills", [])
         if top_skills:
-            lines.append("  🧠 Top Skills")
+            lines.append("   常用技能")
             lines.append("  " + "─" * 56)
-            lines.append(f"  {'Skill':<28} {'Loads':>7} {'Edits':>7} {'Last used':>11}")
+            lines.append(f"  {'技能':<28} {'加载次数':>7} {'编辑次数':>7} {'上次使用':>11}")
             for skill in top_skills[:10]:
                 last_used = "—"
                 if skill.get("last_used_at"):
-                    last_used = datetime.fromtimestamp(skill["last_used_at"]).strftime("%b %d")
+                    last_used = datetime.fromtimestamp(skill["last_used_at"]).strftime("%m月%d日")
                 lines.append(
                     f"  {skill['skill'][:28]:<28} {skill['view_count']:>7,} {skill['manage_count']:>7,} {last_used:>11}"
                 )
             summary = skills.get("summary", {})
             lines.append(
-                f"  Distinct skills: {summary.get('distinct_skills_used', 0)}  "
-                f"Loads: {summary.get('total_skill_loads', 0):,}  "
-                f"Edits: {summary.get('total_skill_edits', 0):,}"
+                f"  不同技能数: {summary.get('distinct_skills_used', 0)}  "
+                f"加载次数: {summary.get('total_skill_loads', 0):,}  "
+                f"编辑次数: {summary.get('total_skill_edits', 0):,}"
             )
             lines.append("")
 
         # Activity patterns
         act = report.get("activity", {})
         if act.get("by_day"):
-            lines.append("  📅 Activity Patterns")
+            lines.append("   活动模式")
             lines.append("  " + "─" * 56)
 
             # Day of week chart
@@ -833,20 +833,20 @@ class InsightsEngine:
                 hour_strs = []
                 for h in busy_hours:
                     hr = h["hour"]
-                    ampm = "AM" if hr < 12 else "PM"
+                    ampm = "上午" if hr < 12 else "下午"
                     display_hr = hr % 12 or 12
-                    hour_strs.append(f"{display_hr}{ampm} ({h['count']})")
-                lines.append(f"  Peak hours: {', '.join(hour_strs)}")
+                    hour_strs.append(f"{display_hr}:00 ({h['count']})")
+                lines.append(f"  高峰时段: {', '.join(hour_strs)}")
 
             if act.get("active_days"):
-                lines.append(f"  Active days: {act['active_days']}")
+                lines.append(f"  活跃天数: {act['active_days']}")
             if act.get("max_streak") and act["max_streak"] > 1:
-                lines.append(f"  Best streak: {act['max_streak']} consecutive days")
+                lines.append(f"  最长连续: {act['max_streak']} 天")
             lines.append("")
 
         # Notable sessions
         if report.get("top_sessions"):
-            lines.append("  🏆 Notable Sessions")
+            lines.append("   值得关注的会话")
             lines.append("  " + "─" * 56)
             for ts in report["top_sessions"]:
                 lines.append(f"  {ts['label']:<20} {ts['value']:<18} ({ts['date']}, {ts['session_id']})")
@@ -858,51 +858,51 @@ class InsightsEngine:
         """Format the insights report for gateway/messaging (shorter)."""
         if report.get("empty"):
             days = report.get("days", 30)
-            return f"No sessions found in the last {days} days."
+            return f"在过去 {days} 天中未找到任何会话。"
 
         lines = []
         o = report["overview"]
         days = report["days"]
 
-        lines.append(f"📊 **Hermes Insights** — Last {days} days\n")
+        lines.append(f" **Hermes 洞察报告** — 最近 {days} 天\n")
 
         # Overview
-        lines.append(f"**Sessions:** {o['total_sessions']} | **Messages:** {o['total_messages']:,} | **Tool calls:** {o['total_tool_calls']:,}")
-        lines.append(f"**Tokens:** {o['total_tokens']:,} (in: {o['total_input_tokens']:,} / out: {o['total_output_tokens']:,})")
+        lines.append(f"**会话数:** {o['total_sessions']} | **消息数:** {o['total_messages']:,} | **工具调用:** {o['total_tool_calls']:,}")
+        lines.append(f"**令牌数:** {o['total_tokens']:,} (输入: {o['total_input_tokens']:,} / 输出: {o['total_output_tokens']:,})")
         if o["total_hours"] > 0:
-            lines.append(f"**Active time:** ~{format_duration_compact(o['total_hours'] * 3600)} | **Avg session:** ~{format_duration_compact(o['avg_session_duration'])}")
+            lines.append(f"**活跃时间:** ~{format_duration_compact(o['total_hours'] * 3600)} | **平均会话:** ~{format_duration_compact(o['avg_session_duration'])}")
         lines.append("")
 
         # Models (top 5)
         if report["models"]:
-            lines.append("**🤖 Models:**")
+            lines.append("**模型:**")
             for m in report["models"][:5]:
-                lines.append(f"  {m['model'][:25]} — {m['sessions']} sessions, {m['total_tokens']:,} tokens")
+                lines.append(f"  {m['model'][:25]} — {m['sessions']} 个会话, {m['total_tokens']:,} 个令牌")
             lines.append("")
 
         # Platforms (if multi-platform)
         if len(report["platforms"]) > 1:
-            lines.append("**📱 Platforms:**")
+            lines.append("**平台:**")
             for p in report["platforms"]:
-                lines.append(f"  {p['platform']} — {p['sessions']} sessions, {p['messages']:,} msgs")
+                lines.append(f"  {p['platform']} — {p['sessions']} 个会话, {p['messages']:,} 条消息")
             lines.append("")
 
         # Tools (top 8)
         if report["tools"]:
-            lines.append("**🔧 Top Tools:**")
+            lines.append("**常用工具:**")
             for t in report["tools"][:8]:
-                lines.append(f"  {t['tool']} — {t['count']:,} calls ({t['percentage']:.1f}%)")
+                lines.append(f"  {t['tool']} — {t['count']:,} 次调用 ({t['percentage']:.1f}%)")
             lines.append("")
 
         skills = report.get("skills", {})
         if skills.get("top_skills"):
-            lines.append("**🧠 Top Skills:**")
+            lines.append("**常用技能:**")
             for skill in skills["top_skills"][:5]:
                 suffix = ""
                 if skill.get("last_used_at"):
-                    suffix = f", last used {datetime.fromtimestamp(skill['last_used_at']).strftime('%b %d')}"
+                    suffix = f", 上次使用 {datetime.fromtimestamp(skill['last_used_at']).strftime('%m月%d日')}"
                 lines.append(
-                    f"  {skill['skill']} — {skill['view_count']:,} loads, {skill['manage_count']:,} edits{suffix}"
+                    f"  {skill['skill']} — {skill['view_count']:,} 次加载, {skill['manage_count']:,} 次编辑{suffix}"
                 )
             lines.append("")
 
@@ -910,12 +910,12 @@ class InsightsEngine:
         act = report.get("activity", {})
         if act.get("busiest_day") and act.get("busiest_hour"):
             hr = act["busiest_hour"]["hour"]
-            ampm = "AM" if hr < 12 else "PM"
+            ampm = "上午" if hr < 12 else "下午"
             display_hr = hr % 12 or 12
-            lines.append(f"**📅 Busiest:** {act['busiest_day']['day']}s ({act['busiest_day']['count']} sessions), {display_hr}{ampm} ({act['busiest_hour']['count']} sessions)")
+            lines.append(f"**最活跃:** {act['busiest_day']['day']} ({act['busiest_day']['count']} 个会话), {display_hr}:00 ({act['busiest_hour']['count']} 个会话)")
             if act.get("active_days"):
-                lines.append(f"**Active days:** {act['active_days']}", )
+                lines.append(f"**活跃天数:** {act['active_days']}", )
             if act.get("max_streak", 0) > 1:
-                lines.append(f"**Best streak:** {act['max_streak']} consecutive days")
+                lines.append(f"**最长连续:** {act['max_streak']} 天")
 
         return "\n".join(lines)

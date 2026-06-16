@@ -1,15 +1,15 @@
 """
-Configuration management for Hermes Agent.
+用于 Hermes 智能体的配置管理。
 
-Config files are stored in ~/.hermes/ for easy access:
-- ~/.hermes/config.yaml  - All settings (model, toolsets, terminal, etc.)
-- ~/.hermes/.env         - API keys and secrets
+配置文件存储在 ~/.hermes/ 中以便于访问：
+- ~/.hermes/config.yaml  - 所有设置（模型、工具集、终端等）
+- ~/.hermes/.env         - API 密钥和密钥
 
-This module provides:
-- hermes config          - Show current configuration
-- hermes config edit     - Open config in editor
-- hermes config set      - Set a specific value
-- hermes config wizard   - Re-run setup wizard
+此模块提供：
+- hermes config          - 显示当前配置
+- hermes config edit     - 在编辑器中打开配置
+- hermes config set      - 设置特定值
+- hermes config wizard   - 重新运行设置向导
 """
 
 import copy
@@ -123,16 +123,16 @@ def _warn_config_parse_failure(config_path: Path, exc: Exception) -> None:
     backup_path = _backup_corrupt_config(config_path)
 
     msg = (
-        f"Failed to parse {config_path}: {exc}. "
-        f"Falling back to default config — every user override "
-        f"(auxiliary providers, fallback chain, model settings) is being IGNORED. "
-        f"Fix the YAML and restart."
+        f"无法解析 {config_path}: {exc}. "
+        f"回退到默认配置 — 每个用户覆盖 "
+        f"（辅助提供商、回退链、模型设置）都被忽略。"
+        f"修复 YAML 并重新启动。"
     )
     if backup_path is not None:
-        msg += f" A copy of the corrupted file was saved to {backup_path}."
+        msg += f" 损坏文件的副本已保存到 {backup_path}。"
     logger.warning(msg)
     try:
-        sys.stderr.write(f"⚠️  hermes config: {msg}\n")
+        sys.stderr.write(f"️  hermes config: {msg}\n")
         sys.stderr.flush()
     except Exception:
         pass
@@ -463,38 +463,38 @@ def recommended_update_command() -> str:
 # Why this matters:
 #   - The published image excludes ``.git`` (see .dockerignore), so the
 #     git-based update path can never succeed inside the container.
-#   - The pre-existing fallback message ("✗ Not a git repository. Please
+#   - The pre-existing fallback message (" Not a git repository. Please
 #     reinstall: curl ... install.sh") is actively misleading inside Docker
 #     — that script installs a *new* host-side Hermes, it doesn't update
 #     the running container.
 #   - The right action is ``docker pull`` + restart the container; this
 #     helper spells that out, with notes on tag pinning and config
 #     persistence so users don't get blindsided.
-_DOCKER_UPDATE_MESSAGE = """\
-✗ ``hermes update`` doesn't apply inside the Docker container.
+_DOCKER_UPDATE_MESSAGE = """\\ 
+ ``hermes update`` 在 Docker 容器内不适用。
 
-Hermes Agent runs as a published image (nousresearch/hermes-agent), not a
-git checkout — the container has no working tree to pull into.  Update by
-pulling a fresh image and restarting your container instead:
+Hermes 智能体作为已发布的镜像运行（nousresearch/hermes-agent），而不是
+git 检出 — 容器没有可以拉取的工作树。通过
+拉取新镜像并重新启动容器来更新：
 
   docker pull nousresearch/hermes-agent:latest
-  # then restart whatever started the container, e.g.:
+  # 然后重新启动启动容器的任何内容，例如：
   docker compose up -d --force-recreate hermes-agent
-  # or, for ad-hoc runs, exit the current container and `docker run` again
+  # 或者，对于临时运行，退出当前容器并再次 `docker run`
 
-Verify the new version after restart:
+重启后验证新版本：
   docker run --rm nousresearch/hermes-agent:latest --version
 
-Notes:
-  • If you pinned a specific tag (e.g. ``:v0.14.0``) the ``:latest`` tag
-    won't move your container — pull the newer tag you actually want, or
-    switch to ``:latest`` / ``:main`` for rolling updates.  See available
-    tags at https://hub.docker.com/r/nousresearch/hermes-agent/tags
-  • Your config and session history live under ``$HERMES_HOME`` (``/opt/data``
-    in the container, typically bind-mounted from the host) and persist
-    across image upgrades — re-pulling doesn't lose any state.
-  • Running a fork?  Build your own image with this repo's ``Dockerfile``
-    and replace the ``docker pull`` step with your build/push pipeline."""
+注意事项：
+   如果您固定了特定标签（例如 ``:v0.14.0``），``:latest`` 标签
+    不会移动您的容器 — 拉取您真正想要的更新标签，或
+    切换到 ``:latest`` / ``:main`` 以进行滚动更新。请参阅可用的
+    标签：https://hub.docker.com/r/nousresearch/hermes-agent/tags
+   您的配置和会话历史位于 ``$HERMES_HOME``（容器中的 ``/opt/data``
+    ，通常从主机绑定挂载），并在镜像升级后保持不变 —
+    重新拉取不会丢失任何状态。
+   运行的是分支版本？使用此仓库的 ``Dockerfile`` 构建您自己的镜像
+    并将 ``docker pull`` 步骤替换为您的构建/推送流程。"""
 
 
 def format_docker_update_message() -> str:
@@ -1479,8 +1479,8 @@ DEFAULT_CONFIG = {
         "tool_progress_command": False,  # Enable /verbose command in messaging gateway
         "tool_progress_overrides": {},  # DEPRECATED — use display.platforms instead
         "tool_preview_length": 0,  # Max chars for tool call previews (0 = no limit, show full paths/commands)
-        # Auto-delete system-notice replies (e.g. "✨ New session started!",
-        # "♻ Restarting gateway…", "⚡ Stopped…") after N seconds on platforms
+        # Auto-delete system-notice replies (e.g. " New session started!",
+        # " Restarting gateway…", " Stopped…") after N seconds on platforms
         # that support message deletion (currently Telegram; other platforms
         # ignore and leave the message in place).  Only affects slash-command
         # replies wrapped with gateway.platforms.base.EphemeralReply — agent
@@ -1924,7 +1924,7 @@ DEFAULT_CONFIG = {
         "thread_require_mention": False,  # If True, require @mention in threads too (multi-bot threads)
         "history_backfill": True,         # If True, prepend recent channel scrollback when bot is triggered (recovers messages missed while require_mention gated them out)
         "history_backfill_limit": 50,     # Max number of recent messages to scan when assembling the backfill block
-        "reactions": True,             # Add 👀/✅/❌ reactions to messages during processing
+        "reactions": True,             # Add // reactions to messages during processing
         "channel_prompts": {},         # Per-channel ephemeral system prompts (forum parents apply to child threads)
         # Opt-in DM role-based auth (#12136). By default, DISCORD_ALLOWED_ROLES
         # authorizes only guild messages in the role's own guild — DMs require
@@ -1979,14 +1979,14 @@ DEFAULT_CONFIG = {
     # WhatsApp platform settings (gateway mode)
     "whatsapp": {
         # Reply prefix prepended to every outgoing WhatsApp message.
-        # Default (None) uses the built-in "⚕ *Hermes Agent*" header.
+        # Default (None) uses the built-in " *Hermes Agent*" header.
         # Set to "" (empty string) to disable the header entirely.
-        # Supports \n for newlines, e.g. "🤖 *My Bot*\n──────\n"
+        # Supports \n for newlines, e.g. " *My Bot*\n──────\n"
     },
 
     # Telegram platform settings (gateway mode)
     "telegram": {
-        "reactions": False,            # Add 👀/✅/❌ reactions to messages during processing
+        "reactions": False,            # Add // reactions to messages during processing
         "channel_prompts": {},         # Per-chat/topic ephemeral system prompts (topics inherit from parent group)
         "allowed_chats": "",           # If set, bot ONLY responds in these group/supergroup chat IDs (whitelist)
         "extra": {
@@ -4304,9 +4304,9 @@ def print_config_warnings(config: Optional[Dict[str, Any]] = None) -> None:
     if not issues:
         return
 
-    lines = ["\033[33m⚠ Config issues detected in config.yaml:\033[0m"]
+    lines = ["\033[33m Config issues detected in config.yaml:\033[0m"]
     for ci in issues:
-        marker = "\033[31m✗\033[0m" if ci.severity == "error" else "\033[33m⚠\033[0m"
+        marker = "\033[31m\033[0m" if ci.severity == "error" else "\033[33m033[0m"
         lines.append(f"  {marker} {ci.message}")
     lines.append("  \033[2mRun 'hermes doctor' for fix suggestions.\033[0m")
     sys.stderr.write("\n".join(lines) + "\n\n")
@@ -4335,18 +4335,18 @@ def warn_deprecated_cwd_env_vars(config: Optional[Dict[str, Any]] = None) -> Non
     lines: list[str] = []
     if messaging_cwd:
         lines.append(
-            f"  \033[33m⚠\033[0m MESSAGING_CWD={messaging_cwd} found in .env — "
+            f"  \033[33m\033[0m MESSAGING_CWD={messaging_cwd} found in .env — "
             f"this is deprecated."
         )
     if terminal_cwd_env and not config_has_explicit_cwd:
         # TERMINAL_CWD in env but not from config bridge — likely from .env
         lines.append(
-            f"  \033[33m⚠\033[0m TERMINAL_CWD={terminal_cwd_env} found in .env — "
+            f"  \033[33m\033[0m TERMINAL_CWD={terminal_cwd_env} found in .env — "
             f"this is deprecated."
         )
     if lines:
         hint_path = os.environ.get("HERMES_HOME", "~/.hermes")
-        lines.insert(0, "\033[33m⚠ Deprecated .env settings detected:\033[0m")
+        lines.insert(0, "\033[33m Deprecated .env settings detected:\033[0m")
         lines.append(
             f"  \033[2mMove to config.yaml instead:  "
             f"terminal:\\n    cwd: /your/project/path\033[0m"
@@ -4374,7 +4374,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
     try:
         fixes = sanitize_env_file()
         if fixes and not quiet:
-            print(f"  ✓ Repaired .env file ({fixes} corrupted entries fixed)")
+            print(f"   Repaired .env file ({fixes} corrupted entries fixed)")
     except Exception:
         pass  # best-effort; don't block migration on sanitize failure
 
@@ -4402,7 +4402,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
             config["display"] = display
             save_config(config)
             if not quiet:
-                print(f"  ✓ Migrated tool progress to config.yaml: {display['tool_progress']}")
+                print(f"   Migrated tool progress to config.yaml: {display['tool_progress']}")
     
     # ── Version 4 → 5: add timezone field ──
     if current_ver < 5:
@@ -4418,7 +4418,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
             save_config(config)
             if not quiet:
                 tz_display = config["timezone"] or "(server-local)"
-                print(f"  ✓ Added timezone to config.yaml: {tz_display}")
+                print(f"   Added timezone to config.yaml: {tz_display}")
 
     # ── Version 8 → 9: clear ANTHROPIC_TOKEN from .env ──
     # The new Anthropic auth flow no longer uses this env var.
@@ -4428,7 +4428,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
             if old_token:
                 save_env_value("ANTHROPIC_TOKEN", "")
                 if not quiet:
-                    print("  ✓ Cleared ANTHROPIC_TOKEN from .env (no longer used)")
+                    print("   Cleared ANTHROPIC_TOKEN from .env (no longer used)")
         except Exception:
             pass
 
@@ -4491,7 +4491,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
                 config.pop("custom_providers", None)
                 save_config(config)
                 if not quiet:
-                    print(f"  ✓ Migrated {migrated_count} custom provider(s) to providers: section")
+                    print(f"   Migrated {migrated_count} custom provider(s) to providers: section")
                     for key in list(providers_dict.keys())[-migrated_count:]:
                         ep = providers_dict[key]
                         print(f"    → {key}: {ep.get('api', '')}")
@@ -4507,7 +4507,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
                 if old_val:
                     save_env_value(dead_var, "")
                     if not quiet:
-                        print(f"  ✓ Cleared {dead_var} from .env (no longer used — config.yaml is source of truth)")
+                        print(f"   Cleared {dead_var} from .env (no longer used — config.yaml is source of truth)")
             except Exception:
                 pass
 
@@ -4559,7 +4559,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
             config["stt"] = stt
             save_config(config)
             if not quiet:
-                print(f"  ✓ Migrated legacy stt.model to provider-specific config")
+                print(f"   Migrated legacy stt.model to provider-specific config")
 
     # ── Version 14 → 15: add explicit gateway interim-message gate ──
     if current_ver < 15:
@@ -4573,7 +4573,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
             results["config_added"].append("display.interim_assistant_messages=true (default)")
             save_config(config)
             if not quiet:
-                print("  ✓ Added display.interim_assistant_messages=true")
+                print("   Added display.interim_assistant_messages=true")
 
     # ── Version 15 → 16: migrate tool_progress_overrides into display.platforms ──
     if current_ver < 16:
@@ -4596,7 +4596,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
             save_config(config)
             if not quiet:
                 migrated = ", ".join(f"{p}={m}" for p, m in old_overrides.items())
-                print(f"  ✓ Migrated tool_progress_overrides → display.platforms: {migrated}")
+                print(f"   Migrated tool_progress_overrides → display.platforms: {migrated}")
             results["config_added"].append("display.platforms (migrated from tool_progress_overrides)")
 
     # ── Version 16 → 17: remove legacy compression.summary_* keys ──
@@ -4632,9 +4632,9 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
                 save_config(config)
                 if not quiet:
                     if migrated_keys:
-                        print(f"  ✓ Migrated compression.summary_* → auxiliary.compression: {', '.join(migrated_keys)}")
+                        print(f"   Migrated compression.summary_* → auxiliary.compression: {', '.join(migrated_keys)}")
                     else:
-                        print("  ✓ Removed unused compression.summary_* keys")
+                        print("   Removed unused compression.summary_* keys")
 
     # ── Version 20 → 21: plugins are now opt-in; grandfather existing user plugins ──
     # The loader now requires plugins to appear in ``plugins.enabled`` before
@@ -4692,12 +4692,12 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
             if not quiet:
                 if grandfathered:
                     print(
-                        f"  ✓ Plugins now opt-in: grandfathered "
+                        f"   Plugins now opt-in: grandfathered "
                         f"{len(grandfathered)} existing plugin(s) into plugins.enabled"
                     )
                 else:
                     print(
-                        "  ✓ Plugins now opt-in: no existing plugins to grandfather. "
+                        "   Plugins now opt-in: no existing plugins to grandfather. "
                         "Use `hermes plugins enable <name>` to activate."
                     )
 
@@ -4772,7 +4772,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
                 )
                 if not quiet:
                     print(
-                        "  ✓ Seeded curator defaults in config.yaml: "
+                        "   Seeded curator defaults in config.yaml: "
                         f"{', '.join(added_curator)}"
                     )
             if added_aux:
@@ -4781,7 +4781,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
                 )
                 if not quiet:
                     print(
-                        "  ✓ Seeded auxiliary.curator defaults in config.yaml: "
+                        "   Seeded auxiliary.curator defaults in config.yaml: "
                         f"{', '.join(added_aux)}"
                     )
 
@@ -4799,7 +4799,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
             save_config(config)
             results["config_added"].append("model_catalog.ttl_hours 24→1")
             if not quiet:
-                print("  ✓ Lowered model_catalog.ttl_hours to 1 (hourly picker refresh)")
+                print("   Lowered model_catalog.ttl_hours to 1 (hourly picker refresh)")
 
     # ── Version 28 → 29: rename memory/skills write_mode → write_approval ──
     # The tri-state write_mode (on|off|approve) was replaced by a clear boolean
@@ -4827,7 +4827,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
         if touched:
             save_config(config)
             if not quiet:
-                print("  ✓ Renamed write_mode → write_approval (boolean gate)")
+                print("   Renamed write_mode → write_approval (boolean gate)")
 
     # ── Post-migration: disable exfiltration-shaped MCP stdio entries ──
     # Users can hand-edit mcp_servers, and older installs may already contain a
@@ -4855,8 +4855,8 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
                 )
                 if not quiet:
                     for issue in issues:
-                        print(f"  ⚠ {issue}")
-                    print(f"  ⚠ Disabled MCP server '{server_name}' pending review")
+                        print(f"   {issue}")
+                    print(f"   Disabled MCP server '{server_name}' pending review")
             if mcp_touched:
                 config["mcp_servers"] = raw_mcp_servers
                 save_config(config)
@@ -4868,9 +4868,9 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
     missing_env = get_missing_env_vars(required_only=True)
     
     if missing_env and not quiet:
-        print("\n⚠️  Missing required environment variables:")
+        print("\n️  Missing required environment variables:")
         for var in missing_env:
-            print(f"   • {var['name']}: {var['description']}")
+            print(f"    {var['name']}: {var['description']}")
     
     if interactive and missing_env:
         print("\nLet's configure them now:\n")
@@ -4886,7 +4886,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
             if value:
                 save_env_value(var["name"], value)
                 results["env_added"].append(var["name"])
-                print(f"  ✓ Saved {var['name']}")
+                print(f"   Saved {var['name']}")
             else:
                 results["warnings"].append(f"Skipped {var['name']} - some features may not work")
             print()
@@ -4914,7 +4914,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
         if new_and_unset:
             print(f"\n  {len(new_and_unset)} new optional key(s) in this update:")
             for name, info in new_and_unset:
-                print(f"    • {name} — {info.get('description', '')}")
+                print(f"     {name} — {info.get('description', '')}")
             print()
             try:
                 answer = input("  Configure new keys? [y/N]: ").strip().lower()
@@ -4938,7 +4938,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
                     if value:
                         save_env_value(name, value)
                         results["env_added"].append(name)
-                        print(f"  ✓ Saved {name}")
+                        print(f"   Saved {name}")
                     print()
             else:
                 print("  Set later with: hermes config set <key> <value>")
@@ -4956,7 +4956,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
             _set_nested(config, key, default)
             results["config_added"].append(key)
             if not quiet:
-                print(f"  ✓ Added {key} = {default}")
+                print(f"   Added {key} = {default}")
         
         # Update version and save
         config["_config_version"] = latest_ver
@@ -4976,7 +4976,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
         print(f"\n  {len(missing_skill_config)} skill setting(s) not configured:")
         for var in missing_skill_config:
             skill_name = var.get("skill", "unknown")
-            print(f"    • {var['key']} — {var['description']} (from skill: {skill_name})")
+            print(f"     {var['key']} — {var['description']} (from skill: {skill_name})")
         print()
         try:
             answer = input("  Configure skill settings? [y/N]: ").strip().lower()
@@ -5000,7 +5000,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
                     storage_key = f"{SKILL_CONFIG_PREFIX}.{var['key']}"
                     _set_nested(config, storage_key, value)
                     results["config_added"].append(var["key"])
-                    print(f"  ✓ Saved {var['key']} = {value}")
+                    print(f"   Saved {var['key']} = {value}")
                 else:
                     results["warnings"].append(
                         f"Skipped {var['key']} — skill '{var.get('skill', '?')}' may ask for it later"
@@ -6011,19 +6011,18 @@ def show_config():
     
     print()
     print(color("┌─────────────────────────────────────────────────────────┐", Colors.CYAN))
-    print(color("│              ⚕ Hermes Configuration                    │", Colors.CYAN))
+    print(color("┌─────────────────────────────────────────────────────────┐", Colors.CYAN))
+    print(color("│               Hermes 配置                             │", Colors.CYAN))
     print(color("└─────────────────────────────────────────────────────────┘", Colors.CYAN))
-    
-    # Paths
+
     print()
-    print(color("◆ Paths", Colors.CYAN, Colors.BOLD))
-    print(f"  Config:       {get_config_path()}")
-    print(f"  Secrets:      {get_env_path()}")
-    print(f"  Install:      {get_project_root()}")
-    
-    # API Keys
+    print(color(" 路径", Colors.CYAN, Colors.BOLD))
+    print(f"  配置:       {get_config_path()}")
+    print(f"  密钥:      {get_env_path()}")
+    print(f"  安装:      {get_project_root()}")
+
     print()
-    print(color("◆ API Keys", Colors.CYAN, Colors.BOLD))
+    print(color(" API 密钥", Colors.CYAN, Colors.BOLD))
     
     keys = [
         ("OPENROUTER_API_KEY", "OpenRouter"),
@@ -6046,10 +6045,10 @@ def show_config():
     
     # Model settings
     print()
-    print(color("◆ Model", Colors.CYAN, Colors.BOLD))
-    print(f"  Model:        {config.get('model', 'not set')}")
+    print(color(" 模型", Colors.CYAN, Colors.BOLD))
+    print(f"  模型:        {config.get('model', '未设置')}")
     _cfg_max_turns = config.get('agent', {}).get('max_turns', DEFAULT_CONFIG['agent']['max_turns'])
-    print(f"  Max turns:    {_cfg_max_turns}")
+    print(f"  最大回合数:    {_cfg_max_turns}")
     # Warn on stale HERMES_MAX_ITERATIONS ghost in .env that disagrees with
     # config.yaml (issue #17534). Read the .env FILE directly so we catch the
     # ghost even when the gateway bridge already overrode os.environ.
@@ -6057,7 +6056,7 @@ def show_config():
         _env_ghost = load_env().get("HERMES_MAX_ITERATIONS")
         if _env_ghost is not None and str(_env_ghost).strip() != str(_cfg_max_turns).strip():
             print(color(
-                f"                ⚠ .env has stale HERMES_MAX_ITERATIONS={_env_ghost} "
+                f"                 .env has stale HERMES_MAX_ITERATIONS={_env_ghost} "
                 f"(run 'hermes doctor --fix' to remove)",
                 Colors.YELLOW,
             ))
@@ -6066,11 +6065,11 @@ def show_config():
     
     # Display
     print()
-    print(color("◆ Display", Colors.CYAN, Colors.BOLD))
+    print(color(" 显示", Colors.CYAN, Colors.BOLD))
     display = config.get('display', {})
-    print(f"  Personality:  {display.get('personality') or 'none'}")
-    print(f"  Reasoning:    {'on' if display.get('show_reasoning', False) else 'off'}")
-    print(f"  Bell:         {'on' if display.get('bell_on_complete', False) else 'off'}")
+    print(f"  个性:  {display.get('personality') or '无'}")
+    print(f"  推理:    {'开' if display.get('show_reasoning', False) else '关'}")
+    print(f"  提示音:         {'开' if display.get('bell_on_complete', False) else '关'}")
     ump = display.get('user_message_preview', {}) if isinstance(display.get('user_message_preview', {}), dict) else {}
     ump_first = ump.get('first_lines', 2)
     ump_last = ump.get('last_lines', 2)
@@ -6078,11 +6077,11 @@ def show_config():
 
     # Terminal
     print()
-    print(color("◆ Terminal", Colors.CYAN, Colors.BOLD))
+    print(color(" 终端", Colors.CYAN, Colors.BOLD))
     terminal = config.get('terminal', {})
-    print(f"  Backend:      {terminal.get('backend', 'local')}")
-    print(f"  Working dir:  {terminal.get('cwd', '.')}")
-    print(f"  Timeout:      {terminal.get('timeout', 60)}s")
+    print(f"  后端:      {terminal.get('backend', 'local')}")
+    print(f"  工作目录:  {terminal.get('cwd', '.')}")
+    print(f"  超时:      {terminal.get('timeout', 60)}s")
     
     if terminal.get('backend') == 'docker':
         print(f"  Docker image: {terminal.get('docker_image', 'nikolaik/python-nodejs:python3.11-nodejs20')}")
@@ -6104,7 +6103,7 @@ def show_config():
     
     # Timezone
     print()
-    print(color("◆ Timezone", Colors.CYAN, Colors.BOLD))
+    print(color(" 时区", Colors.CYAN, Colors.BOLD))
     tz = config.get('timezone', '')
     if tz:
         print(f"  Timezone:     {tz}")
@@ -6113,7 +6112,7 @@ def show_config():
 
     # Compression
     print()
-    print(color("◆ Context Compression", Colors.CYAN, Colors.BOLD))
+    print(color(" 上下文压缩", Colors.CYAN, Colors.BOLD))
     compression = config.get('compression', {})
     enabled = compression.get('enabled', True)
     print(f"  Enabled:      {'yes' if enabled else 'no'}")
@@ -6141,7 +6140,7 @@ def show_config():
     )
     if has_overrides:
         print()
-        print(color("◆ Auxiliary Models (overrides)", Colors.CYAN, Colors.BOLD))
+        print(color(" 辅助模型（覆盖）", Colors.CYAN, Colors.BOLD))
         for label, task_cfg in aux_tasks.items():
             prov = task_cfg.get('provider', 'auto')
             mdl = task_cfg.get('model', '')
@@ -6153,13 +6152,13 @@ def show_config():
     
     # Messaging
     print()
-    print(color("◆ Messaging Platforms", Colors.CYAN, Colors.BOLD))
+    print(color(" 消息平台", Colors.CYAN, Colors.BOLD))
     
     telegram_token = get_env_value('TELEGRAM_BOT_TOKEN')
     discord_token = get_env_value('DISCORD_BOT_TOKEN')
     
-    print(f"  Telegram:     {'configured' if telegram_token else color('not configured', Colors.DIM)}")
-    print(f"  Discord:      {'configured' if discord_token else color('not configured', Colors.DIM)}")
+    print(f"  Telegram:     {'已配置' if telegram_token else color('未配置', Colors.DIM)}")
+    print(f"  Discord:      {'已配置' if discord_token else color('未配置', Colors.DIM)}")
     
     # Skill config
     try:
@@ -6168,7 +6167,7 @@ def show_config():
         if skill_vars:
             resolved = resolve_skill_config_values(skill_vars)
             print()
-            print(color("◆ Skill Settings", Colors.CYAN, Colors.BOLD))
+            print(color(" 技能设置", Colors.CYAN, Colors.BOLD))
             for var in skill_vars:
                 key = var["key"]
                 value = resolved.get(key, "")
@@ -6180,9 +6179,9 @@ def show_config():
 
     print()
     print(color("─" * 60, Colors.DIM))
-    print(color("  hermes config edit     # Edit config file", Colors.DIM))
-    print(color("  hermes config set <key> <value>", Colors.DIM))
-    print(color("  hermes setup           # Run setup wizard", Colors.DIM))
+    print(color("  hermes config edit     # 编辑配置文件", Colors.DIM))
+    print(color("  hermes config set <键> <值>", Colors.DIM))
+    print(color("  hermes setup           # 运行设置向导", Colors.DIM))
     print()
 
 
@@ -6246,7 +6245,7 @@ def set_config_value(key: str, value: str):
     
     if key.upper() in api_keys or key.upper().endswith(('_API_KEY', '_TOKEN')) or key.upper().startswith('TERMINAL_SSH'):
         save_env_value(key.upper(), value)
-        print(f"✓ Set {key} in {get_env_path()}")
+        print(f" Set {key} in {get_env_path()}")
         return
     
     # Otherwise it goes to config.yaml
@@ -6289,7 +6288,7 @@ def set_config_value(key: str, value: str):
     if env_var and key != "terminal.cwd":
         save_env_value(env_var, _terminal_env_value(value))
 
-    print(f"✓ Set {key} = {value} in {config_path}")
+    print(f" Set {key} = {value} in {config_path}")
 
 
 # =============================================================================
@@ -6336,7 +6335,7 @@ def config_command(args):
         current_ver, latest_ver = check_config_version()
         
         if not missing_env and not missing_config and current_ver >= latest_ver:
-            print(color("✓ Configuration is up to date!", Colors.GREEN))
+            print(color(" Configuration is up to date!", Colors.GREEN))
             print()
             return
         
@@ -6354,16 +6353,16 @@ def config_command(args):
         ]
         
         if required_missing:
-            print(f"\n  ⚠️  {len(required_missing)} required API key(s) missing:")
+            print(f"\n  ️  {len(required_missing)} required API key(s) missing:")
             for var in required_missing:
-                print(f"     • {var['name']}")
+                print(f"      {var['name']}")
         
         if optional_missing:
-            print(f"\n  ℹ️  {len(optional_missing)} optional API key(s) not configured:")
+            print(f"\n  ️  {len(optional_missing)} optional API key(s) not configured:")
             for var in optional_missing:
                 tools = var.get("tools", [])
                 tools_str = f" (enables: {', '.join(tools[:2])})" if tools else ""
-                print(f"     • {var['name']}{tools_str}")
+                print(f"      {var['name']}{tools_str}")
         
         print()
         
@@ -6372,44 +6371,44 @@ def config_command(args):
         
         print()
         if results["env_added"] or results["config_added"]:
-            print(color("✓ Configuration updated!", Colors.GREEN))
+            print(color(" Configuration updated!", Colors.GREEN))
         
         if results["warnings"]:
             print()
             for warning in results["warnings"]:
-                print(color(f"  ⚠️  {warning}", Colors.YELLOW))
+                print(color(f"  ️  {warning}", Colors.YELLOW))
         
         print()
     
     elif subcmd == "check":
         # Non-interactive check for what's missing
         print()
-        print(color("📋 Configuration Status", Colors.CYAN, Colors.BOLD))
+        print(color(" Configuration Status", Colors.CYAN, Colors.BOLD))
         print()
         
         current_ver, latest_ver = check_config_version()
         if current_ver >= latest_ver:
-            print(f"  Config version: {current_ver} ✓")
+            print(f"  Config version: {current_ver} ")
         else:
             print(color(f"  Config version: {current_ver} → {latest_ver} (update available)", Colors.YELLOW))
         
         print()
-        print(color("  Required:", Colors.BOLD))
+        print(color(" 必须的:", Colors.BOLD))
         for var_name in REQUIRED_ENV_VARS:
             if get_env_value(var_name):
-                print(f"    ✓ {var_name}")
+                print(f"     {var_name}")
             else:
-                print(color(f"    ✗ {var_name} (missing)", Colors.RED))
+                print(color(f"     {var_name} (missing)", Colors.RED))
         
         print()
-        print(color("  Optional:", Colors.BOLD))
+        print(color("  可选的:", Colors.BOLD))
         for var_name, info in OPTIONAL_ENV_VARS.items():
             if get_env_value(var_name):
-                print(f"    ✓ {var_name}")
+                print(f"     {var_name}")
             else:
                 tools = info.get("tools", [])
                 tools_str = f" → {', '.join(tools[:2])}" if tools else ""
-                print(color(f"    ○ {var_name}{tools_str}", Colors.DIM))
+                print(color(f"     {var_name}{tools_str}", Colors.DIM))
         
         missing_config = get_missing_config_fields()
         if missing_config:
@@ -6420,16 +6419,16 @@ def config_command(args):
         print()
     
     else:
-        print(f"Unknown config command: {subcmd}")
+        print(f"未知的配置命令: {subcmd}")
         print()
-        print("Available commands:")
-        print("  hermes config           Show current configuration")
-        print("  hermes config edit      Open config in editor")
-        print("  hermes config set <key> <value>   Set a config value")
-        print("  hermes config check     Check for missing/outdated config")
-        print("  hermes config migrate   Update config with new options")
-        print("  hermes config path      Show config file path")
-        print("  hermes config env-path  Show .env file path")
+        print("可用命令:")
+        print("  hermes config           显示当前配置")
+        print("  hermes config edit      在编辑器中打开配置")
+        print("  hermes config set <键> <值>   设置配置值")
+        print("  hermes config check     检查缺失/过期的配置")
+        print("  hermes config migrate   使用新选项更新配置")
+        print("  hermes config path      显示配置文件路径")
+        print("  hermes config env-path  显示 .env 文件路径")
         sys.exit(1)
 
 

@@ -99,7 +99,7 @@ class MigrationReport:
                 f"{self.wrote_permissions_default!r}"
             )
         for err in self.errors:
-            lines.append(f"⚠ {err}")
+            lines.append(f" {err}")
         return "\n".join(lines)
 
 

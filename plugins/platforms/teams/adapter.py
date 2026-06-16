@@ -984,23 +984,23 @@ class TeamsAdapter(BasePlatformAdapter):
                 body=AdaptiveCardActionCardResponse(
                     value=AdaptiveCard()
                     .with_version("1.4")
-                    .with_body([TextBlock(text="⚠️ Approval already resolved or expired.", wrap=True)])
+                    .with_body([TextBlock(text="️ Approval already resolved or expired.", wrap=True)])
                 ),
             )
 
         resolve_gateway_approval(session_key, choice)
 
         label_map = {
-            "once": "✅ Allowed (once)",
-            "session": "✅ Allowed (session)",
-            "always": "✅ Always allowed",
-            "deny": "❌ Denied",
+            "once": " Allowed (once)",
+            "session": " Allowed (session)",
+            "always": " Always allowed",
+            "deny": " Denied",
         }
         cmd = data.get("cmd", "")
         desc = data.get("desc", "")
         body = []
         if cmd:
-            body.append(TextBlock(text="⚠️ Command Approval Required", wrap=True, weight="Bolder"))
+            body.append(TextBlock(text="️ Command Approval Required", wrap=True, weight="Bolder"))
             body.append(TextBlock(text=f"```\n{cmd}\n```", wrap=True))
         if desc:
             body.append(TextBlock(text=f"Reason: {desc}", wrap=True, isSubtle=True))
@@ -1037,7 +1037,7 @@ class TeamsAdapter(BasePlatformAdapter):
             AdaptiveCard()
             .with_version("1.4")
             .with_body([
-                TextBlock(text="⚠️ Command Approval Required", wrap=True, weight="Bolder"),
+                TextBlock(text="️ Command Approval Required", wrap=True, weight="Bolder"),
                 TextBlock(text=f"```\n{cmd_preview}\n```", wrap=True),
                 TextBlock(text=f"Reason: {description}", wrap=True, isSubtle=True),
             ])
@@ -1245,7 +1245,7 @@ def interactive_setup() -> None:
             save_env_value("TEAMS_ALLOWED_USERS", "")
     else:
         save_env_value("TEAMS_ALLOW_ALL_USERS", "true")
-        print_warning("⚠️  Open access — anyone who can message the bot can command it.")
+        print_warning("️  Open access — anyone who can message the bot can command it.")
 
     print()
     print_success("Teams configuration saved to ~/.hermes/.env")
@@ -1285,7 +1285,7 @@ def register(ctx) -> None:
         # Teams supports up to ~28 KB per message
         max_message_length=28000,
         # Display
-        emoji="💼",
+        emoji="",
         allow_update_command=True,
         # LLM guidance
         platform_hint=(
