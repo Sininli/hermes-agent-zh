@@ -27,7 +27,7 @@ import shutil
 import sys
 from datetime import datetime
 
-HERMES_HOME = "C:/Users/Administrator/AppData/Local/hermes"
+HERMES_HOME = os.path.expanduser("~/AppData/Local/hermes")
 SKILLS_DIR = os.path.join(HERMES_HOME, "skills")
 STATE_FILE = os.path.join(HERMES_HOME, ".translation_state.json")
 BACKUP_DIR = os.path.join(HERMES_HOME, "translation_backups")
