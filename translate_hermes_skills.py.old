@@ -1,38 +1,33 @@
 #!/usr/bin/env python3
 """
-|Hermes 技能 + 源文件汉化脚本
-|================================
-|用法:
-|  python translate_hermes_skills.py                        # 翻译 skills + 打源文件补丁
-|  python translate_hermes_skills.py --restore [timestamp]  # 从备份还原
-|  python translate_hermes_skills.py --backup-only          # 仅备份，不翻译
-|  python translate_hermes_skills.py --apply-patches        # git pull 后重打补丁
-|  python translate_hermes_skills.py --revert-patches       # 回退所有源文件补丁
-|
-|功能:
-|  - 翻译前自动备份原文件
-|  - 翻译 skills 目录下所有 SKILL.md 的:
-|    - YAML 前置元数据 (description, name, triggers, tags 等)
-|    - Markdown 正文标题 (Headings)
-|    - 正文中的概览、描述性段落
-|    - 保留代码块、命令、技术术语、URL 不翻译
-|  - 翻译 Hermes 源代码文件（banner.py、tips.py 等）—— 通过 git apply 打补丁
-|  - 支持从备份还原所有文件
-|  - 源文件补丁独立保存，git pull 后可用 --apply-patches 重打
-|  - 永不产生 Git 合并冲突标记
-|特点: 支持增量运行（跳过已翻译的）
-|前置: pip install pyyaml (可选, 非必需)
+Hermes 技能文件全面中文翻译脚本
+================================
+用法:
+  python translate_hermes_skills.py            # 翻译
+  python translate_hermes_skills.py --restore  # 从备份还原
+  python translate_hermes_skills.py --backup-only  # 仅备份，不翻译
+
+功能:
+  - 翻译前自动备份原文件
+  - 翻译 skills 目录下所有 SKILL.md 的:
+    - YAML 前置元数据 (description, name, triggers, tags 等)
+    - Markdown 正文标题 (Headings)
+    - 正文中的概览、描述性段落
+    - 保留代码块、命令、技术术语、URL 不翻译
+  - 翻译 Hermes 源代码文件（banner.py、tips.py 等）
+  - 支持从备份还原所有文件
+特点: 支持增量运行（跳过已翻译的）
+前置: pip install pyyaml (可选，非必需)
 """
 
 import os
 import re
 import json
 import shutil
-import subprocess
 import sys
 from datetime import datetime
 
-HERMES_HOME = os.path.expanduser("~/AppData/Local/hermes")
+HERMES_HOME = "C:/Users/Administrator/AppData/Local/hermes"
 SKILLS_DIR = os.path.join(HERMES_HOME, "skills")
 STATE_FILE = os.path.join(HERMES_HOME, ".translation_state.json")
 BACKUP_DIR = os.path.join(HERMES_HOME, "translation_backups")
@@ -1234,9 +1229,9 @@ SOURCE_PATCHES = {
         ("— configured[/]", "— 已配置[/]"),
         ("— failed[/]", "— 失败[/]"),
         ("/help for commands", "/help 查看命令"),
-        ('f"{len(tools)} tools", f"{total_skills} skills"',
-         'f"{len(tools)} 个工具", f"{total_skills} 个技能"'),
-        ('f"{mcp_connected} MCP servers"', 'f"{mcp_connected} 个 MCP 服务器"'),
+        ('f"{{len(tools)}} tools", f"{{total_skills}} skills"',
+         'f"{{len(tools)}} 个工具", f"{{total_skills}} 个技能"'),
+        ('f"{{mcp_connected}} MCP servers"', 'f"{{mcp_connected}} 个 MCP 服务器"'),
         ('"commit" if behind == 1 else "commits"', '"个提交" if behind == 1 else "个提交"'),
         ('{{commits_word}} behind', '{{commits_word}} 落后'),
         ('"[dim yellow] — run [bold]', '"[dim yellow] — 运行 [bold]'),
@@ -1258,29 +1253,6 @@ SOURCE_PATCHES = {
          '_welcome_skin.get_branding("welcome", "欢迎使用 Hermes Agent！输入消息或 /help 查看命令。")'),
         ('_welcome_text = "Welcome to Hermes Agent! Type your message or /help for commands."',
          '_welcome_text = "欢迎使用 Hermes Agent！输入消息或 /help 查看命令。"'),
-        # cli.py 输入栏英文提示汉化
-        ('recording... {_label} to stop, Ctrl+C to cancel',
-         '录音中... {_label} 停止, Ctrl+C 取消'),
-        ('return "transcribing..."', 'return "转录中..."'),
-        ('type password (hidden), Enter to submit · ESC to skip',
-         '输入密码（隐藏），Enter 提交 · ESC 跳过'),
-        ('type secret (hidden), Enter to submit · ESC to skip',
-         '输入密钥（隐藏），Enter 提交 · ESC 跳过'),
-        ('type 1/2/3, or use ↑/↓ then Enter',
-         '输入 1/2/3，或使用 ↑/↓ 后 Enter'),
-        ('type your answer here and press Enter',
-         '在此输入回答后按 Enter'),
-        ('Processing command...', '处理命令中...'),
-        ('msg=interrupt · /queue · /bg · /steer · Ctrl+C cancel',
-         'msg=中断 · /queue · /bg · /steer · Ctrl+C 取消'),
-        ('type or {_label} to record', '输入或按 {_label} 录音'),
-        ('password hidden · Enter to skip', '密码已隐藏 · Enter 跳过'),
-        ('secret hidden · Enter to skip', '密钥已隐藏 · Enter 跳过'),
-        ('type 1/2/3, or ↑/↓ to select, Enter to confirm',
-         '输入 1/2/3，或 ↑/↓ 选择，Enter 确认'),
-        ('type your answer and press Enter', '在此输入回答后按 Enter'),
-        ('command in progress · input temporarily disabled',
-         '命令执行中 · 输入暂时禁用'),
     ],
     # branding.tsx - TUI 欢迎界面
     os.path.join("ui-tui", "src", "components", "branding.tsx"): [
@@ -1444,165 +1416,43 @@ export const VERBS = [
         ('ProviderEntry("qwen-oauth",     "Qwen OAuth (Portal)",      "Qwen OAuth (Reuses local Qwen CLI login)")',
          'ProviderEntry("qwen-oauth",     "Qwen OAuth（Portal）",     "Qwen OAuth（复用本地 Qwen CLI 登录状态）")'),
     ],
-    # commands.py - 斜杠命令描述（COMMAND_REGISTRY）
+    # commands.py - 斜杠命令描述全部汉化
     os.path.join("hermes_cli", "commands.py"): [
-        # Session
-        ('"Acknowledge platform start pings without a reply"',
-         '"确认平台启动 ping，不回复消息"'),
-        ('"Start a new session (fresh session ID + history)"',
-         '"开始新会话（新会话 ID + 历史记录）"'),
-        ('"Enable or inspect Telegram DM topic sessions"',
-         '"启用或查看 Telegram DM 主题会话"'),
-        ('"Clear screen and start a new session"',
-         '"清屏并开始新会话"'),
-        ('"Force a full UI repaint (recovers from terminal drift)"',
-         '"强制完全重绘 UI（恢复终端漂移）"'),
-        ('"Show conversation history"',
-         '"显示对话历史"'),
-        ('"Save the current conversation"',
-         '"保存当前对话"'),
-        ('"Retry the last message (resend to agent)"',
-         '"重试上一条消息（重新发送给代理）"'),
-        ('"Back up N user turns and re-prompt (default 1)"',
-         '"回退 N 轮用户对话并重新提示（默认 1 轮）"'),
-        ('"Set a title for the current session"',
-         '"为当前会话设置标题"'),
-        ('"Hand off this session to a messaging platform (Telegram, Discord, etc.)"',
-         '"将会话交接到消息平台（Telegram、Discord 等）"'),
-        ('"Branch the current session (explore a different path)"',
-         '"分支当前会话（探索不同方向）"'),
-        ('"Compress conversation context (add \'here [N]\' to keep recent N turns)"',
-         '"压缩对话上下文（添加 here [N] 保留最近 N 轮）"'),
-        ('"List or restore filesystem checkpoints"',
-         '"列出或恢复文件系统检查点"'),
-        ('"Create or restore state snapshots of Hermes config/state"',
-         '"创建或恢复 Hermes 配置/状态快照"'),
-        ('"Kill all running background processes"',
-         '"终止所有正在运行的后台进程"'),
-        ('"Approve a pending dangerous command"',
-         '"批准待处理的危险命令"'),
-        ('"Deny a pending dangerous command"',
-         '"拒绝待处理的危险命令"'),
-        ('"Run a prompt in the background"',
-         '"在后台运行提示"'),
-        ('"Show active agents and running tasks"',
-         '"显示活动代理和正在运行的任务"'),
-        ('"Queue a prompt for the next turn (doesn\'t interrupt)"',
-         '"将提示排队到下一轮（不打断当前）"'),
-        ('"Inject a message after the next tool call without interrupting"',
-         '"在下一次工具调用后注入消息，不打断当前操作"'),
-        ('"Set a standing goal Hermes works on across turns until achieved"',
-         '"设置持续目标，Hermes 跨轮持续工作直到达成"'),
-        ('"Add or manage extra criteria on the active goal"',
-         '"添加或管理当前目标的附加条件"'),
-        ('"Show session, model, token, and context info"',
-         '"显示会话、模型、令牌和上下文信息"'),
-        ('"Show your slash command access (admin / user)"',
-         '"显示你的斜杠命令权限（管理员/普通用户）"'),
-        ('"Show active profile name and home directory"',
-         '"显示当前配置文件名称和主目录"'),
-        ('"Set this chat as the home channel"',
-         '"将此聊天设为主频道"'),
-        ('"Resume a previously-named session"',
-         '"恢复之前命名的会话"'),
-        ('"Browse and resume previous sessions"',
-         '"浏览和恢复之前的会话"'),
-        # Configuration
-        ('"Show current configuration"',
-         '"显示当前配置"'),
-        ('"Switch model (persists by default)"',
-         '"切换模型（默认持久化）"'),
-        ('"Toggle codex app-server runtime for OpenAI/Codex models"',
-         '"切换 OpenAI/Codex 模型的 codex app-server 运行环境"'),
-        ('"Show Google Gemini Code Assist quota usage"',
-         '"显示 Google Gemini Code Assist 配额使用情况"'),
-        ('"Set a predefined personality"',
-         '"设置预定义的个性"'),
-        ('"Toggle the context/model status bar"',
-         '"切换上下文/模型状态栏"'),
-        ('"Cycle tool progress display: off -> new -> all -> verbose"',
-         '"切换工具进度显示：关闭 → 新 → 全部 → 详细"'),
-        ('"Toggle gateway runtime-metadata footer on final replies"',
-         '"切换网关运行时元数据页脚（最终回复上）"'),
-        ('"Toggle YOLO mode (skip all dangerous command approvals)"',
-         '"切换 YOLO 模式（跳过所有危险命令审批）"'),
-        ('"Manage reasoning effort and display"',
-         '"管理推理深度和显示"'),
-        ('"Toggle fast mode — OpenAI Priority Processing / Anthropic Fast Mode (Normal/Fast)"',
-         '"切换快速模式 — OpenAI 优先处理 / Anthropic 快速模式（正常/快速）"'),
-        ('"Show or change the display skin/theme"',
-         '"显示或更改显示皮肤/主题"'),
-        ('"Pick the TUI busy-indicator style"',
-         '"选择 TUI 繁忙指示器样式"'),
-        ('"Toggle voice mode"',
-         '"切换语音模式"'),
-        ('"Control what Enter does while Hermes is working"',
-         '"控制 Hermes 工作时按 Enter 的行为"'),
-        # Tools & Skills
-        ('"Manage tools: /tools [list|disable|enable] [name...]"',
-         '"管理工具：/tools [list|disable|enable] [名称...]"'),
-        ('"List available toolsets"',
-         '"列出可用的工具集"'),
-        ('"Search, install, inspect, or manage skills"',
-         '"搜索、安装、查看或管理技能"'),
-        ('"Review pending memory writes / toggle the approval gate"',
-         '"查看待处理的记忆写入 / 切换审批开关"'),
-        ('"List skill bundles (aliases /<name> for multiple skills)"',
-         '"列出技能捆绑包（别名 /<名称> 对应多个技能）"'),
-        ('"Manage scheduled tasks"',
-         '"管理定时任务"'),
-        ('"Review suggested automations (accept/dismiss)"',
-         '"查看建议的自动化（接受/忽略）"'),
-        ('"Set up an automation from a blueprint template"',
-         '"从蓝图模板设置自动化"'),
-        ('"Background skill maintenance (status, run, pin, archive, list-archived)"',
-         '"后台技能维护（状态、运行、固定、归档、列出已归档）"'),
-        ('"Multi-profile collaboration board (tasks, links, comments)"',
-         '"多配置文件协作看板（任务、链接、评论）"'),
-        ('"Reload .env variables into the running session"',
-         '"将 .env 变量重新加载到当前会话中"'),
-        ('"Reload MCP servers from config"',
-         '"从配置重新加载 MCP 服务器"'),
-        ('"Re-scan ~/.hermes/skills/ for newly installed or removed skills"',
-         '"重新扫描 ~/.hermes/skills/ 查找新安装或移除的技能"'),
-        ('"Connect browser tools to your live Chromium-family browser via CDP"',
-         '"通过 CDP 将浏览器工具连接到正在运行的 Chromium 系浏览器"'),
-        ('"List installed plugins and their status"',
-         '"列出已安装的插件及其状态"'),
-        # Info
-        ('"Browse all commands and skills (paginated)"',
-         '"浏览所有命令和技能（分页）"'),
-        ('"Show available commands"',
-         '"显示可用命令"'),
-        ('"Gracefully restart the gateway after draining active runs"',
-         '"在排空活动运行后优雅重启网关"'),
-        ('"Show token usage and rate limits for the current session"',
-         '"显示当前会话的令牌用量和速率限制"'),
-        ('"Show Nous credit balance and top up"',
-         '"显示 Nous 积分余额和充值"'),
-        ('"Manage Nous terminal billing — buy credits, auto-reload, limits"',
-         '"管理 Nous 终端账单 — 购买积分、自动充值、限额"'),
-        ('"Show usage insights and analytics"',
-         '"显示使用统计和分析"'),
-        ('"Show gateway/messaging platform status"',
-         '"显示网关/消息平台状态"'),
-        ('"Pause, resume, or list a failing gateway platform"',
-         '"暂停、恢复或列出故障网关平台"'),
-        ('"Copy the last assistant response to clipboard"',
-         '"将上一条助手回复复制到剪贴板"'),
-        ('"Attach clipboard image from your clipboard"',
-         '"从剪贴板附加图片"'),
-        ('"Attach a local image file for your next prompt"',
-         '"为下一条提示附加本地图片文件"'),
-        ('"Update Hermes Agent to the latest version"',
-         '"将 Hermes Agent 更新到最新版本"'),
-        ('"Show Hermes Agent version"',
-         '"显示 Hermes Agent 版本"'),
-        ('"Upload debug report (system info + logs) and get shareable links"',
-         '"上传调试报告（系统信息 + 日志）并获取可分享链接"'),
-        # Exit
-        ('"Exit the CLI (use --delete to also remove session history)"',
-         '"退出 CLI（使用 --delete 同时删除会话历史）"'),
+        # 别名描述
+        ('f"{{_cmd.description}} (alias for /{{_cmd.name}})"',
+         'f"{{_cmd.description}}（/{{_cmd.name}} 的别名）"'),
+    ],
+    # cli.py - 帮助界面标题汉化补充
+    os.path.join("cli.py"): [
+        # 已有条目（welcome 回退）在上方
+        # 补充帮助界面的标题汉化
+        ('_cprint(f"\\n  {_BOLD}── {category} ──{_RST}")',
+         '_cprint(f"\\n  {_BOLD}── {category} ──{_RST}")'),  # category 自动从中文 COMMAND_REGISTRY 获取
+    ],
+    # cli.py - 输入栏英文提示汉化
+    os.path.join("cli.py"): [
+        ('recording... {_label} to stop, Ctrl+C to cancel',
+         '录音中... {_label} 停止, Ctrl+C 取消'),
+        ('return "transcribing..."', 'return "转录中..."'),
+        ('type password (hidden), Enter to submit · ESC to skip',
+         '输入密码（隐藏），Enter 提交 · ESC 跳过'),
+        ('type secret (hidden), Enter to submit · ESC to skip',
+         '输入密钥（隐藏），Enter 提交 · ESC 跳过'),
+        ('type 1/2/3, or use ↑/↓ then Enter',
+         '输入 1/2/3，或使用 ↑/↓ 后 Enter'),
+        ('type your answer here and press Enter',
+         '在此输入回答后按 Enter'),
+        ('Processing command...', '处理命令中...'),
+        ('msg=interrupt · /queue · /bg · /steer · Ctrl+C cancel',
+         'msg=中断 · /queue · /bg · /steer · Ctrl+C 取消'),
+        ('type or {_label} to record', '输入或按 {_label} 录音'),
+        ('password hidden · Enter to skip', '密码已隐藏 · Enter 跳过'),
+        ('secret hidden · Enter to skip', '密钥已隐藏 · Enter 跳过'),
+        ('type 1/2/3, or ↑/↓ to select, Enter to confirm',
+         '输入 1/2/3，或 ↑/↓ 选择，Enter 确认'),
+        ('type your answer and press Enter', '在此输入回答后按 Enter'),
+        ('command in progress · input temporarily disabled',
+         '命令执行中 · 输入暂时禁用'),
     ],
     # modelPicker.tsx - ModelPicker 选单汉化
     os.path.join("ui-tui", "src", "components", "modelPicker.tsx"): [
@@ -1646,236 +1496,98 @@ export const VERBS = [
 }
 
 
-# ============================================================
-# 4b. 源文件补丁管理（git apply 机制，永不产生合并冲突）
-# ============================================================
-
-PATCHES_DIR = os.path.join(BACKUP_DIR, "patches")
-PATCH_MANIFEST = os.path.join(PATCHES_DIR, ".patch_manifest.json")
-
-def _git(args, check=True):
-    """Run a git command in HERMES_AGENT_DIR."""
-    cmd = ["git"] + args
-    # Windows 默认编码是 GBK，但 git diff 输出可能包含 UTF-8 中文
-    # 显式用 utf-8 解码，避免 UnicodeDecodeError
-    result = subprocess.run(cmd, capture_output=True, encoding='utf-8',
-                            cwd=HERMES_AGENT_DIR)
-    if check and result.returncode != 0:
-        raise RuntimeError(f"git {' '.join(args)} 失败:\n{result.stderr}")
-    return result
-
-def _git_is_clean():
-    """检查 hermes-agent 仓库已跟踪文件是否干净（忽略 untracked）。"""
-    # diff-index 只检查已跟踪的修改，忽略 untracked 文件
-    r = _git(["diff-index", "--quiet", "HEAD"], check=False)
-    return r.returncode == 0
-
-def generate_and_apply_patch(rel_path, patches_or_dict):
-    """生成 .patch 文件并用 git apply 打补丁。
-
-    流程: 读取原文 → 计算替换 → 写 temp 文件 → git diff 生成 patch
-          → 保存 patch 文件 → git apply 应用 → 清理 temp
-    回退时: git apply -R <patch> 即可干净还原。
-    """
+def patch_source_file(rel_path, patches_or_dict):
+    """Apply translations to a Hermes source file."""
     full_path = os.path.join(HERMES_AGENT_DIR, rel_path)
     if not os.path.exists(full_path):
         return False, f"文件不存在: {rel_path}"
 
-    # 读取原文
+    if isinstance(patches_or_dict, dict) and patches_or_dict.get("full_replace"):
+        # 完整替换文件内容（先备份）
+        _backup_file(full_path, subdir="source")
+        with open(full_path, 'w', encoding='utf-8') as f:
+            f.write(patches_or_dict["content"])
+        return True, f"完整替换: {rel_path}"
+
+    # 逐行替换
     try:
         with open(full_path, 'r', encoding='utf-8') as f:
-            original = f.read()
+            content = f.read()
     except Exception as e:
         return False, f"读取失败: {e}"
 
-    # 计算新内容
-    if isinstance(patches_or_dict, dict) and patches_or_dict.get("full_replace"):
-        new_content = patches_or_dict["content"]
-    else:
-        new_content = original
-        for old, new in patches_or_dict:
-            new_content = new_content.replace(old, new)
+    original = content
+    changes = 0
+    for old, new in patches_or_dict:
+        # 处理 f-string 变量展开：{var} → {{var}} 避免 format 冲突
+        old_normalized = old.replace("{behind}", "{Behind}").replace("{tools}", "{Tools}")
+        count = content.count(old)
+        if count > 0:
+            content = content.replace(old, new)
+            changes += count
 
-    if new_content == original:
-        return False, f"无变更: {rel_path}"
+    if changes == 0:
+        return False, f"无匹配: {rel_path}"
 
-    # 写 temp 文件用于 git diff（保持 LF 换行，与 git 仓库一致）
-    tmp_path = full_path + ".zh_patch_tmp"
+    # 先备份原文件，再写入
+    _backup_file(full_path, subdir="source")
     try:
-        with open(tmp_path, 'w', encoding='utf-8', newline='\n') as f:
-            f.write(new_content)
-
-        # git diff 生成 patch
-        rel_for_git = rel_path.replace(os.sep, "/")
-        r = _git(
-            ["diff", "--no-color", "--no-index", "--no-textconv",
-             rel_for_git, rel_for_git + ".zh_patch_tmp"],
-            check=False
-        )
-        if not r.stdout:
-            return False, f"补丁为空: {rel_path}"
-
-        # 标准化 patch：去掉 Windows CRLF 换行，去掉 temp 文件路径
-        patch_content = r.stdout
-        patch_content = patch_content.replace("\r\n", "\n")
-        patch_content = patch_content.replace(
-            rel_for_git + ".zh_patch_tmp",
-            rel_for_git
-        )
-
-        # 保存 patch 文件（LF 换行，与 git 一致）
-        patch_name = rel_path.replace(os.sep, "_") + ".patch"
-        patch_path = os.path.join(PATCHES_DIR, patch_name)
-        os.makedirs(PATCHES_DIR, exist_ok=True)
-        with open(patch_path, 'w', encoding='utf-8', newline='\n') as f:
-            f.write(patch_content)
-
-        # git apply 打补丁
-        r2 = _git(["apply", patch_path], check=False)
-        if r2.returncode != 0:
-            return False, f"git apply 失败: {r2.stderr}"
-
-        return True, f"补丁已应用 ({patch_name})"
-    finally:
-        if os.path.exists(tmp_path):
-            os.remove(tmp_path)
+        with open(full_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+        return True, f"翻译 {changes} 处: {rel_path}"
+    except Exception as e:
+        return False, f"写入失败: {e}"
 
 
 def patch_all_source_files():
-    """生成并应用所有源文件补丁。"""
+    """翻译所有 Hermes 源文件界面文字"""
     print("\n" + "=" * 60)
-    print("Hermes 源文件界面补丁（git apply）")
+    print("Hermes 源文件界面翻译")
     print("=" * 60)
-
-    # 确保 git 工作区干净
-    if not _git_is_clean():
-        print("  ⚠ hermes-agent 仓库有未提交的修改，请先提交或 stash")
-        print("  运行: cd ~/AppData/Local/hermes/hermes-agent && git stash")
-        return 0, 1
-
     success = 0
     failed = 0
-    manifest = {}
 
-    for rel_path, patches in sorted(SOURCE_PATCHES.items()):
-        ok, msg = generate_and_apply_patch(rel_path, patches)
+    for rel_path, patches in SOURCE_PATCHES.items():
+        ok, msg = patch_source_file(rel_path, patches)
         if ok:
             print(f"  ✓ {msg}")
-            manifest[rel_path] = True
             success += 1
         else:
             print(f"  → {msg}")
             failed += 1
 
-    # 保存补丁清单
-    if success > 0:
-        with open(PATCH_MANIFEST, 'w', encoding='utf-8') as f:
-            json.dump(manifest, f, indent=2)
-
     print(f"\n结果: {success} 成功, {failed} 跳过")
-    print(f"补丁文件保存至: {PATCHES_DIR}")
-    print(f"回退命令: python translate_hermes_skills.py --revert-patches")
-    print(f"重打命令: python translate_hermes_skills.py --apply-patches")
     return success, failed
 
 
-def apply_saved_patches():
-    """从保存的 patch 文件重新打补丁（git pull 后使用）。"""
-    if not os.path.exists(PATCHES_DIR):
-        print("✗ 没有找到补丁目录")
-        return False
-    patch_files = sorted([
-        f for f in os.listdir(PATCHES_DIR)
-        if f.endswith(".patch") and f != ".patch_manifest.json"
-    ])
-    if not patch_files:
-        print("✗ 没有找到补丁文件")
-        return False
-
-    print(f"\n找到 {len(patch_files)} 个补丁文件，正在应用...")
-    applied = 0
-    errors = 0
-    for pf in patch_files:
-        patch_path = os.path.join(PATCHES_DIR, pf)
-        r = _git(["apply", patch_path], check=False)
-        if r.returncode == 0:
-            print(f"  ✓ {pf}")
-            applied += 1
-        else:
-            print(f"  ✗ {pf} — 可能已应用或不兼容，跳过")
-            errors += 1
-    print(f"\n结果: {applied} 应用成功, {errors} 跳过")
-    return errors == 0
-
-
-def revert_all_patches():
-    """用 git apply -R 回退所有补丁。"""
-    if not os.path.exists(PATCHES_DIR):
-        print("✗ 没有找到补丁目录")
-        return False
-    patch_files = sorted([
-        f for f in os.listdir(PATCHES_DIR)
-        if f.endswith(".patch") and f != ".patch_manifest.json"
-    ], reverse=True)  # 逆序回退
-    if not patch_files:
-        print("✗ 没有找到补丁文件")
-        return False
-
-    print(f"\n找到 {len(patch_files)} 个补丁文件，正在回退...")
-    reverted = 0
-    errors = 0
-    for pf in patch_files:
-        patch_path = os.path.join(PATCHES_DIR, pf)
-        r = _git(["apply", "-R", patch_path], check=False)
-        if r.returncode == 0:
-            print(f"  ✓ {pf}")
-            reverted += 1
-        else:
-            print(f"  ✗ {pf} — 回退失败，可能已被其他修改覆盖")
-            errors += 1
-    print(f"\n结果: {reverted} 回退成功, {errors} 失败")
-    return errors == 0
-
-
 if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        arg = sys.argv[1]
-        if arg == '--restore':
-            ts = sys.argv[2] if len(sys.argv) > 2 else None
-            restore_all(timestamp=ts)
-        elif arg == '--backup-only':
-            print("=" * 60)
-            print("仅备份模式 — 不执行翻译")
-            print("=" * 60)
-            count = 0
-            for root, dirs, files in os.walk(SKILLS_DIR):
-                if 'SKILL.md' in files:
-                    fp = os.path.join(root, 'SKILL.md')
-                    _backup_file(fp, subdir="skills")
-                    count += 1
-            for rel_path in SOURCE_PATCHES:
-                fp = os.path.join(HERMES_AGENT_DIR, rel_path)
-                if os.path.exists(fp):
-                    _backup_file(fp, subdir="source")
-                    count += 1
-            ts = _get_backup_timestamp()
-            backup_root = os.path.join(BACKUP_DIR, ts)
-            print(f"已备份 {count} 个文件到: {backup_root}")
-            print(f"还原命令: python translate_hermes_skills.py --restore {ts}")
-        elif arg == '--apply-patches':
-            apply_saved_patches()
-        elif arg == '--revert-patches':
-            revert_all_patches()
-        else:
-            print(f"未知参数: {arg}")
-            print("可用参数: --restore [ts], --backup-only, --apply-patches, --revert-patches")
-            sys.exit(1)
+    if len(sys.argv) > 1 and sys.argv[1] == '--restore':
+        # 从备份还原
+        ts = sys.argv[2] if len(sys.argv) > 2 else None
+        restore_all(timestamp=ts)
+    elif len(sys.argv) > 1 and sys.argv[1] == '--backup-only':
+        # 仅备份所有文件，不翻译
+        print("=" * 60)
+        print("仅备份模式 — 不执行翻译")
+        print("=" * 60)
+        count = 0
+        # 备份所有 SKILL.md
+        for root, dirs, files in os.walk(SKILLS_DIR):
+            if 'SKILL.md' in files:
+                fp = os.path.join(root, 'SKILL.md')
+                _backup_file(fp, subdir="skills")
+                count += 1
+        # 备份所有源代码文件
+        for rel_path in SOURCE_PATCHES:
+            fp = os.path.join(HERMES_AGENT_DIR, rel_path)
+            if os.path.exists(fp):
+                _backup_file(fp, subdir="source")
+                count += 1
+        ts = _get_backup_timestamp()
+        backup_root = os.path.join(BACKUP_DIR, ts)
+        print(f"已备份 {count} 个文件到: {backup_root}")
+        print(f"还原命令: python translate_hermes_skills.py --restore {ts}")
     else:
         main()
         print()
-        if _git_is_clean():
-            patch_all_source_files()
-        else:
-            print("\n⚠ hermes-agent 仓库有未提交的修改，跳过源文件补丁")
-            print("  请先提交或 stash 后重新运行脚本")
-            print("  或运行: python translate_hermes_skills.py --apply-patches")
+        patch_all_source_files()
