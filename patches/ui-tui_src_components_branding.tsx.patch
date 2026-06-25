@@ -1,0 +1,108 @@
+diff --git a/ui-tui/src/components/branding.tsx b/ui-tui/src/components/branding.tsx
+index e2023ab7c..8455e19a7 100644
+--- a/ui-tui/src/components/branding.tsx
++++ b/ui-tui/src/components/branding.tsx
+@@ -44,8 +44,8 @@ export function ArtLines({ lines }: { lines: [string, string][] }) {
+ // Terminals can't scale glyphs, so "responsive" means picking a layout that
+ // fits the available columns. Thresholds are picked so each tier reads
+ // comfortably without forcing wrap or truncation drift on box-drawing edges.
+-const TAG_FULL = 'Nous Research · Messenger of the Digital Gods'
+-const TAG_MID = 'Messenger of the Digital Gods'
++const TAG_FULL = 'Nous Research · 数字信使之神'
++const TAG_MID = '数字信使之神'
+ const TAG_TINY = 'Nous Research'
+ const HIDE_BELOW = 34
+ const COMPACT_FROM = 58
+@@ -279,7 +279,7 @@ export function SessionPanel({ info, maxWidth, sid, t }: SessionPanelProps) {
+ 
+   const systemBody = () => {
+     if (sysPromptLen === 0) {
+-      return <Text color={t.color.muted}>No system prompt loaded.</Text>
++      return <Text color={t.color.muted}>未加载系统提示词。</Text>
+     }
+ 
+     return (
+@@ -307,7 +307,7 @@ export function SessionPanel({ info, maxWidth, sid, t }: SessionPanelProps) {
+ 
+           {sid && (
+             <Text>
+-              <Text color={t.color.sessionLabel}>Session: </Text>
++              <Text color={t.color.sessionLabel}>会话: </Text>
+               <Text color={t.color.sessionBorder}>{sid}</Text>
+             </Text>
+           )}
+@@ -336,7 +336,7 @@ export function SessionPanel({ info, maxWidth, sid, t }: SessionPanelProps) {
+             </Text>
+             {sid && (
+               <Text wrap="truncate-end">
+-                <Text color={t.color.sessionLabel}>Session: </Text>
++                <Text color={t.color.sessionLabel}>会话: </Text>
+                 <Text color={t.color.sessionBorder}>{sid}</Text>
+               </Text>
+             )}
+@@ -349,7 +349,7 @@ export function SessionPanel({ info, maxWidth, sid, t }: SessionPanelProps) {
+             onToggle={() => setToolsOpen(v => !v)}
+             open={toolsOpen}
+             t={t}
+-            title="Available Tools"
++            title="可用工具"
+           />
+           {toolsOpen && toolsBody()}
+         </Box>
+@@ -362,7 +362,7 @@ export function SessionPanel({ info, maxWidth, sid, t }: SessionPanelProps) {
+             open={skillsOpen}
+             suffix={skillsCatCount > 0 ? `in ${skillsCatCount} categor${skillsCatCount === 1 ? 'y' : 'ies'}` : undefined}
+             t={t}
+-            title="Available Skills"
++            title="可用技能"
+           />
+           {skillsOpen && skillsBody()}
+         </Box>
+@@ -375,7 +375,7 @@ export function SessionPanel({ info, maxWidth, sid, t }: SessionPanelProps) {
+               open={systemOpen}
+               suffix={`— ${sysPromptLen.toLocaleString()} chars`}
+               t={t}
+-              title="System Prompt"
++              title="系统提示词"
+             />
+             {systemOpen && systemBody()}
+           </Box>
+@@ -388,9 +388,9 @@ export function SessionPanel({ info, maxWidth, sid, t }: SessionPanelProps) {
+               count={mcpConnected}
+               onToggle={() => setMcpOpen(v => !v)}
+               open={mcpOpen}
+-              suffix="connected"
++              suffix="已连接"
+               t={t}
+-              title="MCP Servers"
++              title="MCP 服务器"
+             />
+             {mcpOpen && mcpBody()}
+           </Box>
+@@ -403,22 +403,22 @@ export function SessionPanel({ info, maxWidth, sid, t }: SessionPanelProps) {
+           {skillsTotal} skills
+           {mcpConnected ? ` · ${mcpConnected} MCP` : ''}
+           {' · '}
+-          <Text color={t.color.muted}>/help for commands</Text>
++          <Text color={t.color.muted}>/help 查看命令</Text>
+         </Text>
+ 
+         {typeof info.update_behind === 'number' && info.update_behind > 0 && (
+           <Text bold color={t.color.warn}>
+-            ! {info.update_behind} {info.update_behind === 1 ? 'commit' : 'commits'} behind
++            ! {info.update_behind} {info.update_behind} 个提交落后
+             <Text bold={false} color={t.color.warn} dimColor>
+               {' '}
+-              - run{' '}
++              — 运行{' '}
+             </Text>
+             <Text bold color={t.color.warn}>
+               {info.update_command || 'hermes update'}
+             </Text>
+             <Text bold={false} color={t.color.warn} dimColor>
+               {' '}
+-              to update
++              更新
+             </Text>
+           </Text>
+         )}

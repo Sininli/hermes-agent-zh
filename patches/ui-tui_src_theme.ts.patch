@@ -1,0 +1,18 @@
+diff --git a/ui-tui/src/theme.ts b/ui-tui/src/theme.ts
+index 6d7426cae..b91db6fe7 100644
+--- a/ui-tui/src/theme.ts
++++ b/ui-tui/src/theme.ts
+@@ -240,10 +240,10 @@ const BRAND: ThemeBrand = {
+   name: 'Hermes Agent',
+   icon: '⚕',
+   prompt: '❯',
+-  welcome: 'Type your message or /help for commands.',
+-  goodbye: 'Goodbye! ⚕',
++  welcome: '输入消息或 /help 查看命令。',
++  goodbye: '再见！⚕',
+   tool: '┊',
+-  helpHeader: '(^_^)? Commands'
++  helpHeader: '(^_^)? 命令'
+ }
+ 
+ const cleanPromptSymbol = (s: string | undefined, fallback: string) => {

@@ -1,0 +1,20 @@
+diff --git a/agent/background_review.py b/agent/background_review.py
+index 564c54419..d2fe63ca2 100644
+--- a/agent/background_review.py
++++ b/agent/background_review.py
+@@ -793,13 +793,13 @@ def _run_review_in_thread(
+         if actions:
+             summary = " · ".join(dict.fromkeys(actions))
+             agent._safe_print(
+-                f"  💾 Self-improvement review: {summary}"
++                f"  💾 自我改进审查: {summary}"
+             )
+             _bg_cb = agent.background_review_callback
+             if _bg_cb:
+                 try:
+                     _bg_cb(
+-                        f"💾 Self-improvement review: {summary}"
++                        f"💾 自我改进审查: {summary}"
+                     )
+                 except Exception:
+                     pass

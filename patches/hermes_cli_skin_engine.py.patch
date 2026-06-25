@@ -1,0 +1,49 @@
+diff --git a/hermes_cli/skin_engine.py b/hermes_cli/skin_engine.py
+index 18d92cdd6..828e5342a 100644
+--- a/hermes_cli/skin_engine.py
++++ b/hermes_cli/skin_engine.py
+@@ -188,7 +188,7 @@ _BUILTIN_SKINS: Dict[str, Dict[str, Any]] = {
+         },
+         "branding": {
+             "agent_name": "Hermes Agent",
+-            "welcome": "Welcome to Hermes Agent! Type your message or /help for commands.",
++            "welcome": "欢迎使用 Hermes Agent！输入消息或 /help 查看命令。",
+             "goodbye": "Goodbye! ⚕",
+             "response_label": " ⚕ Hermes ",
+             "prompt_symbol": "❯",
+@@ -299,7 +299,7 @@ _BUILTIN_SKINS: Dict[str, Dict[str, Any]] = {
+         "spinner": {},
+         "branding": {
+             "agent_name": "Hermes Agent",
+-            "welcome": "Welcome to Hermes Agent! Type your message or /help for commands.",
++            "welcome": "欢迎使用 Hermes Agent！输入消息或 /help 查看命令。",
+             "goodbye": "Goodbye! ⚕",
+             "response_label": " ⚕ Hermes ",
+             "prompt_symbol": "❯",
+@@ -338,7 +338,7 @@ _BUILTIN_SKINS: Dict[str, Dict[str, Any]] = {
+         "spinner": {},
+         "branding": {
+             "agent_name": "Hermes Agent",
+-            "welcome": "Welcome to Hermes Agent! Type your message or /help for commands.",
++            "welcome": "欢迎使用 Hermes Agent！输入消息或 /help 查看命令。",
+             "goodbye": "Goodbye! ⚕",
+             "response_label": " ⚕ Hermes ",
+             "prompt_symbol": "❯",
+@@ -375,7 +375,7 @@ _BUILTIN_SKINS: Dict[str, Dict[str, Any]] = {
+         "spinner": {},
+         "branding": {
+             "agent_name": "Hermes Agent",
+-            "welcome": "Welcome to Hermes Agent! Type your message or /help for commands.",
++            "welcome": "欢迎使用 Hermes Agent！输入消息或 /help 查看命令。",
+             "goodbye": "Goodbye! ⚕",
+             "response_label": " ⚕ Hermes ",
+             "prompt_symbol": "❯",
+@@ -412,7 +412,7 @@ _BUILTIN_SKINS: Dict[str, Dict[str, Any]] = {
+         "spinner": {},
+         "branding": {
+             "agent_name": "Hermes Agent",
+-            "welcome": "Welcome to Hermes Agent! Type your message or /help for commands.",
++            "welcome": "欢迎使用 Hermes Agent！输入消息或 /help 查看命令。",
+             "goodbye": "Goodbye! \u2695",
+             "response_label": " \u2695 Hermes ",
+             "prompt_symbol": "\u276f",

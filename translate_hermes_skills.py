@@ -1,29 +1,34 @@
 #!/usr/bin/env python3
 """
-Hermes 技能文件全面中文翻译脚本
-================================
-用法:
-  python translate_hermes_skills.py            # 翻译
-  python translate_hermes_skills.py --restore  # 从备份还原
-  python translate_hermes_skills.py --backup-only  # 仅备份，不翻译
-
-功能:
-  - 翻译前自动备份原文件
-  - 翻译 skills 目录下所有 SKILL.md 的:
-    - YAML 前置元数据 (description, name, triggers, tags 等)
-    - Markdown 正文标题 (Headings)
-    - 正文中的概览、描述性段落
-    - 保留代码块、命令、技术术语、URL 不翻译
-  - 翻译 Hermes 源代码文件（banner.py、tips.py 等）
-  - 支持从备份还原所有文件
-特点: 支持增量运行（跳过已翻译的）
-前置: pip install pyyaml (可选，非必需)
+|Hermes 技能 + 源文件汉化脚本
+|================================
+|用法:
+|  python translate_hermes_skills.py                        # 翻译 skills + 打源文件补丁
+|  python translate_hermes_skills.py --restore [timestamp]  # 从备份还原
+|  python translate_hermes_skills.py --backup-only          # 仅备份，不翻译
+|  python translate_hermes_skills.py --apply-patches        # git pull 后重打补丁
+|  python translate_hermes_skills.py --revert-patches       # 回退所有源文件补丁
+|
+|功能:
+|  - 翻译前自动备份原文件
+|  - 翻译 skills 目录下所有 SKILL.md 的:
+|    - YAML 前置元数据 (description, name, triggers, tags 等)
+|    - Markdown 正文标题 (Headings)
+|    - 正文中的概览、描述性段落
+|    - 保留代码块、命令、技术术语、URL 不翻译
+|  - 翻译 Hermes 源代码文件（banner.py、tips.py 等）—— 通过 git apply 打补丁
+|  - 支持从备份还原所有文件
+|  - 源文件补丁独立保存，git pull 后可用 --apply-patches 重打
+|  - 永不产生 Git 合并冲突标记
+|特点: 支持增量运行（跳过已翻译的）
+|前置: pip install pyyaml (可选, 非必需)
 """
 
 import os
 import re
 import json
 import shutil
+import subprocess
 import sys
 from datetime import datetime
 
@@ -1579,98 +1584,234 @@ export const VERBS = [
 }
 
 
-def patch_source_file(rel_path, patches_or_dict):
-    """Apply translations to a Hermes source file."""
+# ============================================================
+# 4b. 源文件补丁管理（git apply 机制，永不产生合并冲突）
+# ============================================================
+
+PATCHES_DIR = os.path.join(BACKUP_DIR, "patches")
+PATCH_MANIFEST = os.path.join(PATCHES_DIR, ".patch_manifest.json")
+
+def _git(args, check=True):
+    """Run a git command in HERMES_AGENT_DIR."""
+    cmd = ["git"] + args
+    result = subprocess.run(cmd, capture_output=True, text=True,
+                            cwd=HERMES_AGENT_DIR)
+    if check and result.returncode != 0:
+        raise RuntimeError(f"git {' '.join(args)} 失败:\n{result.stderr}")
+    return result
+
+def _git_is_clean():
+    """检查 hermes-agent 仓库已跟踪文件是否干净（忽略 untracked）。"""
+    # diff-index 只检查已跟踪的修改，忽略 untracked 文件
+    r = _git(["diff-index", "--quiet", "HEAD"], check=False)
+    return r.returncode == 0
+
+def generate_and_apply_patch(rel_path, patches_or_dict):
+    """生成 .patch 文件并用 git apply 打补丁。
+
+    流程: 读取原文 → 计算替换 → 写 temp 文件 → git diff 生成 patch
+          → 保存 patch 文件 → git apply 应用 → 清理 temp
+    回退时: git apply -R <patch> 即可干净还原。
+    """
     full_path = os.path.join(HERMES_AGENT_DIR, rel_path)
     if not os.path.exists(full_path):
         return False, f"文件不存在: {rel_path}"
 
-    if isinstance(patches_or_dict, dict) and patches_or_dict.get("full_replace"):
-        # 完整替换文件内容（先备份）
-        _backup_file(full_path, subdir="source")
-        with open(full_path, 'w', encoding='utf-8') as f:
-            f.write(patches_or_dict["content"])
-        return True, f"完整替换: {rel_path}"
-
-    # 逐行替换
+    # 读取原文
     try:
         with open(full_path, 'r', encoding='utf-8') as f:
-            content = f.read()
+            original = f.read()
     except Exception as e:
         return False, f"读取失败: {e}"
 
-    original = content
-    changes = 0
-    for old, new in patches_or_dict:
-        # 处理 f-string 变量展开：{var} → {{var}} 避免 format 冲突
-        old_normalized = old.replace("{behind}", "{Behind}").replace("{tools}", "{Tools}")
-        count = content.count(old)
-        if count > 0:
-            content = content.replace(old, new)
-            changes += count
+    # 计算新内容
+    if isinstance(patches_or_dict, dict) and patches_or_dict.get("full_replace"):
+        new_content = patches_or_dict["content"]
+    else:
+        new_content = original
+        for old, new in patches_or_dict:
+            new_content = new_content.replace(old, new)
 
-    if changes == 0:
-        return False, f"无匹配: {rel_path}"
+    if new_content == original:
+        return False, f"无变更: {rel_path}"
 
-    # 先备份原文件，再写入
-    _backup_file(full_path, subdir="source")
+    # 写 temp 文件用于 git diff（保持 LF 换行，与 git 仓库一致）
+    tmp_path = full_path + ".zh_patch_tmp"
     try:
-        with open(full_path, 'w', encoding='utf-8') as f:
-            f.write(content)
-        return True, f"翻译 {changes} 处: {rel_path}"
-    except Exception as e:
-        return False, f"写入失败: {e}"
+        with open(tmp_path, 'w', encoding='utf-8', newline='\n') as f:
+            f.write(new_content)
+
+        # git diff 生成 patch
+        rel_for_git = rel_path.replace(os.sep, "/")
+        r = _git(
+            ["diff", "--no-color", "--no-index", "--no-textconv",
+             rel_for_git, rel_for_git + ".zh_patch_tmp"],
+            check=False
+        )
+        if not r.stdout:
+            return False, f"补丁为空: {rel_path}"
+
+        # 标准化 patch：去掉 Windows CRLF 换行，去掉 temp 文件路径
+        patch_content = r.stdout
+        patch_content = patch_content.replace("\r\n", "\n")
+        patch_content = patch_content.replace(
+            rel_for_git + ".zh_patch_tmp",
+            rel_for_git
+        )
+
+        # 保存 patch 文件（LF 换行，与 git 一致）
+        patch_name = rel_path.replace(os.sep, "_") + ".patch"
+        patch_path = os.path.join(PATCHES_DIR, patch_name)
+        os.makedirs(PATCHES_DIR, exist_ok=True)
+        with open(patch_path, 'w', encoding='utf-8', newline='\n') as f:
+            f.write(patch_content)
+
+        # git apply 打补丁
+        r2 = _git(["apply", patch_path], check=False)
+        if r2.returncode != 0:
+            return False, f"git apply 失败: {r2.stderr}"
+
+        return True, f"补丁已应用 ({patch_name})"
+    finally:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
 
 
 def patch_all_source_files():
-    """翻译所有 Hermes 源文件界面文字"""
+    """生成并应用所有源文件补丁。"""
     print("\n" + "=" * 60)
-    print("Hermes 源文件界面翻译")
+    print("Hermes 源文件界面补丁（git apply）")
     print("=" * 60)
+
+    # 确保 git 工作区干净
+    if not _git_is_clean():
+        print("  ⚠ hermes-agent 仓库有未提交的修改，请先提交或 stash")
+        print("  运行: cd ~/AppData/Local/hermes/hermes-agent && git stash")
+        return 0, 1
+
     success = 0
     failed = 0
+    manifest = {}
 
-    for rel_path, patches in SOURCE_PATCHES.items():
-        ok, msg = patch_source_file(rel_path, patches)
+    for rel_path, patches in sorted(SOURCE_PATCHES.items()):
+        ok, msg = generate_and_apply_patch(rel_path, patches)
         if ok:
             print(f"  ✓ {msg}")
+            manifest[rel_path] = True
             success += 1
         else:
             print(f"  → {msg}")
             failed += 1
 
+    # 保存补丁清单
+    if success > 0:
+        with open(PATCH_MANIFEST, 'w', encoding='utf-8') as f:
+            json.dump(manifest, f, indent=2)
+
     print(f"\n结果: {success} 成功, {failed} 跳过")
+    print(f"补丁文件保存至: {PATCHES_DIR}")
+    print(f"回退命令: python translate_hermes_skills.py --revert-patches")
+    print(f"重打命令: python translate_hermes_skills.py --apply-patches")
     return success, failed
 
 
+def apply_saved_patches():
+    """从保存的 patch 文件重新打补丁（git pull 后使用）。"""
+    if not os.path.exists(PATCHES_DIR):
+        print("✗ 没有找到补丁目录")
+        return False
+    patch_files = sorted([
+        f for f in os.listdir(PATCHES_DIR)
+        if f.endswith(".patch") and f != ".patch_manifest.json"
+    ])
+    if not patch_files:
+        print("✗ 没有找到补丁文件")
+        return False
+
+    print(f"\n找到 {len(patch_files)} 个补丁文件，正在应用...")
+    applied = 0
+    errors = 0
+    for pf in patch_files:
+        patch_path = os.path.join(PATCHES_DIR, pf)
+        r = _git(["apply", patch_path], check=False)
+        if r.returncode == 0:
+            print(f"  ✓ {pf}")
+            applied += 1
+        else:
+            print(f"  ✗ {pf} — 可能已应用或不兼容，跳过")
+            errors += 1
+    print(f"\n结果: {applied} 应用成功, {errors} 跳过")
+    return errors == 0
+
+
+def revert_all_patches():
+    """用 git apply -R 回退所有补丁。"""
+    if not os.path.exists(PATCHES_DIR):
+        print("✗ 没有找到补丁目录")
+        return False
+    patch_files = sorted([
+        f for f in os.listdir(PATCHES_DIR)
+        if f.endswith(".patch") and f != ".patch_manifest.json"
+    ], reverse=True)  # 逆序回退
+    if not patch_files:
+        print("✗ 没有找到补丁文件")
+        return False
+
+    print(f"\n找到 {len(patch_files)} 个补丁文件，正在回退...")
+    reverted = 0
+    errors = 0
+    for pf in patch_files:
+        patch_path = os.path.join(PATCHES_DIR, pf)
+        r = _git(["apply", "-R", patch_path], check=False)
+        if r.returncode == 0:
+            print(f"  ✓ {pf}")
+            reverted += 1
+        else:
+            print(f"  ✗ {pf} — 回退失败，可能已被其他修改覆盖")
+            errors += 1
+    print(f"\n结果: {reverted} 回退成功, {errors} 失败")
+    return errors == 0
+
+
 if __name__ == '__main__':
-    if len(sys.argv) > 1 and sys.argv[1] == '--restore':
-        # 从备份还原
-        ts = sys.argv[2] if len(sys.argv) > 2 else None
-        restore_all(timestamp=ts)
-    elif len(sys.argv) > 1 and sys.argv[1] == '--backup-only':
-        # 仅备份所有文件，不翻译
-        print("=" * 60)
-        print("仅备份模式 — 不执行翻译")
-        print("=" * 60)
-        count = 0
-        # 备份所有 SKILL.md
-        for root, dirs, files in os.walk(SKILLS_DIR):
-            if 'SKILL.md' in files:
-                fp = os.path.join(root, 'SKILL.md')
-                _backup_file(fp, subdir="skills")
-                count += 1
-        # 备份所有源代码文件
-        for rel_path in SOURCE_PATCHES:
-            fp = os.path.join(HERMES_AGENT_DIR, rel_path)
-            if os.path.exists(fp):
-                _backup_file(fp, subdir="source")
-                count += 1
-        ts = _get_backup_timestamp()
-        backup_root = os.path.join(BACKUP_DIR, ts)
-        print(f"已备份 {count} 个文件到: {backup_root}")
-        print(f"还原命令: python translate_hermes_skills.py --restore {ts}")
+    if len(sys.argv) > 1:
+        arg = sys.argv[1]
+        if arg == '--restore':
+            ts = sys.argv[2] if len(sys.argv) > 2 else None
+            restore_all(timestamp=ts)
+        elif arg == '--backup-only':
+            print("=" * 60)
+            print("仅备份模式 — 不执行翻译")
+            print("=" * 60)
+            count = 0
+            for root, dirs, files in os.walk(SKILLS_DIR):
+                if 'SKILL.md' in files:
+                    fp = os.path.join(root, 'SKILL.md')
+                    _backup_file(fp, subdir="skills")
+                    count += 1
+            for rel_path in SOURCE_PATCHES:
+                fp = os.path.join(HERMES_AGENT_DIR, rel_path)
+                if os.path.exists(fp):
+                    _backup_file(fp, subdir="source")
+                    count += 1
+            ts = _get_backup_timestamp()
+            backup_root = os.path.join(BACKUP_DIR, ts)
+            print(f"已备份 {count} 个文件到: {backup_root}")
+            print(f"还原命令: python translate_hermes_skills.py --restore {ts}")
+        elif arg == '--apply-patches':
+            apply_saved_patches()
+        elif arg == '--revert-patches':
+            revert_all_patches()
+        else:
+            print(f"未知参数: {arg}")
+            print("可用参数: --restore [ts], --backup-only, --apply-patches, --revert-patches")
+            sys.exit(1)
     else:
         main()
         print()
-        patch_all_source_files()
+        if _git_is_clean():
+            patch_all_source_files()
+        else:
+            print("\n⚠ hermes-agent 仓库有未提交的修改，跳过源文件补丁")
+            print("  请先提交或 stash 后重新运行脚本")
+            print("  或运行: python translate_hermes_skills.py --apply-patches")

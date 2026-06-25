@@ -1,0 +1,136 @@
+diff --git a/hermes_cli/banner.py b/hermes_cli/banner.py
+index 68d33e43f..e3feda0d4 100644
+--- a/hermes_cli/banner.py
++++ b/hermes_cli/banner.py
+@@ -657,13 +657,13 @@ def build_welcome_banner(console: "Console", model: str, cwd: str,
+     left_lines.append(f"[{accent}]{model_short}[/]{ctx_str} [dim {dim}]·[/] [dim {dim}]Nous Research[/]")
+ 
+     if os.getenv("HERMES_YOLO_MODE"):
+-        left_lines.append(f"[bold red]⚠ YOLO mode[/] [dim {dim}]— all approval prompts bypassed[/]")
++        left_lines.append(f"[bold red]⚠ YOLO 模式[/] [dim {dim}]— 所有审批提示已跳过[/]")
+     left_lines.append(f"[dim {dim}]{cwd}[/]")
+     if session_id:
+-        left_lines.append(f"[dim {session_color}]Session: {session_id}[/]")
++        left_lines.append(f"[dim {session_color}]会话: {session_id}[/]")
+     left_content = "\n".join(left_lines)
+ 
+-    right_lines = [f"[bold {accent}]Available Tools[/]"]
++    right_lines = [f"[bold {accent}]可用工具[/]"]
+     toolsets_dict: Dict[str, list] = {}
+ 
+     for tool in tools:
+@@ -720,7 +720,7 @@ def build_welcome_banner(console: "Console", model: str, cwd: str,
+         right_lines.append(f"[dim {dim}]{toolset}:[/] {tools_str}")
+ 
+     if remaining_toolsets > 0:
+-        right_lines.append(f"[dim {dim}](and {remaining_toolsets} more toolsets...)[/]")
++        right_lines.append(f"[dim {dim}]（还有 {remaining_toolsets} 个工具集…）[/]")
+ 
+     # MCP Servers section (only if configured)
+     try:
+@@ -731,37 +731,37 @@ def build_welcome_banner(console: "Console", model: str, cwd: str,
+ 
+     if mcp_status:
+         right_lines.append("")
+-        right_lines.append(f"[bold {accent}]MCP Servers[/]")
++        right_lines.append(f"[bold {accent}]MCP 服务器[/]")
+         for srv in mcp_status:
+             status = srv.get("status")
+             if srv["connected"]:
+                 right_lines.append(
+                     f"[dim {dim}]{srv['name']}[/] [{text}]({srv['transport']})[/] "
+-                    f"[dim {dim}]—[/] [{text}]{srv['tools']} tool(s)[/]"
++                    f"[dim {dim}]—[/] [{text}]{srv['tools']} 个工具[/]"
+                 )
+             elif srv.get("disabled") or status == "disabled":
+                 right_lines.append(
+                     f"[dim {dim}]{srv['name']}[/] [dim]({srv['transport']})[/] "
+-                    f"[dim {dim}]— disabled[/]"
++                    f"[dim {dim}]— 已禁用[/]"
+                 )
+             elif status == "connecting":
+                 right_lines.append(
+                     f"[dim {dim}]{srv['name']}[/] [dim]({srv['transport']})[/] "
+-                    f"[yellow]— connecting[/]"
++                    f"[yellow]— 连接中[/]"
+                 )
+             elif status == "configured":
+                 right_lines.append(
+                     f"[dim {dim}]{srv['name']}[/] [dim]({srv['transport']})[/] "
+-                    f"[dim {dim}]— configured[/]"
++                    f"[dim {dim}]— 已配置[/]"
+                 )
+             else:
+                 right_lines.append(
+                     f"[red]{srv['name']}[/] [dim]({srv['transport']})[/] "
+-                    f"[red]— failed[/]"
++                    f"[red]— 失败[/]"
+                 )
+ 
+     right_lines.append("")
+-    right_lines.append(f"[bold {accent}]Available Skills[/]")
++    right_lines.append(f"[bold {accent}]可用技能[/]")
+     # The skills catalog is only reachable when the `skills` toolset is enabled
+     # (it exposes skill_view / skill_manage). When it's disabled — e.g. a Blank
+     # Slate install — the agent literally cannot load any skill, so advertising
+@@ -788,14 +788,14 @@ def build_welcome_banner(console: "Console", model: str, cwd: str,
+                 skills_str = skills_str[:47] + "..."
+             right_lines.append(f"[dim {dim}]{category}:[/] [{text}]{skills_str}[/]")
+     else:
+-        right_lines.append(f"[dim {dim}]No skills installed[/]")
++        right_lines.append(f"[dim {dim}]未安装任何技能[/]")
+ 
+     right_lines.append("")
+     mcp_connected = sum(1 for s in mcp_status if s["connected"]) if mcp_status else 0
+-    summary_parts = [f"{len(tools)} tools", f"{total_skills} skills"]
++    summary_parts = [f"{len(tools)} 个工具", f"{total_skills} 个技能"]
+     if mcp_connected:
+-        summary_parts.append(f"{mcp_connected} MCP servers")
+-    summary_parts.append("/help for commands")
++        summary_parts.append(f"{mcp_connected} 个 MCP 服务器")
++    summary_parts.append("/help 查看命令")
+     # Indicate when the codex_app_server runtime is active so users
+     # understand why tool counts may not match what's actually reachable
+     # (codex builds its own tool list inside the spawned subprocess).
+@@ -804,8 +804,8 @@ def build_welcome_banner(console: "Console", model: str, cwd: str,
+         from hermes_cli.config import load_config as _load_cfg
+         if get_current_runtime(_load_cfg()) == "codex_app_server":
+             right_lines.append(
+-                f"[bold {accent}]Runtime:[/] [{text}]codex app-server[/] "
+-                f"[dim {dim}](terminal/file ops/MCP run inside codex)[/]"
++                f"[bold {accent}]运行环境:[/] [{text}]codex app-server[/] "
++                f"[dim {dim}](终端/文件操作/MCP 在 codex 中运行)[/]"
+             )
+     except Exception:
+         pass
+@@ -814,7 +814,7 @@ def build_welcome_banner(console: "Console", model: str, cwd: str,
+         from hermes_cli.profiles import get_active_profile_name
+         _profile_name = get_active_profile_name()
+         if _profile_name and _profile_name != "default":
+-            right_lines.append(f"[bold {accent}]Profile:[/] [{text}]{_profile_name}[/]")
++            right_lines.append(f"[bold {accent}]配置文件:[/] [{text}]{_profile_name}[/]")
+     except Exception:
+         pass  # Never break the banner over a profiles.py bug
+ 
+@@ -826,10 +826,10 @@ def build_welcome_banner(console: "Console", model: str, cwd: str,
+         if behind is not None and behind != 0:
+             from hermes_cli.config import get_managed_update_command, recommended_update_command
+             if behind > 0:
+-                commits_word = "commit" if behind == 1 else "commits"
++                commits_word = "个提交" if behind == 1 else "个提交"
+                 right_lines.append(
+                     f"[bold yellow]⚠ {behind} {commits_word} behind[/]"
+-                    f"[dim yellow] — run [bold]{recommended_update_command()}[/bold] to update[/]"
++                    f"[dim yellow] — 运行 [bold]{recommended_update_command()}[/bold] 更新[/]"
+                 )
+             else:
+                 # UPDATE_AVAILABLE_NO_COUNT: nix-built hermes; we know an update
+@@ -838,7 +838,7 @@ def build_welcome_banner(console: "Console", model: str, cwd: str,
+                 managed_cmd = get_managed_update_command()
+                 line = "[bold yellow]⚠ update available[/]"
+                 if managed_cmd:
+-                    line += f"[dim yellow] — run [bold]{managed_cmd}[/bold][/]"
++                    line += f"[dim yellow] — 运行 [bold]{managed_cmd}[/bold][/]"
+                 right_lines.append(line)
+     except Exception:
+         pass  # Never break the banner over an update check

@@ -1,0 +1,17 @@
+diff --git a/agent/display.py b/agent/display.py
+index e6d26f1ce..ebcc53ff9 100644
+--- a/agent/display.py
++++ b/agent/display.py
+@@ -800,9 +800,9 @@ class KawaiiSpinner:
+     ]
+ 
+     THINKING_VERBS = [
+-        "pondering", "contemplating", "musing", "cogitating", "ruminating",
+-        "deliberating", "mulling", "reflecting", "processing", "reasoning",
+-        "analyzing", "computing", "synthesizing", "formulating", "brainstorming",
++        "沉思", "思考", "思索", "考量", "反思",
++        "斟酌", "推敲", "反省", "处理", "推理",
++        "分析", "计算", "综合", "构思", "头脑风暴",
+     ]
+ 
+     @classmethod
